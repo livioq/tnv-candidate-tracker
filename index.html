@@ -171,6 +171,16 @@
   .modal-section-title:first-child{margin-top:0; padding-top:0; border-top:none;}
   .modal-section-title .sub{font-family:var(--sans); font-weight:400; font-size:12px; color:var(--muted);}
 
+  /* Timeline bar: one cell per elapsed day, coloured by how that step ran against target */
+  .timeline-bar-wrap{overflow-x:auto; padding:2px 0 12px;}
+  .timeline-bar{display:flex; align-items:center; gap:0; height:16px; width:max-content;}
+  .timeline-bar .day-cell{width:7px; height:14px; flex:0 0 auto; border-radius:1px;}
+  .timeline-bar .day-cell.green{background:var(--green);}
+  .timeline-bar .day-cell.amber{background:var(--amber);}
+  .timeline-bar .day-cell.red{background:var(--red);}
+  .timeline-bar .day-cell.ongoing{opacity:.55;}
+  .timeline-bar .seg-break{width:2px; height:16px; background:var(--paper); border-left:1px solid var(--bg); border-right:1px solid var(--bg); flex:0 0 auto;}
+
   /* Stepper */
   .stepper{margin-top:8px;}
   .step-row{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
@@ -314,6 +324,7 @@
               <th data-key="client">Client</th>
               <th data-key="candidateName">Candidate</th>
               <th data-key="stage">Current step</th>
+              <th data-key="since">Since</th>
               <th data-key="waitingOn">Waiting on</th>
               <th data-key="owner">Recruiter</th>
               <th data-key="over" class="sorted">Days over target</th>
@@ -456,15 +467,17 @@
 
   // ---------- ids / dates ----------
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
-  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  // Never use Date#toISOString for a calendar date — it converts to UTC first, which
+  // silently shifts the date by a day for anyone outside UTC (e.g. entering "3 days"
+  // could get stored as 2). Read the Date object's own local Y/M/D fields instead.
+  function toLocalISO(d){
+    var y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate();
+    return y + "-" + (m<10?"0":"")+m + "-" + (day<10?"0":"")+day;
+  }
+  function todayISO(){ return toLocalISO(new Date()); }
   function daysBetween(iso1, iso2){
     var a = new Date(iso1+"T00:00:00"), b = new Date(iso2+"T00:00:00");
     return Math.round((b-a) / 86400000);
-  }
-  function addDays(iso, n){
-    var d = new Date((iso||todayISO())+"T00:00:00");
-    d.setDate(d.getDate() + (parseInt(n,10)||0));
-    return d.toISOString().slice(0,10);
   }
   function fmtDate(iso){
     if(!iso) return "—";
@@ -566,6 +579,11 @@
     if(overDays <= 6) return {band:"red", label:"At risk"};
     return {band:"crit", label:"Overdue"};
   }
+  // The timeline bar only has three colours (green/amber/red) — "a lot over" (red or crit) collapses to red.
+  function threeColorBand(overDays){
+    if(overDays <= 0) return "green";
+    return riskFromOver(overDays).band === "amber" ? "amber" : "red";
+  }
 
   // ---------- analysis ----------
   // Walks a candidate's ordered timeline. Entries with actualDate are "done";
@@ -576,7 +594,7 @@
     var segments = []; // {label, targetDays, owner, actualDays, overDays, status:'done'|'current'|'pending'}
     var firstDate = tl.length ? tl[0].actualDate : null;
     var lastDoneDate = firstDate;
-    var currentDays = null, currentTarget = null, currentOver = 0, currentBand = "closed", currentLabel = c.outcome, currentOwner = null;
+    var currentDays = null, currentTarget = null, currentOver = 0, currentBand = "closed", currentLabel = c.outcome, currentOwner = null, currentSince = null;
     var totalTargetDone = 0, totalOverDone = 0;
 
     for(var i=1;i<tl.length;i++){
@@ -595,7 +613,7 @@
         var ov = tgt===null||tgt===undefined ? 0 : Math.max(0, elapsed-tgt);
         var rb = riskFromOver(ov);
         segments.push({label:step.label, targetDays:tgt, owner:step.owner, days:elapsed, over:ov, status:"current"});
-        currentDays = elapsed; currentTarget = tgt; currentOver = ov; currentBand = rb.band; currentLabel = step.label; currentOwner = step.owner;
+        currentDays = elapsed; currentTarget = tgt; currentOver = ov; currentBand = rb.band; currentLabel = step.label; currentOwner = step.owner; currentSince = lastDoneDate;
       } else {
         segments.push({label:step.label, targetDays:step.targetDays, owner:step.owner, days:null, over:null, status:"pending"});
       }
@@ -604,6 +622,7 @@
     var totalOver = totalOverDone + (isOpen(c) ? currentOver : 0);
     return {segments:segments, currentDays:currentDays, currentOver: isOpen(c)?currentOver:null,
       currentBand: isOpen(c)?currentBand:"closed", currentLabel: currentLabel, currentOwner: currentOwner,
+      currentSince: currentSince, lastDate: lastDoneDate,
       totalActual: totalActual, totalOver: totalOver};
   }
   function currentStepName(c){
@@ -618,7 +637,7 @@
 
   // ---------- sample data ----------
   function sampleData(){
-    function back(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+    function back(n){ var d=new Date(); d.setDate(d.getDate()-n); return toLocalISO(d); }
     function step(label, owner, targetDays, actualBack){
       return {id:uid(), label:label, owner:owner, targetDays:targetDays, actualDate: actualBack===undefined ? null : back(actualBack)};
     }
@@ -941,6 +960,7 @@
       if(ui.sortKey === "over"){ ka=a._a.currentOver===null?-1:a._a.currentOver; kb=b._a.currentOver===null?-1:b._a.currentOver; }
       else if(ui.sortKey === "total"){ ka=a._a.totalActual===null?-1:a._a.totalActual; kb=b._a.totalActual===null?-1:b._a.totalActual; }
       else if(ui.sortKey === "stage"){ ka=currentStepName(a).toLowerCase(); kb=currentStepName(b).toLowerCase(); }
+      else if(ui.sortKey === "since"){ ka=(isOpen(a)?a._a.currentSince:a._a.lastDate)||""; kb=(isOpen(b)?b._a.currentSince:b._a.lastDate)||""; }
       else { ka=(a[ui.sortKey]||"").toString().toLowerCase(); kb=(b[ui.sortKey]||"").toString().toLowerCase(); }
       if(ka<kb) return -1*dir; if(ka>kb) return 1*dir; return 0;
     });
@@ -950,7 +970,7 @@
     var tbody = document.getElementById("candTbody");
     var list = filteredCandidates();
     if(!list.length){
-      tbody.innerHTML = '<tr><td colspan="7" style="padding:26px; text-align:center; color:var(--muted);">No candidates match these filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="padding:26px; text-align:center; color:var(--muted);">No candidates match these filters.</td></tr>';
     } else {
       tbody.innerHTML = list.map(function(c){
         var a = c._a;
@@ -959,10 +979,12 @@
           : '<span class="badge '+a.currentBand+'">'+(a.currentOver>0?'+':'')+a.currentOver+'d</span>';
         var totalTxt = a.totalActual===null ? "—" : a.totalActual+"d";
         var waitingOn = isOpen(c) ? (a.currentOwner || "—") : "—";
+        var sinceDate = isOpen(c) ? a.currentSince : a.lastDate;
         return '<tr data-id="'+c.id+'">'
           + '<td>'+esc(c.client)+'</td>'
           + '<td class="name-cell"><b>'+esc(c.candidateName)+'</b><div class="sub">'+esc(c.vacancy)+'</div></td>'
           + '<td><span class="stage-pill">'+esc(currentStepName(c))+'</span></td>'
+          + '<td class="mono" style="font-size:12.5px; color:var(--muted);">'+fmtDate(sinceDate)+'</td>'
           + '<td>'+(waitingOn!=="—" ? '<span class="owner-tag '+waitingOn+'">'+esc(waitingOn)+'</span>' : '—')+'</td>'
           + '<td>'+esc(c.owner||"—")+'</td>'
           + '<td class="num">'+badge+'</td>'
@@ -1499,7 +1521,7 @@
       box.innerHTML = '<div class="empty-state" style="padding:24px;"><p style="margin:0;">No timeline yet. Click "Load agreed process" above to pull in the steps you\'ve agreed with this client.</p></div>';
       return;
     }
-    var html = "";
+    var html = renderTimelineBar(tl);
     var foundCurrent = false;
     var lastDoneDate = tl[0].actualDate;
     for(var i=0;i<tl.length;i++){
@@ -1516,6 +1538,42 @@
     box.innerHTML = html;
     bindStepperEvents();
   }
+  // One cell per elapsed day, coloured by how that segment ran against its target,
+  // with a break between segments marking each step/decision boundary.
+  function renderTimelineBar(tl){
+    var cells = [];
+    var lastDoneDate = tl[0].actualDate;
+    var foundCurrent = false;
+    for(var i=1;i<tl.length;i++){
+      var s = tl[i];
+      if(s.actualDate){
+        var days = daysBetween(lastDoneDate, s.actualDate);
+        var over = hasTarget(s) ? Math.max(0, days-s.targetDays) : 0;
+        cells = cells.concat(timelineDayCells(days, over, s.label, false));
+        cells.push('<span class="seg-break" title="'+escAttr(s.label+' reached')+'"></span>');
+        lastDoneDate = s.actualDate;
+      } else if(!foundCurrent){
+        foundCurrent = true;
+        var elapsed = daysBetween(lastDoneDate, todayISO()); if(elapsed<0) elapsed=0;
+        var over2 = hasTarget(s) ? Math.max(0, elapsed-s.targetDays) : 0;
+        cells = cells.concat(timelineDayCells(elapsed, over2, s.label, true));
+      } else {
+        break; // nothing actual to draw yet for steps beyond the current one
+      }
+    }
+    if(!cells.length) return "";
+    return '<div class="timeline-bar-wrap"><div class="timeline-bar">'+cells.join("")+'</div></div>';
+  }
+  function timelineDayCells(n, over, label, ongoing){
+    var band = threeColorBand(over);
+    var count = Math.max(1, n);
+    var out = [];
+    for(var d=0; d<count; d++){
+      var title = label+" — day "+(d+1)+" of "+count+(over>0 ? " (+"+over+"d over target)" : "");
+      out.push('<span class="day-cell '+band+(ongoing?' ongoing':'')+'" title="'+escAttr(title)+'"></span>');
+    }
+    return out;
+  }
   function renderInsertForm(afterIdx){
     var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
     var opts = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){return !used[s.label];});
@@ -1524,7 +1582,7 @@
       + opts.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(o.label)+'</option>'; }).join("")
       + '<option value="__custom__">Custom…</option></select></div>'
       + '<div class="field tl-insert-custom-wrap" style="display:none;"><label>Step name</label><input type="text" class="tl-insert-custom-name"></div>'
-      + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-insert-days" value="0"></div>'
+      + '<div class="field"><label>Date reached</label><input type="date" class="tl-insert-date" value="'+todayISO()+'"></div>'
       + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-insert-confirm" data-after="'+afterIdx+'">+ Add</button></div>'
       + '</div><div class="sub" style="margin-top:6px;">Ad-hoc steps like this have no predicted target — just what actually happened.</div></div>';
   }
@@ -1546,7 +1604,7 @@
       var badge = hasTarget(s) ? overBadge(over) : '';
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
       body += '<div class="step-meta-lines">';
-      if(hasTarget(s)) body += '<div class="meta-line predicted">Predicted: '+s.targetDays+'d</div>';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">Target: '+s.targetDays+'d</div>';
       body += '<div class="meta-line actual">Actual: <b>'+days+'d</b>'+(badge?' '+badge:'')+'</div>';
       body += '</div>';
       body += '<div class="step-meta">';
@@ -1554,9 +1612,9 @@
       body += '</div>';
       if(idx>0){
         body += '<div class="step-actions">'
-          + '<button type="button" class="btn ghost small tl-edit-days" data-id="'+s.id+'">Edit actual days</button>'
+          + '<button type="button" class="btn ghost small tl-edit-days" data-id="'+s.id+'">Edit completion date</button>'
           + '<div class="mini-form" id="edit-form-'+s.id+'"><div class="row">'
-          + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-days-input" value="'+days+'"></div>'
+          + '<div class="field"><label>Date completed</label><input type="date" class="tl-date-input" value="'+s.actualDate+'"></div>'
           + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-edit-confirm" data-id="'+s.id+'">Save</button></div>'
           + '</div></div>'
           + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
@@ -1567,17 +1625,16 @@
       var over2 = hasTarget(s) ? Math.max(0, elapsed-target) : 0;
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">in progress</span></div>';
       body += '<div class="step-meta-lines">';
-      if(hasTarget(s)) body += '<div class="meta-line predicted">Predicted: '+target+'d</div>';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">Target: '+target+'d</div>';
       body += '<div class="meta-line actual">'+elapsed+'d so far'+(hasTarget(s)?' '+overBadge(over2):'')+'</div>';
       body += '</div>';
       body += '<div class="step-meta">';
-      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(target===null?'':target)+'" placeholder="none"></span>';
       if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
       body += '</div>';
       body += '<div class="step-actions">'
         + '<button type="button" class="btn small tl-complete" data-id="'+s.id+'">Mark complete…</button>'
         + '<div class="mini-form" id="complete-form-'+s.id+'"><div class="row">'
-        + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-complete-days" value="'+elapsed+'"></div>'
+        + '<div class="field"><label>Date completed</label><input type="date" class="tl-complete-date" value="'+todayISO()+'"></div>'
         + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-complete-confirm" data-id="'+s.id+'">Confirm</button></div>'
         + '</div></div>'
         + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Skip this step</button>'
@@ -1585,7 +1642,7 @@
     } else { // pending
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">upcoming</span></div>';
       body += '<div class="step-meta">';
-      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?'':s.targetDays)+'" placeholder="none"></span>';
+      body += '<span>Target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?'':s.targetDays)+'" placeholder="none"></span>';
       if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
       body += '</div>';
       body += '<div class="step-actions"><button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
@@ -1625,10 +1682,10 @@
       btn.addEventListener("click", function(){
         var idx = ui.draftTimeline.findIndex(function(x){return x.id===btn.dataset.id;});
         if(idx<1) return;
-        var prevDate = ui.draftTimeline[idx-1].actualDate;
         var form = document.getElementById("edit-form-"+btn.dataset.id);
-        var days = Math.max(0, parseInt(form.querySelector(".tl-days-input").value,10)||0);
-        ui.draftTimeline[idx].actualDate = addDays(prevDate, days);
+        var dateVal = form.querySelector(".tl-date-input").value;
+        if(!dateVal) return;
+        ui.draftTimeline[idx].actualDate = dateVal;
         renderStepper();
       });
     });
@@ -1642,10 +1699,10 @@
       btn.addEventListener("click", function(){
         var idx = ui.draftTimeline.findIndex(function(x){return x.id===btn.dataset.id;});
         if(idx<0) return;
-        var prevDate = idx>0 ? ui.draftTimeline[idx-1].actualDate : ui.draftTimeline[idx].actualDate;
         var form = document.getElementById("complete-form-"+btn.dataset.id);
-        var days = Math.max(0, parseInt(form.querySelector(".tl-complete-days").value,10)||0);
-        ui.draftTimeline[idx].actualDate = addDays(prevDate, days);
+        var dateVal = form.querySelector(".tl-complete-date").value;
+        if(!dateVal) return;
+        ui.draftTimeline[idx].actualDate = dateVal;
         renderStepper();
       });
     });
@@ -1668,10 +1725,9 @@
         var sel = form.querySelector(".tl-insert-select");
         var label = sel.value==="__custom__" ? form.querySelector(".tl-insert-custom-name").value.trim() : sel.value;
         if(!label) return;
-        var days = Math.max(0, parseInt(form.querySelector(".tl-insert-days").value,10)||0);
-        var prevDate = ui.draftTimeline[afterIdx].actualDate;
+        var dateVal = form.querySelector(".tl-insert-date").value || todayISO();
         var lib = libraryEntry(label);
-        var newStep = {id:uid(), label:label, owner: lib?lib.owner:null, targetDays:null, actualDate: addDays(prevDate, days)};
+        var newStep = {id:uid(), label:label, owner: lib?lib.owner:null, targetDays:null, actualDate: dateVal};
         ui.draftTimeline.splice(afterIdx+1, 0, newStep);
         var autoOutcome = outcomeForLabel(label);
         if(autoOutcome) document.getElementById("f_outcome").value = autoOutcome;
