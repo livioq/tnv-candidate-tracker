@@ -228,6 +228,18 @@
   .add-step-form .row{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;}
   .add-step-form .field{flex:1 1 130px; min-width:110px;}
 
+  /* Wizard */
+  .wizard-choice-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  .wizard-choice{flex:1 1 200px; text-align:left; border:1px solid var(--border-strong); border-radius:var(--radius); background:var(--paper); padding:14px 16px; cursor:pointer;}
+  .wizard-choice:hover{border-color:var(--ink);}
+  .wizard-choice b{display:block; font-size:14px; margin-bottom:3px;}
+  .wizard-choice span{color:var(--muted); font-size:12.5px;}
+  .wizard-preview{border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-top:12px; background:var(--bg);}
+  .wizard-preview .row-line{display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid var(--border);}
+  .wizard-preview .row-line:last-child{border-bottom:none;}
+  .wizard-done{text-align:center; padding:20px 0;}
+  .wizard-done h3{font-family:var(--serif); font-size:18px; margin:0 0 6px;}
+
   footer{color:var(--muted); font-size:12px; text-align:center; margin-top:40px;}
 
   @media (max-width:760px){
@@ -250,6 +262,8 @@
       <div class="menu-wrap">
         <button class="btn" id="menuBtn">File ▾</button>
         <div class="menu-pop" id="menuPop">
+          <button id="openGlobalDefaults">Global defaults…</button>
+          <hr>
           <button id="exportJson">Export JSON (backup)</button>
           <button id="importJsonBtn">Import JSON</button>
           <hr>
@@ -266,8 +280,8 @@
   <nav class="tabs">
     <button data-tab="dashboard" class="active">Dashboard</button>
     <button data-tab="candidates">Candidates</button>
-    <button data-tab="clients">By client</button>
-    <button data-tab="process">Process</button>
+    <button data-tab="insights">Insights</button>
+    <button data-tab="clients">Clients</button>
   </nav>
 
   <main>
@@ -310,12 +324,12 @@
       </div>
     </section>
 
-    <section id="tab-clients" hidden><div id="clientDetailWrap"></div></section>
+    <section id="tab-insights" hidden><div id="clientDetailWrap"></div></section>
 
-    <section id="tab-process" hidden>
+    <section id="tab-clients" hidden>
       <div class="section-heading">
-        <h2>Agreed process</h2>
-        <span class="hint">Global default → client → client + vacancy. Each level only overrides what you customize.</span>
+        <h2>Clients</h2>
+        <span class="hint">Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.</span>
       </div>
       <div id="processWrap"></div>
     </section>
@@ -364,6 +378,26 @@
       </div>
     </div>
   </form>
+</dialog>
+
+<dialog id="globalDefaultsModal">
+  <div class="modal-head">
+    <h2>Global defaults</h2>
+    <button type="button" class="btn ghost small" id="globalDefaultsClose">Close</button>
+  </div>
+  <div class="modal-body">
+    <p class="sub" style="margin-top:-4px;">The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.</p>
+    <div id="globalDefaultsBody"></div>
+  </div>
+</dialog>
+
+<dialog id="wizardModal">
+  <div class="modal-head">
+    <h2 id="wizardTitle">New client</h2>
+    <button type="button" class="btn ghost small" id="wizardClose">Close</button>
+  </div>
+  <div class="modal-body" id="wizardBody"></div>
+  <div class="modal-foot" id="wizardFoot"></div>
 </dialog>
 
 <script>
@@ -417,6 +451,7 @@
   var state = { globalTemplate: [], clientTemplates: {}, positionTemplates: {}, clientList: [], vacancyList: {}, candidates: [] };
   var ui = { tab:"dashboard", sortKey:"over", sortDir:"desc",
     filterClient:"", filterRisk:"", search:"", editingId:null, draftTimeline:[], draftOutcome:OPEN_OUTCOME };
+  var wizard = { stage:null, client:null, positionName:"", steps:[] };
 
   // ---------- ids / dates ----------
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
@@ -715,13 +750,13 @@
     var wrap = document.getElementById("ctaWrap");
     if(!clientsList().length){
       wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Create client</button>';
-      document.getElementById("addBtn").addEventListener("click", promptCreateClient);
+      document.getElementById("addBtn").addEventListener("click", function(){ openWizardNewClient(); });
       return;
     }
     if(!readyForCandidates()){
       wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add position</button>'
         + '<span class="hint" style="margin-left:8px;">then you can add a candidate</span>';
-      document.getElementById("addBtn").addEventListener("click", function(){ setTab("process"); });
+      document.getElementById("addBtn").addEventListener("click", function(){ openWizardAddPositionFromHome(); });
       return;
     }
     wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add candidate</button>';
@@ -785,7 +820,7 @@
     wrap.innerHTML = '<div class="client-grid">'+cards+'</div>';
     wrap.querySelectorAll(".client-card").forEach(function(card){
       card.addEventListener("click", function(){
-        setTab("clients");
+        setTab("insights");
         setTimeout(function(){
           var target = document.querySelector('[data-detail="'+CSS.escape(card.dataset.client)+'"]');
           if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
@@ -808,8 +843,8 @@
     }
     if(!readyForCandidates()){
       return '<div class="empty-state"><h3>Add a position to get started</h3>'
-        + '<p>You have a client set up, but no position yet. Add one on the Process tab, then you can add a candidate for it.</p>'
-        + '<div class="btn-row"><button class="btn primary" id="emptyGoProcessBtn">Go add a position</button>'
+        + '<p>You have a client set up, but no position yet. Add one, then you can add a candidate for it.</p>'
+        + '<div class="btn-row"><button class="btn primary" id="emptyGoProcessBtn">+ Add position</button>'
         + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
     }
     return '<div class="empty-state"><h3>No candidates yet</h3>'
@@ -822,12 +857,8 @@
     var cc = document.getElementById("emptyCreateClientBtn"), gp = document.getElementById("emptyGoProcessBtn");
     if(a) a.addEventListener("click", function(){ openModal(); });
     if(s) s.addEventListener("click", loadSampleData);
-    if(cc) cc.addEventListener("click", function(){ promptCreateClient(); });
-    if(gp) gp.addEventListener("click", function(){ setTab("process"); });
-  }
-  function promptCreateClient(){
-    var name = prompt("New client name:");
-    if(addClient(name)){ renderAll(); setTab("process"); }
+    if(cc) cc.addEventListener("click", function(){ openWizardNewClient(); });
+    if(gp) gp.addEventListener("click", function(){ openWizardAddPositionFromHome(); });
   }
   function populateClientFilter(){
     var sel = document.getElementById("filterClient");
@@ -925,19 +956,16 @@
   }
   function kpi(n,l){ return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
 
-  // ---------- Process tab ----------
+  // ---------- Clients tab ----------
   function renderProcessTab(){
     var wrap = document.getElementById("processWrap");
-    var html = renderTemplateBlock("Step 1 — Global default", "The overall rules for new clients: the default steps and timings. Applies to any client or position with no customization of its own.",
-      state.globalTemplate, {kind:"global"});
     var names = clientsList();
-    html += '<div class="template-block"><div class="client-block-header" style="margin-bottom:'+(names.length?'10px':'0')+';">'
-      + '<h3 style="margin:0;">Step 2 — Clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>'
-      + '<div class="sub" style="margin-top:-6px;">Add a client, then customize their process only if it differs from the default.</div>';
+    var html = '<div class="template-block"><div class="client-block-header" style="margin-bottom:'+(names.length?'10px':'0')+';">'
+      + '<h3 style="margin:0;">Your clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>';
     if(!names.length){
-      html += '<div class="sub">No clients yet. Add one to set up their process ahead of the first candidate.</div>';
+      html += '<div class="sub">No clients yet. Add one to set up their positions ahead of the first candidate.</div>';
     } else {
-      html += '<div class="sub" style="margin-bottom:8px;">Click a client to view or customize their process.</div>';
+      html += '<div class="sub" style="margin-bottom:8px;">Click a client to view or customize their process, and manage their positions.</div>';
       names.forEach(function(name){
         var hasClientTpl = !!state.clientTemplates[name];
         html += '<details class="client-tpl"><summary><div class="client-block-header">'
@@ -949,7 +977,7 @@
         }
         var vacs = vacanciesForClient(name);
         html += '<div class="vacancy-list"><div class="client-block-header" style="margin-bottom:6px;">'
-          + '<div class="sub" style="margin:0;">Step 3 — Positions at '+esc(name)+(vacs.length?'':' (add one before you can add a candidate here)')+'</div>'
+          + '<div class="sub" style="margin:0;">Positions at '+esc(name)+(vacs.length?'':' (add one before you can add a candidate here)')+'</div>'
           + '<button class="btn small" data-action="add-vacancy" data-client="'+escAttr(name)+'">+ Add position</button></div>';
         vacs.forEach(function(v){
           var pk = posKey(name, v);
@@ -973,9 +1001,6 @@
     html += '</div>';
     wrap.innerHTML = html;
     bindProcessTabEvents(wrap);
-  }
-  function renderTemplateBlock(title, sub, steps, ctx){
-    return '<div class="template-block"><h3>'+esc(title)+'</h3><div class="sub">'+esc(sub)+'</div>'+renderStepListEditor(steps, ctx)+'</div>';
   }
   function renderStepListEditor(steps, ctx){
     var ctxAttr = 'data-kind="'+ctx.kind+'" data-client="'+escAttr(ctx.client||"")+'" data-vacancy="'+escAttr(ctx.vacancy||"")+'"';
@@ -1010,19 +1035,62 @@
   function getStepsFor(kind, client, vacancy){
     if(kind==="global") return state.globalTemplate;
     if(kind==="client") return state.clientTemplates[client];
+    if(kind==="wizard") return wizard.steps;
     return state.positionTemplates[posKey(client, vacancy)];
+  }
+  // Generic step-list editing (target days, reorder, remove, add) — reused by the
+  // Clients tab, the Global defaults modal, and the "modify timetable" wizard step.
+  function bindStepListEditor(container, rerender){
+    container.querySelectorAll(".tpl-days-input").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var steps = getStepsFor(inp.dataset.kind, inp.dataset.client, inp.dataset.vacancy);
+        var s = steps.filter(function(x){return x.id===inp.dataset.id;})[0];
+        if(s){ s.targetDays = Math.max(0, parseInt(inp.value,10)||0); save(); rerender(); }
+      });
+    });
+    container.querySelectorAll(".tpl-move").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
+        var swapWith = btn.dataset.dir==="up" ? idx-1 : idx+1;
+        if(swapWith<0 || swapWith>=steps.length || idx<=0 || swapWith<=0) return; // never move the start marker or swap into its slot
+        var tmp = steps[idx]; steps[idx]=steps[swapWith]; steps[swapWith]=tmp;
+        save(); rerender();
+      });
+    });
+    container.querySelectorAll(".tpl-remove").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
+        if(idx>0) steps.splice(idx,1);
+        save(); rerender();
+      });
+    });
+    container.querySelectorAll(".tpl-add-select").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        var wrapEl = sel.closest(".add-step-form").querySelector(".tpl-custom-name-wrap");
+        wrapEl.style.display = sel.value==="__custom__" ? "block" : "none";
+      });
+    });
+    container.querySelectorAll(".tpl-add-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var form = btn.closest(".add-step-form");
+        var sel = form.querySelector(".tpl-add-select");
+        var label = sel.value==="__custom__" ? form.querySelector(".tpl-custom-name").value.trim() : sel.value;
+        var days = Math.max(0, parseInt(form.querySelector(".tpl-add-days").value,10)||0);
+        if(!label) return;
+        var lib = libraryEntry(label);
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        steps.push({id:uid(), label:label, owner: lib?lib.owner:null, targetDays: days});
+        save(); rerender();
+      });
+    });
   }
   function bindProcessTabEvents(wrap){
     var addClientBtn = document.getElementById("addClientBtn");
-    if(addClientBtn) addClientBtn.addEventListener("click", function(){
-      var name = prompt("New client name:");
-      if(addClient(name)){ renderProcessTab(); renderTopbarCTA(); }
-    });
+    if(addClientBtn) addClientBtn.addEventListener("click", function(){ openWizardNewClient(); });
     wrap.querySelectorAll('[data-action="add-vacancy"]').forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var v = prompt("New position/vacancy name for "+btn.dataset.client+":");
-        if(addVacancy(btn.dataset.client, v)){ renderProcessTab(); renderTopbarCTA(); }
-      });
+      btn.addEventListener("click", function(){ openWizardAddPosition(btn.dataset.client); });
     });
     wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
       btn.addEventListener("click", function(){
@@ -1047,50 +1115,149 @@
         renderProcessTab();
       });
     });
-    wrap.querySelectorAll(".tpl-days-input").forEach(function(inp){
-      inp.addEventListener("change", function(){
-        var steps = getStepsFor(inp.dataset.kind, inp.dataset.client, inp.dataset.vacancy);
-        var s = steps.filter(function(x){return x.id===inp.dataset.id;})[0];
-        if(s){ s.targetDays = Math.max(0, parseInt(inp.value,10)||0); save(); }
+    bindStepListEditor(wrap, renderProcessTab);
+  }
+
+  // ---------- Global defaults modal (File menu) ----------
+  function renderGlobalDefaultsModal(){
+    var body = document.getElementById("globalDefaultsBody");
+    body.innerHTML = renderStepListEditor(state.globalTemplate, {kind:"global"});
+    bindStepListEditor(body, renderGlobalDefaultsModal);
+  }
+
+  // ---------- New client / new position wizard ----------
+  function openWizardNewClient(){
+    wizard = { stage:"new-client", client:null, positionName:"", steps:[] };
+    renderWizard();
+    document.getElementById("wizardModal").showModal();
+  }
+  function openWizardAddPosition(client){
+    wizard = { stage:"new-position", client:client, positionName:"", steps:[] };
+    renderWizard();
+    document.getElementById("wizardModal").showModal();
+  }
+  function openWizardAddPositionFromHome(){
+    var withoutPositions = clientsList().filter(function(c){ return vacanciesForClient(c).length===0; });
+    if(withoutPositions.length === 1){ openWizardAddPosition(withoutPositions[0]); return; }
+    if(clientsList().length === 1){ openWizardAddPosition(clientsList()[0]); return; }
+    wizard = { stage:"pick-client", client:null, positionName:"", steps:[] };
+    renderWizard();
+    document.getElementById("wizardModal").showModal();
+  }
+  function closeWizard(){
+    document.getElementById("wizardModal").close();
+    renderAll();
+  }
+  document.getElementById("wizardClose").addEventListener("click", closeWizard);
+
+  function renderWizard(){
+    var title = document.getElementById("wizardTitle");
+    var body = document.getElementById("wizardBody");
+    var foot = document.getElementById("wizardFoot");
+
+    if(wizard.stage === "pick-client"){
+      title.textContent = "Add position — choose client";
+      body.innerHTML = '<label>Client</label><select id="wz_pickClient">'
+        + clientsList().map(function(c){ return '<option value="'+escAttr(c)+'">'+esc(c)+'</option>'; }).join("")
+        + '</select>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_next">Next</button>';
+      document.getElementById("wz_cancel").addEventListener("click", closeWizard);
+      document.getElementById("wz_next").addEventListener("click", function(){
+        wizard.client = document.getElementById("wz_pickClient").value;
+        wizard.stage = "new-position";
+        renderWizard();
       });
-    });
-    wrap.querySelectorAll(".tpl-move").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
-        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
-        var swapWith = btn.dataset.dir==="up" ? idx-1 : idx+1;
-        if(swapWith<0 || swapWith>=steps.length || idx<=0 || swapWith<=0) return; // never move the start marker or swap into its slot
-        var tmp = steps[idx]; steps[idx]=steps[swapWith]; steps[swapWith]=tmp;
-        save(); renderProcessTab();
+      return;
+    }
+
+    if(wizard.stage === "new-client"){
+      title.textContent = "New client";
+      var previewRows = state.globalTemplate.map(function(s){
+        return '<div class="row-line"><span>'+esc(s.label)+'</span><span class="mono">'+(hasTarget(s)?s.targetDays+"d":"—")+'</span></div>';
+      }).join("");
+      body.innerHTML = '<label>Client name</label><input type="text" id="wz_clientName" placeholder="e.g. Acme Srl">'
+        + '<div class="sub" style="margin-top:12px;">Starts from the global default process below — you can customize this client\'s own steps and timings afterwards, or change the defaults for every future client from File ▾ → Global defaults.</div>'
+        + '<div class="wizard-preview">'+previewRows+'</div>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_save">Save</button>';
+      document.getElementById("wz_cancel").addEventListener("click", closeWizard);
+      document.getElementById("wz_save").addEventListener("click", function(){
+        var name = document.getElementById("wz_clientName").value.trim();
+        if(!name){ alert("Enter a client name."); return; }
+        addClient(name);
+        wizard.client = name;
+        wizard.stage = "new-position";
+        wizard.positionName = "";
+        renderWizard();
       });
-    });
-    wrap.querySelectorAll(".tpl-remove").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
-        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
-        if(idx>0) steps.splice(idx,1);
-        save(); renderProcessTab();
+      var nameInput = document.getElementById("wz_clientName");
+      nameInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("wz_save").click(); } });
+      nameInput.focus();
+      return;
+    }
+
+    if(wizard.stage === "new-position"){
+      title.textContent = "Add position — " + wizard.client;
+      body.innerHTML = '<label>Position name</label><input type="text" id="wz_positionName" value="'+escAttr(wizard.positionName)+'" placeholder="e.g. Senior Backend Developer">'
+        + '<div class="wizard-choice-row">'
+        + '<button type="button" class="wizard-choice" id="wz_useDefault"><b>Use company default timetable</b><span>Inherits from '+esc(levelLabel(resolveTemplate(wizard.client, "__none__").level))+'</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_modify"><b>Modify timetable</b><span>Adjust steps or timings just for this position</span></button>'
+        + '</div>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>';
+      document.getElementById("wz_cancel").addEventListener("click", closeWizard);
+      document.getElementById("wz_useDefault").addEventListener("click", function(){
+        var name = document.getElementById("wz_positionName").value.trim();
+        if(!name){ alert("Enter a position name."); return; }
+        addVacancy(wizard.client, name);
+        wizard.positionName = name;
+        wizard.stage = "saved";
+        renderWizard();
       });
-    });
-    wrap.querySelectorAll(".tpl-add-select").forEach(function(sel){
-      sel.addEventListener("change", function(){
-        var wrapEl = sel.closest(".add-step-form").querySelector(".tpl-custom-name-wrap");
-        wrapEl.style.display = sel.value==="__custom__" ? "block" : "none";
+      document.getElementById("wz_modify").addEventListener("click", function(){
+        var name = document.getElementById("wz_positionName").value.trim();
+        if(!name){ alert("Enter a position name."); return; }
+        wizard.positionName = name;
+        wizard.steps = cloneSteps(resolveTemplate(wizard.client, "__none__").steps);
+        wizard.stage = "modify-position";
+        renderWizard();
       });
-    });
-    wrap.querySelectorAll(".tpl-add-btn").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var form = btn.closest(".add-step-form");
-        var sel = form.querySelector(".tpl-add-select");
-        var label = sel.value==="__custom__" ? form.querySelector(".tpl-custom-name").value.trim() : sel.value;
-        var days = Math.max(0, parseInt(form.querySelector(".tpl-add-days").value,10)||0);
-        if(!label) return;
-        var lib = libraryEntry(label);
-        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
-        steps.push({id:uid(), label:label, owner: lib?lib.owner:null, targetDays: days});
-        save(); renderProcessTab();
+      document.getElementById("wz_positionName").focus();
+      return;
+    }
+
+    if(wizard.stage === "modify-position"){
+      title.textContent = "Modify timetable — " + wizard.positionName;
+      body.innerHTML = renderStepListEditor(wizard.steps, {kind:"wizard"});
+      bindStepListEditor(body, renderWizard);
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_saveSteps">Save position</button>';
+      document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "new-position"; renderWizard(); });
+      document.getElementById("wz_saveSteps").addEventListener("click", function(){
+        addVacancy(wizard.client, wizard.positionName);
+        state.positionTemplates[posKey(wizard.client, wizard.positionName)] = cloneSteps(wizard.steps);
+        save();
+        wizard.stage = "saved";
+        renderWizard();
       });
-    });
+      return;
+    }
+
+    if(wizard.stage === "saved"){
+      title.textContent = "Position added";
+      body.innerHTML = '<div class="wizard-done"><h3>"'+esc(wizard.positionName)+'" added for '+esc(wizard.client)+'</h3>'
+        + '<p class="sub">You can now add a candidate for this position.</p></div>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_addAnother">+ Add another position for '+esc(wizard.client)+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_home">Return to home</button>';
+      document.getElementById("wz_addAnother").addEventListener("click", function(){
+        wizard.stage = "new-position"; wizard.positionName = ""; wizard.steps = [];
+        renderWizard();
+      });
+      document.getElementById("wz_home").addEventListener("click", function(){
+        closeWizard(); setTab("dashboard");
+      });
+      return;
+    }
   }
 
   // ---------- Candidate modal ----------
@@ -1146,8 +1313,8 @@
 
   function openModal(id){
     if(!id && !readyForCandidates()){
-      alert("Add a client and at least one position for them first (Process tab) before adding a candidate.");
-      setTab("process");
+      alert("Add a client and at least one position for them first (Clients tab) before adding a candidate.");
+      setTab("clients");
       return;
     }
     ui.editingId = id || null;
@@ -1414,7 +1581,7 @@
   function setTab(name){
     ui.tab = name;
     document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("active", b.dataset.tab === name); });
-    ["dashboard","candidates","clients","process"].forEach(function(t){ document.getElementById("tab-"+t).hidden = (t !== name); });
+    ["dashboard","candidates","insights","clients"].forEach(function(t){ document.getElementById("tab-"+t).hidden = (t !== name); });
   }
   document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ setTab(b.dataset.tab); }); });
 
@@ -1435,6 +1602,16 @@
   var menuBtn = document.getElementById("menuBtn"), menuPop = document.getElementById("menuPop");
   menuBtn.addEventListener("click", function(e){ e.stopPropagation(); menuPop.classList.toggle("open"); });
   document.addEventListener("click", function(){ menuPop.classList.remove("open"); });
+
+  document.getElementById("openGlobalDefaults").addEventListener("click", function(){
+    menuPop.classList.remove("open");
+    renderGlobalDefaultsModal();
+    document.getElementById("globalDefaultsModal").showModal();
+  });
+  document.getElementById("globalDefaultsClose").addEventListener("click", function(){
+    document.getElementById("globalDefaultsModal").close();
+    renderAll();
+  });
 
   document.getElementById("exportJson").addEventListener("click", function(){
     downloadFile(JSON.stringify(state, null, 2), "tnv-candidates-"+todayISO()+".json", "application/json");
