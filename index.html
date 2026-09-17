@@ -125,6 +125,9 @@
   thead th.sorted.asc::after{content:' ▴';}
   tbody tr{border-bottom:1px solid var(--border); cursor:pointer;}
   tbody tr:hover{background:var(--paper);}
+  tbody tr.tl-bar-row{cursor:default; background:var(--bg);}
+  tbody tr.tl-bar-row:hover{background:var(--bg);}
+  tbody tr.tl-bar-row td{padding:10px 10px 14px;}
   tbody td{padding:9px 10px; vertical-align:middle;}
   td.num, .mono{font-family:var(--mono);}
   .name-cell b{font-weight:600;}
@@ -171,15 +174,23 @@
   .modal-section-title:first-child{margin-top:0; padding-top:0; border-top:none;}
   .modal-section-title .sub{font-family:var(--sans); font-weight:400; font-size:12px; color:var(--muted);}
 
-  /* Timeline bar: one cell per elapsed day, coloured by how that step ran against target */
-  .timeline-bar-wrap{overflow-x:auto; padding:2px 0 12px;}
-  .timeline-bar{display:flex; align-items:center; gap:0; height:16px; width:max-content;}
-  .timeline-bar .day-cell{width:7px; height:14px; flex:0 0 auto; border-radius:1px;}
-  .timeline-bar .day-cell.green{background:var(--green);}
-  .timeline-bar .day-cell.amber{background:var(--amber);}
-  .timeline-bar .day-cell.red{background:var(--red);}
-  .timeline-bar .day-cell.ongoing{opacity:.55;}
-  .timeline-bar .seg-break{width:2px; height:16px; background:var(--paper); border-left:1px solid var(--bg); border-right:1px solid var(--bg); flex:0 0 auto;}
+  /* Timeline bar: one cell per elapsed day per step, coloured by how that step ran
+     against target, with each step's own name labelled underneath it. */
+  .timeline-bar-wrap{overflow-x:auto; padding:4px 0 12px; max-width:min(900px, 80vw);}
+  .timeline-bar{display:flex; align-items:flex-start; gap:0; width:max-content;}
+  .tl-segment{display:flex; flex-direction:column; align-items:center; padding:0 2px;}
+  .tl-segment .cells{display:flex; gap:1px;}
+  .tl-segment .day-cell{width:7px; height:14px; flex:0 0 auto; border-radius:1px;}
+  .tl-segment .day-cell.green{background:var(--green);}
+  .tl-segment .day-cell.amber{background:var(--amber);}
+  .tl-segment .day-cell.red{background:var(--red);}
+  .tl-segment .day-cell.ongoing{opacity:.55;}
+  .tl-segment .seg-label{font-size:10px; color:var(--muted); margin-top:4px; max-width:80px; text-align:center; line-height:1.15; word-break:break-word;}
+  .tl-seg-divider{width:1px; align-self:stretch; background:var(--border-strong); margin:0 6px; min-height:14px;}
+
+  .timeline-bar.big .day-cell{width:14px; height:30px; border-radius:2px;}
+  .timeline-bar.big .seg-label{font-size:12.5px; color:var(--ink); font-weight:500; max-width:130px; margin-top:7px;}
+  .timeline-bar.big .tl-seg-divider{margin:0 10px;}
 
   /* Stepper */
   .stepper{margin-top:8px;}
@@ -980,6 +991,7 @@
         var totalTxt = a.totalActual===null ? "—" : a.totalActual+"d";
         var waitingOn = isOpen(c) ? (a.currentOwner || "—") : "—";
         var sinceDate = isOpen(c) ? a.currentSince : a.lastDate;
+        var bar = renderTimelineBar(c.timeline||[], {big:true});
         return '<tr data-id="'+c.id+'">'
           + '<td>'+esc(c.client)+'</td>'
           + '<td class="name-cell"><b>'+esc(c.candidateName)+'</b><div class="sub">'+esc(c.vacancy)+'</div></td>'
@@ -989,7 +1001,8 @@
           + '<td>'+esc(c.owner||"—")+'</td>'
           + '<td class="num">'+badge+'</td>'
           + '<td class="num">'+totalTxt+'</td>'
-          + '</tr>';
+          + '</tr>'
+          + (bar ? '<tr class="tl-bar-row"><td colspan="8">'+bar+'</td></tr>' : '');
       }).join("");
     }
     tbody.querySelectorAll("tr[data-id]").forEach(function(tr){
@@ -1538,10 +1551,12 @@
     box.innerHTML = html;
     bindStepperEvents();
   }
-  // One cell per elapsed day, coloured by how that segment ran against its target,
-  // with a break between segments marking each step/decision boundary.
-  function renderTimelineBar(tl){
-    var cells = [];
+  // One labelled segment per step: a row of day-cells (one per elapsed day, coloured by
+  // how that step ran against its target) with the step's own name underneath it, and a
+  // divider between segments marking each step/decision boundary.
+  function renderTimelineBar(tl, opts){
+    var big = opts && opts.big;
+    var segments = [];
     var lastDoneDate = tl[0].actualDate;
     var foundCurrent = false;
     for(var i=1;i<tl.length;i++){
@@ -1549,30 +1564,30 @@
       if(s.actualDate){
         var days = daysBetween(lastDoneDate, s.actualDate);
         var over = hasTarget(s) ? Math.max(0, days-s.targetDays) : 0;
-        cells = cells.concat(timelineDayCells(days, over, s.label, false));
-        cells.push('<span class="seg-break" title="'+escAttr(s.label+' reached')+'"></span>');
+        segments.push(renderTimelineSegment(s.label, days, over, false));
         lastDoneDate = s.actualDate;
       } else if(!foundCurrent){
         foundCurrent = true;
         var elapsed = daysBetween(lastDoneDate, todayISO()); if(elapsed<0) elapsed=0;
         var over2 = hasTarget(s) ? Math.max(0, elapsed-s.targetDays) : 0;
-        cells = cells.concat(timelineDayCells(elapsed, over2, s.label, true));
+        segments.push(renderTimelineSegment(s.label, elapsed, over2, true));
       } else {
         break; // nothing actual to draw yet for steps beyond the current one
       }
     }
-    if(!cells.length) return "";
-    return '<div class="timeline-bar-wrap"><div class="timeline-bar">'+cells.join("")+'</div></div>';
+    if(!segments.length) return "";
+    return '<div class="timeline-bar-wrap"><div class="timeline-bar'+(big?' big':'')+'">'
+      + segments.join('<div class="tl-seg-divider"></div>') + '</div></div>';
   }
-  function timelineDayCells(n, over, label, ongoing){
+  function renderTimelineSegment(label, n, over, ongoing){
     var band = threeColorBand(over);
     var count = Math.max(1, n);
-    var out = [];
+    var cells = "";
     for(var d=0; d<count; d++){
-      var title = label+" — day "+(d+1)+" of "+count+(over>0 ? " (+"+over+"d over target)" : "");
-      out.push('<span class="day-cell '+band+(ongoing?' ongoing':'')+'" title="'+escAttr(title)+'"></span>');
+      cells += '<span class="day-cell '+band+(ongoing&&d===count-1?' ongoing':'')+'"></span>';
     }
-    return out;
+    var title = label+" — "+n+"d"+(over>0 ? " (+"+over+"d over target)" : "");
+    return '<div class="tl-segment" title="'+escAttr(title)+'"><div class="cells">'+cells+'</div><div class="seg-label">'+esc(label)+'</div></div>';
   }
   function renderInsertForm(afterIdx){
     var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
