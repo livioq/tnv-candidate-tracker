@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNV Candidate Tracker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14181F;
+    --bg:#F7F6F3;
+    --paper:#FFFFFF;
+    --border:#E1DED6;
+    --border-strong:#CFCABD;
+    --muted:#5B6472;
+    --green:#2E7D5B;   --green-bg:#E7F3EC;
+    --amber:#B4791F;   --amber-bg:#FBF1DF;
+    --red:#B9432E;     --red-bg:#FBEAE6;
+    --crit:#7A2418;    --crit-bg:#F3D9D2;
+    --closed:#8A8578;  --closed-bg:#EEECE5;
+    --focus:#2A5FB0;
+    --radius:3px;
+    --serif:'Fraunces', Georgia, serif;
+    --sans:'IBM Plex Sans', -apple-system, Helvetica, Arial, sans-serif;
+    --mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ECEAE3; --bg:#15171B; --paper:#1C1F24; --border:#31353C; --border-strong:#3D424A;
+      --muted:#9AA1AC;
+      --green:#5FBE93; --green-bg:#193028;
+      --amber:#E0A94A; --amber-bg:#332612;
+      --red:#E07B63; --red-bg:#3A1D17;
+      --crit:#F2A38F; --crit-bg:#43190F;
+      --closed:#9AA1AC; --closed-bg:#24272C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ECEAE3; --bg:#15171B; --paper:#1C1F24; --border:#31353C; --border-strong:#3D424A;
+    --muted:#9AA1AC;
+    --green:#5FBE93; --green-bg:#193028;
+    --amber:#E0A94A; --amber-bg:#332612;
+    --red:#E07B63; --red-bg:#3A1D17;
+    --crit:#F2A38F; --crit-bg:#43190F;
+    --closed:#9AA1AC; --closed-bg:#24272C;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.5; min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  button, input, select, textarea{font-family:inherit; font-size:inherit; color:inherit;}
+  ::selection{background:var(--focus); color:#fff;}
+  :focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px 80px;}
+
+  /* Topbar */
+  header.topbar{
+    border-bottom:1px solid var(--border);
+    padding:28px 0 20px;
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px;
+  }
+  .brand-block{display:flex; flex-direction:column; gap:4px;}
+  .brand-row{display:flex; align-items:baseline; gap:10px;}
+  .brand-mark{
+    font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.06em;
+    color:var(--muted); border:1px solid var(--border-strong); border-radius:var(--radius);
+    padding:2px 6px;
+  }
+  h1{font-family:var(--serif); font-weight:600; font-size:30px; margin:0; letter-spacing:-0.01em;}
+  .tagline{margin:0; color:var(--muted); font-size:14px; max-width:46ch;}
+  .topbar-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+
+  button.btn{
+    background:var(--paper); border:1px solid var(--border-strong); border-radius:var(--radius);
+    padding:9px 14px; cursor:pointer; font-weight:500; font-size:14px; color:var(--ink);
+    transition:background .12s ease, border-color .12s ease;
+  }
+  button.btn:hover{border-color:var(--ink);}
+  button.btn.primary{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  button.btn.primary:hover{opacity:.88;}
+  button.btn.danger{color:var(--red); border-color:var(--red);}
+  button.btn.small{padding:5px 9px; font-size:12.5px;}
+  button.btn.ghost{background:transparent; border-color:transparent;}
+  button.btn.ghost:hover{border-color:var(--border-strong);}
+
+  .menu-wrap{position:relative;}
+  .menu-pop{
+    position:absolute; right:0; top:calc(100% + 6px); background:var(--paper);
+    border:1px solid var(--border-strong); border-radius:var(--radius); min-width:190px;
+    box-shadow:0 6px 20px rgba(0,0,0,.12); z-index:20; padding:6px; display:none;
+  }
+  .menu-pop.open{display:block;}
+  .menu-pop button{
+    display:block; width:100%; text-align:left; background:none; border:none; padding:8px 10px;
+    border-radius:var(--radius); cursor:pointer; font-size:13.5px; color:var(--ink);
+  }
+  .menu-pop button:hover{background:var(--bg);}
+  .menu-pop hr{border:none; border-top:1px solid var(--border); margin:5px 2px;}
+  input[type=file]{display:none;}
+
+  /* Tabs */
+  nav.tabs{display:flex; gap:2px; margin:22px 0 22px; border-bottom:1px solid var(--border);}
+  nav.tabs button{
+    background:none; border:none; padding:10px 4px; margin-right:22px; cursor:pointer;
+    font-size:14.5px; font-weight:500; color:var(--muted); border-bottom:2px solid transparent;
+    position:relative; top:1px;
+  }
+  nav.tabs button.active{color:var(--ink); border-bottom-color:var(--ink);}
+  nav.tabs button:hover{color:var(--ink);}
+
+  section[hidden]{display:none !important;}
+
+  /* Stat strip */
+  .stat-strip{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--border);
+    border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:28px;
+  }
+  .stat{background:var(--paper); padding:16px 18px;}
+  .stat .n{font-family:var(--mono); font-size:26px; font-weight:600; line-height:1;}
+  .stat .l{color:var(--muted); font-size:12.5px; margin-top:6px;}
+  .stat.green .n{color:var(--green);}
+  .stat.amber .n{color:var(--amber);}
+  .stat.red .n{color:var(--red);}
+
+  .section-heading{
+    display:flex; align-items:baseline; justify-content:space-between; margin:0 0 14px;
+  }
+  .section-heading h2{font-family:var(--serif); font-size:19px; font-weight:600; margin:0;}
+  .section-heading .hint{color:var(--muted); font-size:13px;}
+
+  /* Client cards */
+  .client-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px;}
+  .client-card{
+    background:var(--paper); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 18px; cursor:pointer; transition:border-color .12s ease;
+  }
+  .client-card:hover{border-color:var(--border-strong);}
+  .client-card .top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+  .client-card h3{font-size:15.5px; margin:0; font-weight:600;}
+  .client-card .count{font-family:var(--mono); font-size:13px; color:var(--muted);}
+  .risk-dots{display:flex; gap:4px; margin:12px 0 10px;}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.green{background:var(--green);} .dot.amber{background:var(--amber);}
+  .dot.red{background:var(--red);} .dot.crit{background:var(--crit);}
+  .client-card .median{font-size:12.5px; color:var(--muted);}
+  .client-card .median b{font-family:var(--mono); color:var(--ink); font-weight:600;}
+  .effort-tag{
+    display:inline-block; margin-top:10px; font-size:11px; font-weight:600; letter-spacing:.02em;
+    padding:2px 7px; border-radius:var(--radius);
+  }
+  .effort-tag.Low{background:var(--green-bg); color:var(--green);}
+  .effort-tag.Medium{background:var(--amber-bg); color:var(--amber);}
+  .effort-tag.High{background:var(--red-bg); color:var(--red);}
+
+  .empty-state{
+    border:1px dashed var(--border-strong); border-radius:var(--radius); padding:44px 24px;
+    text-align:center; color:var(--muted);
+  }
+  .empty-state h3{font-family:var(--serif); color:var(--ink); font-size:18px; margin:0 0 6px;}
+  .empty-state .btn-row{margin-top:16px; display:flex; gap:10px; justify-content:center;}
+
+  /* Filters */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+  .filters select, .filters input[type=search]{
+    background:var(--paper); border:1px solid var(--border-strong); border-radius:var(--radius);
+    padding:7px 10px; font-size:13.5px;
+  }
+  .filters input[type=search]{min-width:200px;}
+
+  /* Table */
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left; font-weight:500; color:var(--muted); font-size:12px;
+    padding:8px 10px; border-bottom:1px solid var(--border-strong); cursor:pointer; white-space:nowrap;
+  }
+  thead th:hover{color:var(--ink);}
+  thead th.sorted::after{content:' ▾'; font-size:10px;}
+  thead th.sorted.asc::after{content:' ▴';}
+  tbody tr{border-bottom:1px solid var(--border); cursor:pointer;}
+  tbody tr:hover{background:var(--paper);}
+  tbody td{padding:9px 10px; vertical-align:middle;}
+  td.num, .mono{font-family:var(--mono);}
+  .name-cell b{font-weight:600;}
+  .name-cell .sub{color:var(--muted); font-size:12px;}
+  .badge{
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px;
+    font-weight:600; padding:3px 8px; border-radius:var(--radius); white-space:nowrap;
+  }
+  .badge.green{background:var(--green-bg); color:var(--green);}
+  .badge.amber{background:var(--amber-bg); color:var(--amber);}
+  .badge.red{background:var(--red-bg); color:var(--red);}
+  .badge.crit{background:var(--crit-bg); color:var(--crit);}
+  .badge.closed{background:var(--closed-bg); color:var(--closed);}
+  .stage-pill{
+    font-size:12px; color:var(--muted); border:1px solid var(--border); border-radius:var(--radius);
+    padding:3px 8px; white-space:nowrap;
+  }
+  .waiting-tag{font-size:11.5px; color:var(--muted);}
+  .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius);}
+  .table-scroll table{min-width:920px;}
+
+  /* Client detail (by-client tab) */
+  .client-detail-card{
+    background:var(--paper); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:16px;
+  }
+  .client-detail-card h3{font-family:var(--serif); font-size:18px; margin:0 0 4px;}
+  .client-kpis{display:flex; gap:22px; flex-wrap:wrap; margin:14px 0; padding:14px 0;
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .kpi .n{font-family:var(--mono); font-weight:600; font-size:19px;}
+  .kpi .l{color:var(--muted); font-size:11.5px; margin-top:2px;}
+  .ceo-line{
+    font-size:13.5px; color:var(--muted); background:var(--bg); border-radius:var(--radius);
+    padding:10px 12px; margin-top:4px;
+  }
+  .ceo-line b{color:var(--ink); font-family:var(--mono);}
+
+  /* Modal */
+  dialog{
+    border:none; border-radius:6px; padding:0; width:min(620px,92vw); background:var(--paper);
+    color:var(--ink); box-shadow:0 12px 40px rgba(0,0,0,.25);
+  }
+  dialog::backdrop{background:rgba(20,24,31,.45);}
+  .modal-head{display:flex; justify-content:space-between; align-items:center;
+    padding:18px 22px; border-bottom:1px solid var(--border);}
+  .modal-head h2{font-family:var(--serif); font-size:18px; margin:0;}
+  .modal-body{padding:20px 22px; max-height:65vh; overflow-y:auto;}
+  .modal-foot{display:flex; justify-content:space-between; gap:10px; padding:16px 22px; border-top:1px solid var(--border);}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .form-grid .full{grid-column:1/-1;}
+  label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:5px; font-weight:500;}
+  input[type=text], input[type=date], select, textarea{
+    width:100%; background:var(--bg); border:1px solid var(--border-strong); border-radius:var(--radius);
+    padding:8px 10px; font-size:13.5px;
+  }
+  textarea{resize:vertical; min-height:56px;}
+
+  footer{color:var(--muted); font-size:12px; text-align:center; margin-top:40px;}
+
+  @media (max-width:760px){
+    .stat-strip{grid-template-columns:repeat(2,1fr);}
+    .form-grid{grid-template-columns:1fr;}
+    h1{font-size:24px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand-block">
+      <div class="brand-row">
+        <span class="brand-mark">TNV</span>
+        <h1>Candidate Tracker</h1>
+      </div>
+      <p class="tagline">Every candidate has a clock running. This shows who's holding it up.</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn primary" id="addBtn">+ Add candidate</button>
+      <div class="menu-wrap">
+        <button class="btn" id="menuBtn">File ▾</button>
+        <div class="menu-pop" id="menuPop">
+          <button id="exportJson">Export JSON (backup)</button>
+          <button id="importJsonBtn">Import JSON</button>
+          <hr>
+          <button id="exportCsv">Export CSV (for Excel / email)</button>
+          <hr>
+          <button id="loadSample">Load sample data</button>
+          <button id="clearAll" style="color:var(--red);">Clear all data</button>
+        </div>
+        <input type="file" id="importJsonFile" accept="application/json">
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="dashboard" class="active">Dashboard</button>
+    <button data-tab="candidates">Candidates</button>
+    <button data-tab="clients">By client</button>
+  </nav>
+
+  <main>
+    <section id="tab-dashboard">
+      <div class="stat-strip" id="statStrip"></div>
+      <div class="section-heading">
+        <h2>Clients</h2>
+        <span class="hint">Click a client for the full breakdown</span>
+      </div>
+      <div id="clientGridWrap"></div>
+    </section>
+
+    <section id="tab-candidates" hidden>
+      <div class="filters">
+        <input type="search" id="searchBox" placeholder="Search candidate, client, vacancy…">
+        <select id="filterClient"><option value="">All clients</option></select>
+        <select id="filterRisk">
+          <option value="">All statuses</option>
+          <option value="green">On track</option>
+          <option value="amber">Slipping</option>
+          <option value="red">At risk</option>
+          <option value="crit">Overdue</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <div class="table-scroll">
+        <table id="candTable">
+          <thead>
+            <tr>
+              <th data-key="client">Client</th>
+              <th data-key="candidateName">Candidate</th>
+              <th data-key="stage">Stage</th>
+              <th data-key="waitingOn">Waiting on</th>
+              <th data-key="owner">TNV owner</th>
+              <th data-key="days" class="sorted">Days waiting</th>
+              <th data-key="nextAction">Next action</th>
+            </tr>
+          </thead>
+          <tbody id="candTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-clients" hidden>
+      <div id="clientDetailWrap"></div>
+    </section>
+  </main>
+
+  <footer>Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.</footer>
+</div>
+
+<dialog id="candModal">
+  <form method="dialog" id="candForm">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add candidate</h2>
+      <button type="button" class="btn ghost small" id="modalClose">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div><label>Client / company</label><input required type="text" id="f_client" placeholder="e.g. Acme Srl"></div>
+        <div><label>Vacancy</label><input required type="text" id="f_vacancy" placeholder="e.g. Senior Backend Developer"></div>
+
+        <div><label>Candidate name</label><input required type="text" id="f_candidateName"></div>
+        <div><label>TNV owner</label><input type="text" id="f_owner" placeholder="e.g. Adelaide"></div>
+
+        <div><label>Date sent to client</label><input required type="date" id="f_dateSent"></div>
+        <div><label>Last action date</label><input required type="date" id="f_lastActionDate"></div>
+
+        <div>
+          <label>Current stage</label>
+          <select id="f_stage"></select>
+        </div>
+        <div>
+          <label>Waiting on</label>
+          <select id="f_waitingOn">
+            <option value="Client">Client</option>
+            <option value="TNV">TNV</option>
+            <option value="Candidate">Candidate</option>
+            <option value="—">Nobody / closed</option>
+          </select>
+        </div>
+
+        <div class="full"><label>Next action</label><input type="text" id="f_nextAction" placeholder="e.g. Chase HR for interview slot"></div>
+        <div><label>Deadline (optional)</label><input type="date" id="f_deadline"></div>
+        <div>
+          <label>Outcome</label>
+          <select id="f_outcome"></select>
+        </div>
+
+        <div class="full"><label>Notes</label><textarea id="f_notes"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn danger" id="deleteBtn" style="display:none;">Delete</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button type="button" class="btn" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn primary" id="saveBtn">Save candidate</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "tnv-candidate-tracker-v1";
+  var STAGES = ["Submitted","HR Review","Interview Requested","Interview Scheduled",
+    "Interview Held","Technical Feedback","Final Decision","Offer Made","Placed","Lost"];
+  var OUTCOMES = ["In process","Placed","Lost to another offer","Rejected by client","Withdrawn"];
+  var OPEN_OUTCOME = "In process";
+
+  var state = { candidates: [] };
+  var ui = { tab:"dashboard", sortKey:"days", sortDir:"desc",
+    filterClient:"", filterRisk:"", search:"", editingId:null };
+
+  // ---------- persistence ----------
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) state = JSON.parse(raw);
+    }catch(e){ console.error("Load failed", e); }
+    if(!state.candidates) state.candidates = [];
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ alert("Could not save — your browser storage may be full or blocked."); }
+  }
+
+  // ---------- helpers ----------
+  function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+  function todayISO(){ return new Date().toISOString().slice(0,10); }
+  function daysBetween(iso1, iso2){
+    var a = new Date(iso1+"T00:00:00"), b = new Date(iso2+"T00:00:00");
+    return Math.round((b-a) / 86400000);
+  }
+  function fmtDate(iso){
+    if(!iso) return "—";
+    var d = new Date(iso+"T00:00:00");
+    return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+  }
+  function median(arr){
+    if(!arr.length) return null;
+    var s = arr.slice().sort(function(a,b){return a-b;});
+    var mid = Math.floor(s.length/2);
+    return s.length % 2 ? s[mid] : (s[mid-1]+s[mid])/2;
+  }
+  function isOpen(c){ return c.outcome === OPEN_OUTCOME; }
+
+  function riskOf(c){
+    if(!isOpen(c)) return {band:"closed", label:c.outcome, days:null};
+    var days = daysBetween(c.lastActionDate || c.dateSent, todayISO());
+    if(days < 0) days = 0;
+    var band, label;
+    if(days <= 2){ band="green"; label="On track"; }
+    else if(days <= 5){ band="amber"; label="Slipping"; }
+    else if(days <= 10){ band="red"; label="At risk"; }
+    else { band="crit"; label="Overdue"; }
+    return {band:band, label:label, days:days};
+  }
+
+  function effortLabel(medianDays){
+    if(medianDays === null) return null;
+    if(medianDays <= 3) return "Low";
+    if(medianDays <= 8) return "Medium";
+    return "High";
+  }
+
+  // ---------- sample data ----------
+  function sampleData(){
+    var t = todayISO();
+    function back(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+    return [
+      {id:uid(), client:"Acme Software Srl", vacancy:"Senior Backend Developer", candidateName:"Francesca Melis",
+        owner:"Adelaide", dateSent:back(31), lastActionDate:back(28), stage:"Interview Requested",
+        waitingOn:"Client", nextAction:"Chase HR for interview slot", deadline:"", outcome:OPEN_OUTCOME,
+        notes:"Strong candidate, currently also interviewing elsewhere."},
+      {id:uid(), client:"Acme Software Srl", vacancy:"Senior Backend Developer", candidateName:"Marco Deiana",
+        owner:"Adelaide", dateSent:back(20), lastActionDate:back(2), stage:"HR Review",
+        waitingOn:"Client", nextAction:"Await HR screen result", deadline:"", outcome:OPEN_OUTCOME, notes:""},
+      {id:uid(), client:"Acme Software Srl", vacancy:"QA Engineer", candidateName:"Giulia Pinna",
+        owner:"Matteo", dateSent:back(9), lastActionDate:back(1), stage:"Submitted",
+        waitingOn:"Client", nextAction:"Confirm CV received", deadline:"", outcome:OPEN_OUTCOME, notes:""},
+      {id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Sara Cocco",
+        owner:"Matteo", dateSent:back(14), lastActionDate:back(13), stage:"Interview Scheduled",
+        waitingOn:"TNV", nextAction:"Confirm interview time with candidate", deadline:back(-2), outcome:OPEN_OUTCOME, notes:""},
+      {id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Luca Serra",
+        owner:"Matteo", dateSent:back(45), lastActionDate:back(40), stage:"Final Decision",
+        waitingOn:"Client", nextAction:"Push CTO for a yes/no", deadline:"", outcome:OPEN_OUTCOME,
+        notes:"Candidate told us he has another offer expiring soon."},
+      {id:uid(), client:"Isola Digitale", vacancy:"Frontend Developer", candidateName:"Elena Fadda",
+        owner:"Adelaide", dateSent:back(6), lastActionDate:back(1), stage:"Technical Feedback",
+        waitingOn:"Client", nextAction:"Request written feedback", deadline:"", outcome:OPEN_OUTCOME, notes:""},
+      {id:uid(), client:"Isola Digitale", vacancy:"Frontend Developer", candidateName:"Davide Porcu",
+        owner:"Adelaide", dateSent:back(60), lastActionDate:back(15), stage:"Final Decision",
+        waitingOn:"Client", nextAction:"Escalate to CEO", deadline:"", outcome:OPEN_OUTCOME,
+        notes:"Three weeks with no reply after positive interview."},
+      {id:uid(), client:"Isola Digitale", vacancy:"DevOps Engineer", candidateName:"Chiara Mura",
+        owner:"Matteo", dateSent:back(5), lastActionDate:back(5), stage:"Submitted",
+        waitingOn:"Client", nextAction:"Follow up if no reply by Friday", deadline:"", outcome:OPEN_OUTCOME, notes:""},
+      {id:uid(), client:"Barbagia Robotics", vacancy:"Embedded Engineer", candidateName:"Andrea Lai",
+        owner:"Adelaide", dateSent:back(40), lastActionDate:back(3), stage:"Placed",
+        waitingOn:"—", nextAction:"", deadline:"", outcome:"Placed", notes:"Started 3 days ago."},
+      {id:uid(), client:"Barbagia Robotics", vacancy:"Embedded Engineer", candidateName:"Simone Piras",
+        owner:"Adelaide", dateSent:back(38), lastActionDate:back(10), stage:"Final Decision",
+        waitingOn:"—", nextAction:"", deadline:"", outcome:"Lost to another offer",
+        notes:"Accepted a competing offer after 10 days of silence from client."}
+    ];
+  }
+
+  // ---------- derived data ----------
+  function clientsList(){
+    var set = {};
+    state.candidates.forEach(function(c){ set[c.client]=true; });
+    return Object.keys(set).sort();
+  }
+  function clientStats(clientName){
+    var all = state.candidates.filter(function(c){ return c.client === clientName; });
+    var open = all.filter(isOpen);
+    var risks = open.map(riskOf);
+    var counts = {green:0, amber:0, red:0, crit:0};
+    risks.forEach(function(r){ counts[r.band] = (counts[r.band]||0)+1; });
+    var waitDays = open.filter(function(c){return c.waitingOn==="Client";})
+      .map(function(c){ return daysBetween(c.lastActionDate||c.dateSent, todayISO()); });
+    var med = median(waitDays);
+    var placed = all.filter(function(c){return c.outcome==="Placed";}).length;
+    var lost = all.filter(function(c){return c.outcome==="Lost to another offer";}).length;
+    return {name:clientName, all:all, open:open, counts:counts, medianClientWait:med,
+      effort:effortLabel(med), placed:placed, lost:lost};
+  }
+
+  // ---------- rendering ----------
+  function renderAll(){
+    renderStatStrip();
+    renderClientGrid();
+    populateClientFilter();
+    renderCandidatesTable();
+    renderClientDetail();
+  }
+
+  function renderStatStrip(){
+    var open = state.candidates.filter(isOpen);
+    var risks = open.map(riskOf);
+    var counts = {green:0, amber:0, red:0, crit:0};
+    risks.forEach(function(r){ counts[r.band]=(counts[r.band]||0)+1; });
+    var clientWaits = open.filter(function(c){return c.waitingOn==="Client";})
+      .map(function(c){ return daysBetween(c.lastActionDate||c.dateSent, todayISO()); });
+    var med = median(clientWaits);
+    var stats = [
+      {n: open.length, l:"Active candidates", cls:""},
+      {n: counts.green||0, l:"On track", cls:"green"},
+      {n: counts.amber||0, l:"Slipping", cls:"amber"},
+      {n: (counts.red||0)+(counts.crit||0), l:"At risk / overdue", cls:"red"},
+      {n: med===null ? "—" : med.toFixed(1)+"d", l:"Median client wait", cls:""}
+    ];
+    var el = document.getElementById("statStrip");
+    el.innerHTML = stats.map(function(s){
+      return '<div class="stat '+s.cls+'"><div class="n">'+s.n+'</div><div class="l">'+s.l+'</div></div>';
+    }).join("");
+  }
+
+  function renderClientGrid(){
+    var wrap = document.getElementById("clientGridWrap");
+    var names = clientsList();
+    if(!names.length){
+      wrap.innerHTML = emptyStateHTML();
+      bindEmptyState();
+      return;
+    }
+    var cards = names.map(function(name){
+      var s = clientStats(name);
+      var dots = "";
+      ["green","amber","red","crit"].forEach(function(band){
+        for(var i=0;i<(s.counts[band]||0);i++) dots += '<span class="dot '+band+'"></span>';
+      });
+      var medianTxt = s.medianClientWait===null ? "—" : s.medianClientWait.toFixed(1)+" days";
+      var effortTag = s.effort ? '<span class="effort-tag '+s.effort+'">'+s.effort+' effort</span>' : "";
+      return '<div class="client-card" data-client="'+escAttr(name)+'">'
+        + '<div class="top"><h3>'+esc(name)+'</h3><span class="count">'+s.open.length+' active</span></div>'
+        + '<div class="risk-dots">'+(dots || '<span style="color:var(--muted); font-size:12px;">no active candidates</span>')+'</div>'
+        + '<div class="median">Median client wait: <b>'+medianTxt+'</b></div>'
+        + effortTag
+        + '</div>';
+    }).join("");
+    wrap.innerHTML = '<div class="client-grid">'+cards+'</div>';
+    wrap.querySelectorAll(".client-card").forEach(function(card){
+      card.addEventListener("click", function(){
+        setTab("clients");
+        setTimeout(function(){
+          var target = document.querySelector('[data-detail="'+CSS.escape(card.dataset.client)+'"]');
+          if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+        }, 30);
+      });
+    });
+  }
+
+  function emptyStateHTML(){
+    return '<div class="empty-state">'
+      + '<h3>No candidates yet</h3>'
+      + '<p>Add your first candidate, or load sample data to see how the dashboard works.</p>'
+      + '<div class="btn-row">'
+      + '<button class="btn primary" id="emptyAddBtn">+ Add candidate</button>'
+      + '<button class="btn" id="emptySampleBtn">Load sample data</button>'
+      + '</div></div>';
+  }
+  function bindEmptyState(){
+    var a = document.getElementById("emptyAddBtn");
+    var s = document.getElementById("emptySampleBtn");
+    if(a) a.addEventListener("click", function(){ openModal(); });
+    if(s) s.addEventListener("click", loadSampleData);
+  }
+
+  function populateClientFilter(){
+    var sel = document.getElementById("filterClient");
+    var current = sel.value;
+    var names = clientsList();
+    sel.innerHTML = '<option value="">All clients</option>' +
+      names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("");
+    sel.value = names.indexOf(current) >= 0 ? current : "";
+  }
+
+  function filteredCandidates(){
+    var list = state.candidates.slice();
+    if(ui.filterClient) list = list.filter(function(c){ return c.client === ui.filterClient; });
+    if(ui.filterRisk) list = list.filter(function(c){ return riskOf(c).band === ui.filterRisk; });
+    if(ui.search){
+      var q = ui.search.toLowerCase();
+      list = list.filter(function(c){
+        return (c.client+" "+c.candidateName+" "+c.vacancy).toLowerCase().indexOf(q) >= 0;
+      });
+    }
+    list.forEach(function(c){ c._risk = riskOf(c); });
+    list.sort(function(a,b){
+      var dir = ui.sortDir === "asc" ? 1 : -1;
+      var ka, kb;
+      if(ui.sortKey === "days"){ ka = a._risk.days===null?-1:a._risk.days; kb = b._risk.days===null?-1:b._risk.days; }
+      else { ka = (a[ui.sortKey]||"").toString().toLowerCase(); kb = (b[ui.sortKey]||"").toString().toLowerCase(); }
+      if(ka < kb) return -1*dir;
+      if(ka > kb) return 1*dir;
+      return 0;
+    });
+    return list;
+  }
+
+  function renderCandidatesTable(){
+    var tbody = document.getElementById("candTbody");
+    var list = filteredCandidates();
+    if(!list.length){
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:26px; text-align:center; color:var(--muted);">No candidates match these filters.</td></tr>';
+    } else {
+      tbody.innerHTML = list.map(function(c){
+        var r = c._risk;
+        var badge = r.band === "closed"
+          ? '<span class="badge closed">'+esc(r.label)+'</span>'
+          : '<span class="badge '+r.band+'">'+r.days+'d · '+esc(r.label)+'</span>';
+        return '<tr data-id="'+c.id+'">'
+          + '<td>'+esc(c.client)+'</td>'
+          + '<td class="name-cell"><b>'+esc(c.candidateName)+'</b><div class="sub">'+esc(c.vacancy)+'</div></td>'
+          + '<td><span class="stage-pill">'+esc(c.stage)+'</span></td>'
+          + '<td class="waiting-tag">'+esc(c.waitingOn||"—")+'</td>'
+          + '<td>'+esc(c.owner||"—")+'</td>'
+          + '<td class="num">'+badge+'</td>'
+          + '<td>'+esc(c.nextAction||"—")+'</td>'
+          + '</tr>';
+      }).join("");
+    }
+    tbody.querySelectorAll("tr[data-id]").forEach(function(tr){
+      tr.addEventListener("click", function(){ openModal(tr.dataset.id); });
+    });
+    document.querySelectorAll("thead th[data-key]").forEach(function(th){
+      th.classList.toggle("sorted", th.dataset.key === ui.sortKey);
+      th.classList.toggle("asc", th.dataset.key === ui.sortKey && ui.sortDir === "asc");
+    });
+  }
+
+  function renderClientDetail(){
+    var wrap = document.getElementById("clientDetailWrap");
+    var names = clientsList();
+    if(!names.length){ wrap.innerHTML = emptyStateHTML(); bindEmptyState(); return; }
+    wrap.innerHTML = names.map(function(name){
+      var s = clientStats(name);
+      var medTxt = s.medianClientWait===null ? "—" : s.medianClientWait.toFixed(1)+" days";
+      var atRisk = (s.counts.red||0)+(s.counts.crit||0);
+      var ceoLine = s.medianClientWait===null ? "" :
+        '<div class="ceo-line">Framed for the client: candidates typically wait <b>'+medTxt+'</b> on your side before the next step happens.</div>';
+      return '<div class="client-detail-card" data-detail="'+escAttr(name)+'">'
+        + '<h3>'+esc(name)+'</h3>'
+        + '<div class="client-kpis">'
+        + kpi(s.open.length, "Active")
+        + kpi(atRisk, "At risk / overdue")
+        + kpi(medTxt, "Median client wait")
+        + kpi(s.placed, "Placed")
+        + kpi(s.lost, "Lost to other offers")
+        + '</div>'
+        + ceoLine
+        + '</div>';
+    }).join("");
+  }
+  function kpi(n,l){ return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+
+  // ---------- modal ----------
+  var modal = document.getElementById("candModal");
+  function fillSelect(id, options){
+    var sel = document.getElementById(id);
+    sel.innerHTML = options.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(o)+'</option>'; }).join("");
+  }
+  fillSelect("f_stage", STAGES);
+  fillSelect("f_outcome", OUTCOMES);
+
+  function openModal(id){
+    ui.editingId = id || null;
+    var c = id ? state.candidates.find(function(x){return x.id===id;}) : null;
+    document.getElementById("modalTitle").textContent = c ? "Edit candidate" : "Add candidate";
+    document.getElementById("deleteBtn").style.display = c ? "inline-block" : "none";
+    document.getElementById("f_client").value = c ? c.client : "";
+    document.getElementById("f_vacancy").value = c ? c.vacancy : "";
+    document.getElementById("f_candidateName").value = c ? c.candidateName : "";
+    document.getElementById("f_owner").value = c ? c.owner : "";
+    document.getElementById("f_dateSent").value = c ? c.dateSent : todayISO();
+    document.getElementById("f_lastActionDate").value = c ? c.lastActionDate : todayISO();
+    document.getElementById("f_stage").value = c ? c.stage : STAGES[0];
+    document.getElementById("f_waitingOn").value = c ? c.waitingOn : "Client";
+    document.getElementById("f_nextAction").value = c ? c.nextAction : "";
+    document.getElementById("f_deadline").value = c ? c.deadline || "" : "";
+    document.getElementById("f_outcome").value = c ? c.outcome : OPEN_OUTCOME;
+    document.getElementById("f_notes").value = c ? c.notes || "" : "";
+    modal.showModal();
+  }
+  function closeModal(){ modal.close(); ui.editingId = null; }
+
+  document.getElementById("addBtn").addEventListener("click", function(){ openModal(); });
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  modal.addEventListener("cancel", function(e){ /* Esc key */ });
+
+  document.getElementById("candForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var data = {
+      client: document.getElementById("f_client").value.trim(),
+      vacancy: document.getElementById("f_vacancy").value.trim(),
+      candidateName: document.getElementById("f_candidateName").value.trim(),
+      owner: document.getElementById("f_owner").value.trim(),
+      dateSent: document.getElementById("f_dateSent").value,
+      lastActionDate: document.getElementById("f_lastActionDate").value,
+      stage: document.getElementById("f_stage").value,
+      waitingOn: document.getElementById("f_waitingOn").value,
+      nextAction: document.getElementById("f_nextAction").value.trim(),
+      deadline: document.getElementById("f_deadline").value,
+      outcome: document.getElementById("f_outcome").value,
+      notes: document.getElementById("f_notes").value.trim()
+    };
+    if(!data.client || !data.vacancy || !data.candidateName){ return; }
+    if(ui.editingId){
+      var idx = state.candidates.findIndex(function(x){return x.id===ui.editingId;});
+      state.candidates[idx] = Object.assign({id:ui.editingId}, data);
+    } else {
+      data.id = uid();
+      state.candidates.push(data);
+    }
+    save(); closeModal(); renderAll();
+  });
+
+  document.getElementById("deleteBtn").addEventListener("click", function(){
+    if(!ui.editingId) return;
+    if(!confirm("Delete this candidate? This can't be undone.")) return;
+    state.candidates = state.candidates.filter(function(x){return x.id!==ui.editingId;});
+    save(); closeModal(); renderAll();
+  });
+
+  // ---------- tabs ----------
+  function setTab(name){
+    ui.tab = name;
+    document.querySelectorAll("nav.tabs button").forEach(function(b){
+      b.classList.toggle("active", b.dataset.tab === name);
+    });
+    ["dashboard","candidates","clients"].forEach(function(t){
+      document.getElementById("tab-"+t).hidden = (t !== name);
+    });
+  }
+  document.querySelectorAll("nav.tabs button").forEach(function(b){
+    b.addEventListener("click", function(){ setTab(b.dataset.tab); });
+  });
+
+  // ---------- filters & sorting ----------
+  document.getElementById("searchBox").addEventListener("input", function(e){
+    ui.search = e.target.value; renderCandidatesTable();
+  });
+  document.getElementById("filterClient").addEventListener("change", function(e){
+    ui.filterClient = e.target.value; renderCandidatesTable();
+  });
+  document.getElementById("filterRisk").addEventListener("change", function(e){
+    ui.filterRisk = e.target.value; renderCandidatesTable();
+  });
+  document.querySelectorAll("thead th[data-key]").forEach(function(th){
+    th.addEventListener("click", function(){
+      var key = th.dataset.key;
+      if(ui.sortKey === key){ ui.sortDir = ui.sortDir === "asc" ? "desc" : "asc"; }
+      else { ui.sortKey = key; ui.sortDir = "desc"; }
+      renderCandidatesTable();
+    });
+  });
+
+  // ---------- file menu ----------
+  var menuBtn = document.getElementById("menuBtn");
+  var menuPop = document.getElementById("menuPop");
+  menuBtn.addEventListener("click", function(e){ e.stopPropagation(); menuPop.classList.toggle("open"); });
+  document.addEventListener("click", function(){ menuPop.classList.remove("open"); });
+
+  document.getElementById("exportJson").addEventListener("click", function(){
+    downloadFile(JSON.stringify(state, null, 2), "tnv-candidates-"+todayISO()+".json", "application/json");
+  });
+  document.getElementById("importJsonBtn").addEventListener("click", function(){
+    document.getElementById("importJsonFile").click();
+  });
+  document.getElementById("importJsonFile").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var parsed = JSON.parse(ev.target.result);
+        if(!parsed || !Array.isArray(parsed.candidates)) throw new Error("bad shape");
+        var mode = state.candidates.length
+          ? confirm("Replace current data with the imported file? Cancel to merge instead.")
+          : true;
+        if(mode){ state = parsed; }
+        else {
+          var ids = {}; state.candidates.forEach(function(c){ids[c.id]=true;});
+          parsed.candidates.forEach(function(c){ if(!ids[c.id]) state.candidates.push(c); });
+        }
+        save(); renderAll();
+      }catch(err){ alert("That doesn't look like a valid export file."); }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  document.getElementById("exportCsv").addEventListener("click", function(){
+    var cols = ["client","vacancy","candidateName","owner","dateSent","lastActionDate",
+      "stage","waitingOn","nextAction","deadline","outcome","notes"];
+    var header = cols.join(",");
+    var rows = state.candidates.map(function(c){
+      var r = riskOf(c);
+      var vals = cols.map(function(k){ return csvCell(c[k]); });
+      vals.push(csvCell(r.band==="closed" ? "" : r.days));
+      vals.push(csvCell(r.band==="closed" ? "" : r.label));
+      return vals.join(",");
+    });
+    var csv = header + ",daysWaiting,status\n" + rows.join("\n");
+    downloadFile(csv, "tnv-candidates-"+todayISO()+".csv", "text/csv");
+  });
+  function csvCell(v){
+    v = (v===undefined || v===null) ? "" : String(v);
+    if(/[",\n]/.test(v)) v = '"'+v.replace(/"/g,'""')+'"';
+    return v;
+  }
+
+  document.getElementById("loadSample").addEventListener("click", loadSampleData);
+  function loadSampleData(){
+    if(state.candidates.length && !confirm("This adds sample candidates alongside your existing data. Continue?")) return;
+    state.candidates = state.candidates.concat(sampleData());
+    save(); renderAll();
+  }
+
+  document.getElementById("clearAll").addEventListener("click", function(){
+    if(!confirm("Delete ALL candidates from this browser? This can't be undone.")) return;
+    state.candidates = [];
+    save(); renderAll();
+  });
+
+  function downloadFile(content, filename, mime){
+    var blob = new Blob([content], {type:mime});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  // ---------- escaping ----------
+  function esc(s){
+    return String(s===undefined||s===null?"":s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function escAttr(s){ return esc(s).replace(/"/g,"&quot;"); }
+
+  // ---------- init ----------
+  load();
+  renderAll();
+})();
+</script>
+</body>
+</html>
