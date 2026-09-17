@@ -184,6 +184,10 @@
   .step-label{font-weight:600; font-size:13.5px;}
   .step-row.current .step-label{color:var(--ink);}
   .step-meta{font-size:12px; color:var(--muted); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .step-meta-lines{margin-top:4px; display:flex; flex-direction:column; gap:2px;}
+  .meta-line{font-size:12.5px; color:var(--muted); display:flex; gap:6px; align-items:center;}
+  .meta-line.actual{color:var(--ink);}
+  .meta-line.actual b{font-family:var(--mono);}
   .step-actions{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center;}
   .target-edit{width:46px; font-family:var(--mono); padding:3px 5px; font-size:12px; display:inline-block;}
   .over-badge{font-family:var(--mono); font-weight:600; font-size:11.5px; padding:1px 6px; border-radius:var(--radius);}
@@ -269,6 +273,8 @@
   <main>
     <section id="tab-dashboard">
       <div class="stat-strip" id="statStrip"></div>
+      <div class="section-heading"><h2>Where the delays are</h2><span class="hint">Every client's biggest recurring hold-up, ranked — the whole picture, in one place</span></div>
+      <div id="delayWrap" style="margin-bottom:28px;"></div>
       <div class="section-heading"><h2>Clients</h2><span class="hint">Click a client for the full breakdown</span></div>
       <div id="clientGridWrap"></div>
     </section>
@@ -328,8 +334,8 @@
 
       <div class="modal-section-title">Candidate</div>
       <div class="form-grid">
-        <div><label>Client / company</label><input required type="text" id="f_client" placeholder="e.g. Acme Srl"></div>
-        <div><label>Vacancy</label><input required type="text" id="f_vacancy" placeholder="e.g. Senior Backend Developer"></div>
+        <div><label>Client / company</label><select required id="f_client"></select></div>
+        <div><label>Vacancy / position</label><select required id="f_vacancy"></select></div>
         <div><label>Candidate name</label><input required type="text" id="f_candidateName"></div>
         <div><label>Recruiter (TNV)</label><input type="text" id="f_owner" placeholder="e.g. Adelaide"></div>
         <div>
@@ -408,7 +414,7 @@
     return e && e.outcome ? e.outcome : null;
   }
 
-  var state = { globalTemplate: [], clientTemplates: {}, positionTemplates: {}, candidates: [] };
+  var state = { globalTemplate: [], clientTemplates: {}, positionTemplates: {}, clientList: [], vacancyList: {}, candidates: [] };
   var ui = { tab:"dashboard", sortKey:"over", sortDir:"desc",
     filterClient:"", filterRisk:"", search:"", editingId:null, draftTimeline:[], draftOutcome:OPEN_OUTCOME };
 
@@ -418,6 +424,11 @@
   function daysBetween(iso1, iso2){
     var a = new Date(iso1+"T00:00:00"), b = new Date(iso2+"T00:00:00");
     return Math.round((b-a) / 86400000);
+  }
+  function addDays(iso, n){
+    var d = new Date((iso||todayISO())+"T00:00:00");
+    d.setDate(d.getDate() + (parseInt(n,10)||0));
+    return d.toISOString().slice(0,10);
   }
   function fmtDate(iso){
     if(!iso) return "—";
@@ -468,6 +479,8 @@
     if(!state.globalTemplate || !state.globalTemplate.length) state.globalTemplate = newGlobalDefault();
     if(!state.clientTemplates) state.clientTemplates = {};
     if(!state.positionTemplates) state.positionTemplates = {};
+    if(!state.clientList) state.clientList = [];
+    if(!state.vacancyList) state.vacancyList = {};
     if(!state.candidates) state.candidates = [];
   }
   function save(){
@@ -633,18 +646,36 @@
 
   // ---------- derived: clients / positions ----------
   function clientsList(){
-    var set = {}; state.candidates.forEach(function(c){ set[c.client]=true; });
+    var set = {};
+    state.clientList.forEach(function(c){ set[c]=true; });
+    state.candidates.forEach(function(c){ set[c.client]=true; });
     Object.keys(state.clientTemplates).forEach(function(c){ set[c]=true; });
     return Object.keys(set).sort();
   }
   function vacanciesForClient(client){
     var set = {};
+    (state.vacancyList[client]||[]).forEach(function(v){ set[v]=true; });
     state.candidates.filter(function(c){return c.client===client;}).forEach(function(c){ set[c.vacancy]=true; });
     Object.keys(state.positionTemplates).forEach(function(k){
       var parts = k.split("__::__");
       if(parts[0]===client) set[parts[1]]=true;
     });
     return Object.keys(set).sort();
+  }
+  function addClient(name){
+    name = (name||"").trim();
+    if(!name) return false;
+    if(state.clientList.indexOf(name) === -1) state.clientList.push(name);
+    save();
+    return true;
+  }
+  function addVacancy(client, vacancy){
+    vacancy = (vacancy||"").trim();
+    if(!client || !vacancy) return false;
+    if(!state.vacancyList[client]) state.vacancyList[client] = [];
+    if(state.vacancyList[client].indexOf(vacancy) === -1) state.vacancyList[client].push(vacancy);
+    save();
+    return true;
   }
   function clientStats(clientName){
     var all = state.candidates.filter(function(c){ return c.client === clientName; });
@@ -678,7 +709,25 @@
 
   // ---------- rendering: dashboard ----------
   function renderAll(){
-    renderStatStrip(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail(); renderProcessTab();
+    renderStatStrip(); renderDelayOverview(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail(); renderProcessTab();
+  }
+  function renderDelayOverview(){
+    var wrap = document.getElementById("delayWrap");
+    var names = Array.from(new Set(state.candidates.map(function(c){return c.client;}))).sort();
+    if(!names.length){ wrap.innerHTML = '<div class="ceo-line">No candidates yet — nothing to diagnose.</div>'; return; }
+    var flat = [];
+    names.forEach(function(name){
+      clientStats(name).problems.forEach(function(p){
+        flat.push({client:name, label:p.label, avgOver:p.avgOver, count:p.count});
+      });
+    });
+    flat.sort(function(a,b){ return b.avgOver-a.avgOver; });
+    if(!flat.length){ wrap.innerHTML = '<div class="ceo-line">No step is consistently overrunning its target across any client yet.</div>'; return; }
+    var rows = flat.slice(0,8).map(function(p){
+      return '<tr><td>'+esc(p.client)+'</td><td>'+esc(p.label)+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
+    }).join("");
+    wrap.innerHTML = '<table class="problem-table"><thead><tr><th>Client</th><th>Step</th><th>Avg over target</th><th>Occurrences</th></tr></thead><tbody>'+rows+'</tbody></table>'
+      + '<div class="ceo-line">Top hold-up overall: <b>'+esc(flat[0].client)+' — '+esc(flat[0].label)+'</b>, averaging <b>'+flat[0].avgOver.toFixed(1)+' days</b> over target.</div>';
   }
   function renderStatStrip(){
     var open = state.candidates.filter(isOpen);
@@ -841,8 +890,12 @@
     var html = renderTemplateBlock("Global default", "Applies to any client or vacancy with no customization of its own.",
       state.globalTemplate, {kind:"global"});
     var names = clientsList();
-    if(names.length){
-      html += '<div class="template-block"><h3>Clients</h3><div class="sub">Click a client to view or customize their process.</div>';
+    html += '<div class="template-block"><div class="client-block-header" style="margin-bottom:'+(names.length?'10px':'0')+';">'
+      + '<h3 style="margin:0;">Clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>';
+    if(!names.length){
+      html += '<div class="sub">No clients yet. Add one to set up their process ahead of the first candidate.</div>';
+    } else {
+      html += '<div class="sub" style="margin-bottom:8px;">Click a client to view or customize their process.</div>';
       names.forEach(function(name){
         var hasClientTpl = !!state.clientTemplates[name];
         html += '<details class="client-tpl"><summary><div class="client-block-header">'
@@ -853,28 +906,29 @@
           html += '<div style="padding:8px 0;"><button class="btn small" data-action="customize-client" data-client="'+escAttr(name)+'">Customize this client\'s process</button></div>';
         }
         var vacs = vacanciesForClient(name);
-        if(vacs.length){
-          html += '<div class="vacancy-list"><div class="sub" style="margin-bottom:6px;">Vacancies at '+esc(name)+'</div>';
-          vacs.forEach(function(v){
-            var pk = posKey(name, v);
-            var hasPosTpl = !!state.positionTemplates[pk];
-            html += '<div class="vacancy-row"><span class="name">'+esc(v)+'</span>';
-            if(hasPosTpl){
-              html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button></span>';
-            } else {
-              html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button></span>';
-            }
-            html += '</div>';
-            if(hasPosTpl && ui.openPosition === pk){
-              html += renderStepListEditor(state.positionTemplates[pk], {kind:"position", client:name, vacancy:v});
-            }
-          });
+        html += '<div class="vacancy-list"><div class="client-block-header" style="margin-bottom:6px;">'
+          + '<div class="sub" style="margin:0;">Vacancies at '+esc(name)+'</div>'
+          + '<button class="btn small" data-action="add-vacancy" data-client="'+escAttr(name)+'">+ Add position</button></div>';
+        vacs.forEach(function(v){
+          var pk = posKey(name, v);
+          var hasPosTpl = !!state.positionTemplates[pk];
+          html += '<div class="vacancy-row"><span class="name">'+esc(v)+'</span>';
+          if(hasPosTpl){
+            html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button></span>';
+          } else {
+            html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button></span>';
+          }
           html += '</div>';
-        }
+          if(hasPosTpl && ui.openPosition === pk){
+            html += renderStepListEditor(state.positionTemplates[pk], {kind:"position", client:name, vacancy:v});
+          }
+        });
+        if(!vacs.length) html += '<div class="sub">No positions yet.</div>';
+        html += '</div>';
         html += '</details>';
       });
-      html += '</div>';
     }
+    html += '</div>';
     wrap.innerHTML = html;
     bindProcessTabEvents(wrap);
   }
@@ -917,6 +971,17 @@
     return state.positionTemplates[posKey(client, vacancy)];
   }
   function bindProcessTabEvents(wrap){
+    var addClientBtn = document.getElementById("addClientBtn");
+    if(addClientBtn) addClientBtn.addEventListener("click", function(){
+      var name = prompt("New client name:");
+      if(addClient(name)) renderProcessTab();
+    });
+    wrap.querySelectorAll('[data-action="add-vacancy"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var v = prompt("New position/vacancy name for "+btn.dataset.client+":");
+        if(addVacancy(btn.dataset.client, v)) renderProcessTab();
+      });
+    });
     wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
       btn.addEventListener("click", function(){
         var client = btn.dataset.client;
@@ -993,13 +1058,64 @@
     document.getElementById(id).innerHTML = options.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(o)+'</option>'; }).join("");
   }
 
+  function populateClientSelect(selected){
+    var sel = document.getElementById("f_client");
+    var names = clientsList();
+    sel.innerHTML = '<option value="">Select client…</option>'
+      + names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("")
+      + '<option value="__new__">+ Add new client…</option>';
+    sel.value = selected && names.indexOf(selected)>=0 ? selected : "";
+  }
+  function populateVacancySelect(client, selected){
+    var sel = document.getElementById("f_vacancy");
+    var vacs = client ? vacanciesForClient(client) : [];
+    sel.innerHTML = '<option value="">Select position…</option>'
+      + vacs.map(function(v){ return '<option value="'+escAttr(v)+'">'+esc(v)+'</option>'; }).join("")
+      + '<option value="__new__">+ Add new position…</option>';
+    sel.value = selected && vacs.indexOf(selected)>=0 ? selected : "";
+    sel.disabled = !client;
+  }
+  document.getElementById("f_client").addEventListener("change", function(){
+    var sel = this;
+    if(sel.value === "__new__"){
+      var name = prompt("New client name:");
+      if(addClient(name)){ populateClientSelect(name); } else { sel.value = ""; return; }
+    }
+    populateVacancySelect(sel.value, "");
+    maybeAutoLoadTemplate();
+  });
+  document.getElementById("f_vacancy").addEventListener("change", function(){
+    var sel = this;
+    var client = document.getElementById("f_client").value;
+    if(sel.value === "__new__"){
+      var v = prompt("New position name for "+client+":");
+      if(addVacancy(client, v)){ populateVacancySelect(client, v); } else { sel.value = ""; return; }
+    }
+    maybeAutoLoadTemplate();
+  });
+  // Only auto-loads for a brand-new candidate with no timeline yet — never clobbers
+  // an existing candidate's in-progress steps just because the dropdowns changed.
+  function maybeAutoLoadTemplate(){
+    if(ui.editingId) return;
+    var client = document.getElementById("f_client").value;
+    var vacancy = document.getElementById("f_vacancy").value;
+    if(!client || !vacancy || vacancy==="__new__") return;
+    if(ui.draftTimeline.length) return;
+    var resolved = resolveTemplate(client, vacancy);
+    var fresh = cloneSteps(resolved.steps);
+    fresh[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
+    ui.draftTimeline = fresh;
+    document.getElementById("tplSourceNote").textContent = " — loaded from " + levelLabel(resolved.level);
+    renderStepper();
+  }
+
   function openModal(id){
     ui.editingId = id || null;
     var c = id ? state.candidates.find(function(x){return x.id===id;}) : null;
     document.getElementById("modalTitle").textContent = c ? "Edit candidate" : "Add candidate";
     document.getElementById("deleteBtn").style.display = c ? "inline-block" : "none";
-    document.getElementById("f_client").value = c ? c.client : "";
-    document.getElementById("f_vacancy").value = c ? c.vacancy : "";
+    populateClientSelect(c ? c.client : "");
+    populateVacancySelect(c ? c.client : "", c ? c.vacancy : "");
     document.getElementById("f_candidateName").value = c ? c.candidateName : "";
     document.getElementById("f_owner").value = c ? c.owner : "";
     document.getElementById("f_outcome").value = c ? c.outcome : OPEN_OUTCOME;
@@ -1060,45 +1176,69 @@
       if(status==="current") foundCurrent = true;
       html += renderStepRow(s, i, status, i>0?lastDoneDate:null);
       if(s.actualDate) lastDoneDate = s.actualDate;
-      if(i < tl.length-1 && (status==="done" || status==="current")){
-        html += '<div class="insert-row"><button type="button" class="tl-insert-btn" data-after="'+i+'">+ insert step here</button></div>';
+      if(i < tl.length-1 && status==="done"){
+        html += '<div class="insert-row"><button type="button" class="tl-insert-btn" data-after="'+i+'">+ insert step here</button>'
+          + renderInsertForm(i) + '</div>';
       }
     }
     box.innerHTML = html;
     bindStepperEvents();
   }
+  function renderInsertForm(afterIdx){
+    var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
+    var opts = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){return !used[s.label];});
+    return '<div class="mini-form" id="insert-form-'+afterIdx+'"><div class="row">'
+      + '<div class="field"><label>Step</label><select class="tl-insert-select" data-after="'+afterIdx+'">'
+      + opts.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(o.label)+'</option>'; }).join("")
+      + '<option value="__custom__">Custom…</option></select></div>'
+      + '<div class="field tl-insert-custom-wrap" style="display:none;"><label>Step name</label><input type="text" class="tl-insert-custom-name"></div>'
+      + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-insert-days" value="0"></div>'
+      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-insert-confirm" data-after="'+afterIdx+'">+ Add</button></div>'
+      + '</div><div class="sub" style="margin-top:6px;">Ad-hoc steps like this have no predicted target — just what actually happened.</div></div>';
+  }
+  function hasTarget(s){ return s.targetDays!==null && s.targetDays!==undefined; }
   function renderStepRow(s, idx, status, prevDate){
     var dotClass = status;
     var body = '<div class="step-row '+dotClass+'"><div class="step-dot"></div><div class="step-main">';
     body += '<div class="step-title-row"><span class="step-label">'+esc(s.label)+'</span>';
     if(status==="done"){
       var days = daysBetween(prevDate, s.actualDate);
-      var over = (s.targetDays===null||s.targetDays===undefined) ? 0 : Math.max(0, days-s.targetDays);
-      var badge = s.targetDays===null||s.targetDays===undefined ? '' : overBadge(over);
+      var over = hasTarget(s) ? Math.max(0, days-s.targetDays) : 0;
+      var badge = hasTarget(s) ? overBadge(over) : '';
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
+      body += '<div class="step-meta-lines">';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">Predicted: '+s.targetDays+'d</div>';
+      body += '<div class="meta-line actual">Actual: <b>'+days+'d</b>'+(badge?' '+badge:'')+'</div>';
+      body += '</div>';
       body += '<div class="step-meta">';
-      if(s.targetDays!==null && s.targetDays!==undefined) body += '<span>target '+s.targetDays+'d, took '+days+'d</span>'+badge;
       if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
       body += '</div>';
       if(idx>0){
-        body += '<div class="step-actions"><button type="button" class="btn ghost small tl-edit-date" data-id="'+s.id+'">Edit date</button>'
+        body += '<div class="step-actions">'
+          + '<button type="button" class="btn ghost small tl-edit-days" data-id="'+s.id+'">Edit actual days</button>'
+          + '<div class="mini-form" id="edit-form-'+s.id+'"><div class="row">'
+          + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-days-input" value="'+days+'"></div>'
+          + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-edit-confirm" data-id="'+s.id+'">Save</button></div>'
+          + '</div></div>'
           + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
       }
     } else if(status==="current"){
       var elapsed = daysBetween(prevDate, todayISO()); if(elapsed<0) elapsed=0;
       var target = s.targetDays;
-      var over2 = (target===null||target===undefined) ? 0 : Math.max(0, elapsed-target);
+      var over2 = hasTarget(s) ? Math.max(0, elapsed-target) : 0;
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">in progress</span></div>';
+      body += '<div class="step-meta-lines">';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">Predicted: '+target+'d</div>';
+      body += '<div class="meta-line actual">'+elapsed+'d so far'+(hasTarget(s)?' '+overBadge(over2):'')+'</div>';
+      body += '</div>';
       body += '<div class="step-meta">';
-      body += '<span>'+elapsed+'d so far</span>';
-      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(target===null?0:target)+'">d</span>';
-      if(target!==null && target!==undefined) body += overBadge(over2);
+      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(target===null?'':target)+'" placeholder="none"></span>';
       if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
       body += '</div>';
       body += '<div class="step-actions">'
         + '<button type="button" class="btn small tl-complete" data-id="'+s.id+'">Mark complete…</button>'
         + '<div class="mini-form" id="complete-form-'+s.id+'"><div class="row">'
-        + '<div class="field"><label>Date reached</label><input type="date" class="tl-complete-date" value="'+todayISO()+'"></div>'
+        + '<div class="field"><label>Actual days it took</label><input type="number" min="0" class="tl-complete-days" value="'+elapsed+'"></div>'
         + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-complete-confirm" data-id="'+s.id+'">Confirm</button></div>'
         + '</div></div>'
         + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Skip this step</button>'
@@ -1106,7 +1246,7 @@
     } else { // pending
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">upcoming</span></div>';
       body += '<div class="step-meta">';
-      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?0:s.targetDays)+'">d</span>';
+      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?'':s.targetDays)+'" placeholder="none"></span>';
       if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
       body += '</div>';
       body += '<div class="step-actions"><button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
@@ -1131,15 +1271,26 @@
     box.querySelectorAll(".tl-target-edit").forEach(function(inp){
       inp.addEventListener("change", function(){
         var s = ui.draftTimeline.find(function(x){return x.id===inp.dataset.id;});
-        if(s) s.targetDays = Math.max(0, parseInt(inp.value,10)||0);
+        if(!s) return;
+        s.targetDays = inp.value==="" ? null : Math.max(0, parseInt(inp.value,10)||0);
+        renderStepper();
       });
     });
-    box.querySelectorAll(".tl-edit-date").forEach(function(btn){
+    box.querySelectorAll(".tl-edit-days").forEach(function(btn){
       btn.addEventListener("click", function(){
-        var s = ui.draftTimeline.find(function(x){return x.id===btn.dataset.id;});
-        if(!s) return;
-        var v = prompt("New date for \""+s.label+"\" (YYYY-MM-DD):", s.actualDate);
-        if(v && /^\d{4}-\d{2}-\d{2}$/.test(v)){ s.actualDate = v; renderStepper(); }
+        var f = document.getElementById("edit-form-"+btn.dataset.id);
+        if(f) f.classList.toggle("open");
+      });
+    });
+    box.querySelectorAll(".tl-edit-confirm").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var idx = ui.draftTimeline.findIndex(function(x){return x.id===btn.dataset.id;});
+        if(idx<1) return;
+        var prevDate = ui.draftTimeline[idx-1].actualDate;
+        var form = document.getElementById("edit-form-"+btn.dataset.id);
+        var days = Math.max(0, parseInt(form.querySelector(".tl-days-input").value,10)||0);
+        ui.draftTimeline[idx].actualDate = addDays(prevDate, days);
+        renderStepper();
       });
     });
     box.querySelectorAll(".tl-complete").forEach(function(btn){
@@ -1150,33 +1301,44 @@
     });
     box.querySelectorAll(".tl-complete-confirm").forEach(function(btn){
       btn.addEventListener("click", function(){
-        var s = ui.draftTimeline.find(function(x){return x.id===btn.dataset.id;});
+        var idx = ui.draftTimeline.findIndex(function(x){return x.id===btn.dataset.id;});
+        if(idx<0) return;
+        var prevDate = idx>0 ? ui.draftTimeline[idx-1].actualDate : ui.draftTimeline[idx].actualDate;
         var form = document.getElementById("complete-form-"+btn.dataset.id);
-        var dateVal = form.querySelector(".tl-complete-date").value || todayISO();
-        if(s){ s.actualDate = dateVal; renderStepper(); }
+        var days = Math.max(0, parseInt(form.querySelector(".tl-complete-days").value,10)||0);
+        ui.draftTimeline[idx].actualDate = addDays(prevDate, days);
+        renderStepper();
       });
     });
     box.querySelectorAll(".tl-insert-btn").forEach(function(btn){
-      btn.addEventListener("click", function(){ openInsertPicker(parseInt(btn.dataset.after,10)); });
+      btn.addEventListener("click", function(){
+        var f = document.getElementById("insert-form-"+btn.dataset.after);
+        if(f) f.classList.toggle("open");
+      });
     });
-  }
-  function openInsertPicker(afterIdx){
-    var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
-    var opts = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){return !used[s.label];}).map(function(s){return s.label;});
-    var list = opts.concat(["Custom…"]);
-    var choice = prompt("Insert which step after \""+ui.draftTimeline[afterIdx].label+"\"?\n\n"+list.map(function(l,i){return (i+1)+". "+l;}).join("\n")+"\n\nType the number, or the exact custom name:");
-    if(!choice) return;
-    var idx = parseInt(choice,10);
-    var label = (idx>=1 && idx<=list.length) ? list[idx-1] : choice.trim();
-    if(label === "Custom…") { label = prompt("Custom step name:"); if(!label) return; }
-    var daysStr = prompt("Target days for \""+label+"\":", String(DEFAULT_TARGET_DAYS));
-    var days = Math.max(0, parseInt(daysStr,10)||0);
-    var lib = libraryEntry(label);
-    var newStep = {id:uid(), label:label, owner: lib?lib.owner:null, targetDays: days, actualDate:null};
-    ui.draftTimeline.splice(afterIdx+1, 0, newStep);
-    var autoOutcome = outcomeForLabel(label);
-    if(autoOutcome) document.getElementById("f_outcome").value = autoOutcome;
-    renderStepper();
+    box.querySelectorAll(".tl-insert-select").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        var wrapEl = sel.closest(".mini-form").querySelector(".tl-insert-custom-wrap");
+        wrapEl.style.display = sel.value==="__custom__" ? "block" : "none";
+      });
+    });
+    box.querySelectorAll(".tl-insert-confirm").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var afterIdx = parseInt(btn.dataset.after,10);
+        var form = document.getElementById("insert-form-"+afterIdx);
+        var sel = form.querySelector(".tl-insert-select");
+        var label = sel.value==="__custom__" ? form.querySelector(".tl-insert-custom-name").value.trim() : sel.value;
+        if(!label) return;
+        var days = Math.max(0, parseInt(form.querySelector(".tl-insert-days").value,10)||0);
+        var prevDate = ui.draftTimeline[afterIdx].actualDate;
+        var lib = libraryEntry(label);
+        var newStep = {id:uid(), label:label, owner: lib?lib.owner:null, targetDays:null, actualDate: addDays(prevDate, days)};
+        ui.draftTimeline.splice(afterIdx+1, 0, newStep);
+        var autoOutcome = outcomeForLabel(label);
+        if(autoOutcome) document.getElementById("f_outcome").value = autoOutcome;
+        renderStepper();
+      });
+    });
   }
 
   document.getElementById("candForm").addEventListener("submit", function(e){
