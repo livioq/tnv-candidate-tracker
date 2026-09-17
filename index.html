@@ -45,7 +45,6 @@
     --closed:#9AA1AC; --closed-bg:#24272C;
     --tnv:#8FB0E8; --tnv-bg:#1B2636;
   }
-
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased;}
@@ -59,7 +58,7 @@
   .brand-row{display:flex; align-items:baseline; gap:10px;}
   .brand-mark{font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.06em; color:var(--muted); border:1px solid var(--border-strong); border-radius:var(--radius); padding:2px 6px;}
   h1{font-family:var(--serif); font-weight:600; font-size:30px; margin:0; letter-spacing:-0.01em;}
-  .tagline{margin:0; color:var(--muted); font-size:14px; max-width:50ch;}
+  .tagline{margin:0; color:var(--muted); font-size:14px; max-width:52ch;}
   .topbar-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
 
   button.btn{background:var(--paper); border:1px solid var(--border-strong); border-radius:var(--radius); padding:9px 14px; cursor:pointer; font-weight:500; font-size:14px; color:var(--ink); transition:background .12s ease, border-color .12s ease;}
@@ -70,7 +69,9 @@
   button.btn.small{padding:5px 9px; font-size:12.5px;}
   button.btn.ghost{background:transparent; border-color:transparent;}
   button.btn.ghost:hover{border-color:var(--border-strong);}
-  button.btn:disabled{opacity:.45; cursor:not-allowed;}
+  button.btn:disabled{opacity:.4; cursor:not-allowed;}
+  button.icon-btn{background:none; border:none; cursor:pointer; color:var(--muted); font-size:13px; padding:2px 5px; border-radius:var(--radius);}
+  button.icon-btn:hover{color:var(--ink); background:var(--bg);}
 
   .menu-wrap{position:relative;}
   .menu-pop{position:absolute; right:0; top:calc(100% + 6px); background:var(--paper); border:1px solid var(--border-strong); border-radius:var(--radius); min-width:190px; box-shadow:0 6px 20px rgba(0,0,0,.12); z-index:20; padding:6px; display:none;}
@@ -80,7 +81,7 @@
   .menu-pop hr{border:none; border-top:1px solid var(--border); margin:5px 2px;}
   input[type=file]{display:none;}
 
-  nav.tabs{display:flex; gap:2px; margin:22px 0 22px; border-bottom:1px solid var(--border);}
+  nav.tabs{display:flex; gap:2px; margin:22px 0 22px; border-bottom:1px solid var(--border); flex-wrap:wrap;}
   nav.tabs button{background:none; border:none; padding:10px 4px; margin-right:22px; cursor:pointer; font-size:14.5px; font-weight:500; color:var(--muted); border-bottom:2px solid transparent; position:relative; top:1px;}
   nav.tabs button.active{color:var(--ink); border-bottom-color:var(--ink);}
   nav.tabs button:hover{color:var(--ink);}
@@ -92,7 +93,7 @@
   .stat .l{color:var(--muted); font-size:12.5px; margin-top:6px;}
   .stat.green .n{color:var(--green);} .stat.amber .n{color:var(--amber);} .stat.red .n{color:var(--red);}
 
-  .section-heading{display:flex; align-items:baseline; justify-content:space-between; margin:0 0 14px;}
+  .section-heading{display:flex; align-items:baseline; justify-content:space-between; margin:0 0 14px; flex-wrap:wrap; gap:6px;}
   .section-heading h2{font-family:var(--serif); font-size:19px; font-weight:600; margin:0;}
   .section-heading .hint{color:var(--muted); font-size:13px;}
 
@@ -107,10 +108,6 @@
   .dot.green{background:var(--green);} .dot.amber{background:var(--amber);} .dot.red{background:var(--red);} .dot.crit{background:var(--crit);}
   .client-card .stat-line{font-size:12.5px; color:var(--muted); margin-top:3px;}
   .client-card .stat-line b{font-family:var(--mono); color:var(--ink); font-weight:600;}
-  .effort-tag{display:inline-block; margin-top:10px; font-size:11px; font-weight:600; letter-spacing:.02em; padding:2px 7px; border-radius:var(--radius);}
-  .effort-tag.Low{background:var(--green-bg); color:var(--green);}
-  .effort-tag.Medium{background:var(--amber-bg); color:var(--amber);}
-  .effort-tag.High{background:var(--red-bg); color:var(--red);}
 
   .empty-state{border:1px dashed var(--border-strong); border-radius:var(--radius); padding:44px 24px; text-align:center; color:var(--muted);}
   .empty-state h3{font-family:var(--serif); color:var(--ink); font-size:18px; margin:0 0 6px;}
@@ -138,9 +135,12 @@
   .badge.crit{background:var(--crit-bg); color:var(--crit);}
   .badge.closed{background:var(--closed-bg); color:var(--closed);}
   .stage-pill{font-size:12px; color:var(--muted); border:1px solid var(--border); border-radius:var(--radius); padding:3px 8px; white-space:nowrap;}
-  .waiting-tag{font-size:11.5px; color:var(--muted);}
+  .owner-tag{font-size:10.5px; padding:1px 6px; border-radius:var(--radius); font-weight:600; white-space:nowrap;}
+  .owner-tag.TNV{background:var(--tnv-bg); color:var(--tnv);}
+  .owner-tag.Client{background:var(--red-bg); color:var(--red);}
+  .owner-tag.Candidate{background:var(--green-bg); color:var(--green);}
   .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius);}
-  .table-scroll table{min-width:960px;}
+  .table-scroll table{min-width:980px;}
 
   .client-detail-card{background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:20px 22px; margin-bottom:16px;}
   .client-detail-card h3{font-family:var(--serif); font-size:18px; margin:0 0 4px;}
@@ -149,46 +149,80 @@
   .kpi .l{color:var(--muted); font-size:11.5px; margin-top:2px;}
   .ceo-line{font-size:13.5px; color:var(--muted); background:var(--bg); border-radius:var(--radius); padding:10px 12px; margin-top:4px;}
   .ceo-line b{color:var(--ink); font-family:var(--mono);}
+  .problem-table{width:100%; font-size:13px; margin-top:8px; border-collapse:collapse;}
+  .problem-table th{text-align:left; color:var(--muted); font-weight:500; font-size:11.5px; padding:5px 8px; border-bottom:1px solid var(--border);}
+  .problem-table td{padding:6px 8px; border-bottom:1px solid var(--border);}
+  .problem-table tr:last-child td{border-bottom:none;}
 
   /* Modal */
   dialog{border:none; border-radius:6px; padding:0; width:min(720px,94vw); background:var(--paper); color:var(--ink); box-shadow:0 12px 40px rgba(0,0,0,.25);}
   dialog::backdrop{background:rgba(20,24,31,.45);}
   .modal-head{display:flex; justify-content:space-between; align-items:center; padding:18px 22px; border-bottom:1px solid var(--border);}
   .modal-head h2{font-family:var(--serif); font-size:18px; margin:0;}
-  .modal-body{padding:20px 22px; max-height:72vh; overflow-y:auto;}
+  .modal-body{padding:20px 22px; max-height:74vh; overflow-y:auto;}
   .modal-foot{display:flex; justify-content:space-between; gap:10px; padding:16px 22px; border-top:1px solid var(--border);}
   .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   .form-grid .full{grid-column:1/-1;}
   label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:5px; font-weight:500;}
-  input[type=text], input[type=date], select, textarea{width:100%; background:var(--bg); border:1px solid var(--border-strong); border-radius:var(--radius); padding:8px 10px; font-size:13.5px;}
+  input[type=text], input[type=date], input[type=number], select, textarea{width:100%; background:var(--bg); border:1px solid var(--border-strong); border-radius:var(--radius); padding:8px 10px; font-size:13.5px;}
   textarea{resize:vertical; min-height:52px;}
-  .modal-section-title{font-family:var(--serif); font-size:15.5px; font-weight:600; margin:22px 0 10px; padding-top:16px; border-top:1px solid var(--border);}
+  .modal-section-title{font-family:var(--serif); font-size:15.5px; font-weight:600; margin:22px 0 4px; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:baseline;}
   .modal-section-title:first-child{margin-top:0; padding-top:0; border-top:none;}
+  .modal-section-title .sub{font-family:var(--sans); font-weight:400; font-size:12px; color:var(--muted);}
 
-  /* Timeline (package-tracking style) */
-  .timeline{position:relative; padding-left:2px;}
-  .tl-item{position:relative; padding:0 0 2px 26px;}
-  .tl-item:not(:last-child)::before{content:''; position:absolute; left:4px; top:16px; bottom:-6px; width:2px; background:var(--border-strong);}
-  .tl-dot{position:absolute; left:0; top:3px; width:10px; height:10px; border-radius:50%; background:var(--ink); box-shadow:0 0 0 3px var(--paper);}
-  .tl-item.ongoing .tl-dot{background:var(--paper); border:2px solid var(--ink);}
-  .tl-row{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap;}
-  .tl-name{font-weight:600; font-size:13.5px;}
-  .tl-item.ongoing .tl-name{color:var(--muted); font-weight:500; font-style:italic;}
-  .tl-date{font-family:var(--mono); font-size:12px; color:var(--muted); white-space:nowrap;}
-  .tl-gap{font-size:12px; color:var(--muted); padding:5px 0 14px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
-  .owner-tag{font-size:10.5px; padding:1px 6px; border-radius:var(--radius); font-weight:600; white-space:nowrap;}
-  .owner-tag.TNV{background:var(--tnv-bg); color:var(--tnv);}
-  .owner-tag.Client{background:var(--red-bg); color:var(--red);}
-  .owner-tag.Candidate{background:var(--green-bg); color:var(--green);}
-  .tl-gap-days{font-family:var(--mono); font-weight:600;}
-  .tl-gap-days.amber{color:var(--amber);} .tl-gap-days.red{color:var(--red);} .tl-gap-days.crit{color:var(--crit);}
-  .tl-remove{background:none; border:none; color:var(--muted); cursor:pointer; font-size:12px; padding:0 4px; opacity:0; transition:opacity .1s;}
-  .tl-item:hover .tl-remove{opacity:1;}
-  .tl-remove:hover{color:var(--red);}
-  .add-checkpoint{border:1px dashed var(--border-strong); border-radius:var(--radius); padding:14px; margin-top:8px;}
-  .add-checkpoint .row{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;}
-  .add-checkpoint .field{flex:1 1 140px; min-width:120px;}
-  .add-checkpoint label{margin-bottom:4px;}
+  /* Stepper */
+  .stepper{margin-top:8px;}
+  .step-row{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+  .step-row:last-child{border-bottom:none;}
+  .step-dot{width:10px; height:10px; border-radius:50%; background:var(--border-strong); margin-top:4px; flex:0 0 auto;}
+  .step-row.completed .step-dot{background:var(--ink);}
+  .step-row.current .step-dot{background:var(--paper); border:2px solid var(--ink); width:8px; height:8px;}
+  .step-row.pending .step-dot{background:var(--paper); border:2px solid var(--border-strong);}
+  .step-row.pending{opacity:.6;}
+  .step-main{flex:1; min-width:0;}
+  .step-title-row{display:flex; justify-content:space-between; gap:8px; align-items:baseline; flex-wrap:wrap;}
+  .step-label{font-weight:600; font-size:13.5px;}
+  .step-row.current .step-label{color:var(--ink);}
+  .step-meta{font-size:12px; color:var(--muted); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .step-actions{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; align-items:center;}
+  .target-edit{width:46px; font-family:var(--mono); padding:3px 5px; font-size:12px; display:inline-block;}
+  .over-badge{font-family:var(--mono); font-weight:600; font-size:11.5px; padding:1px 6px; border-radius:var(--radius);}
+  .over-badge.green{background:var(--green-bg); color:var(--green);}
+  .over-badge.amber{background:var(--amber-bg); color:var(--amber);}
+  .over-badge.red{background:var(--red-bg); color:var(--red);}
+  .over-badge.crit{background:var(--crit-bg); color:var(--crit);}
+  .insert-row{padding:2px 0 2px 20px;}
+  .insert-row button{font-size:11px; color:var(--muted); background:none; border:none; cursor:pointer; padding:3px 4px;}
+  .insert-row button:hover{color:var(--ink); text-decoration:underline;}
+  .mini-form{background:var(--bg); border:1px solid var(--border-strong); border-radius:var(--radius); padding:10px; margin:6px 0; display:none;}
+  .mini-form.open{display:block;}
+  .mini-form .row{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;}
+  .mini-form .field{flex:1 1 120px; min-width:100px;}
+  .mini-form label{margin-bottom:3px; font-size:11.5px;}
+
+  /* Process tab */
+  .template-block{background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; margin-bottom:14px;}
+  .template-block h3{font-family:var(--serif); font-size:16px; margin:0 0 3px;}
+  .template-block .sub{color:var(--muted); font-size:12.5px; margin-bottom:10px;}
+  .tpl-row{display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border);}
+  .tpl-row:last-child{border-bottom:none;}
+  .tpl-row .tpl-label{flex:1; font-size:13.5px;}
+  .tpl-row .tpl-owner{font-size:11px; color:var(--muted); width:70px;}
+  .tpl-reorder{display:flex; flex-direction:column; gap:0;}
+  .tpl-reorder button{font-size:9px; line-height:1; padding:1px 4px;}
+  .client-block-header{display:flex; justify-content:space-between; align-items:center; cursor:pointer;}
+  .client-block-header .status{font-size:12px; color:var(--muted);}
+  .vacancy-list{margin-top:10px; padding-top:10px; border-top:1px solid var(--border);}
+  .vacancy-row{display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:13px;}
+  .vacancy-row .name{color:var(--ink);}
+  .vacancy-row .status{color:var(--muted); font-size:12px;}
+  details.client-tpl summary{list-style:none; cursor:pointer;}
+  details.client-tpl summary::-webkit-details-marker{display:none;}
+  details.client-tpl[open] .client-block-header{margin-bottom:10px;}
+
+  .add-step-form{border:1px dashed var(--border-strong); border-radius:var(--radius); padding:12px; margin-top:10px;}
+  .add-step-form .row{display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;}
+  .add-step-form .field{flex:1 1 130px; min-width:110px;}
 
   footer{color:var(--muted); font-size:12px; text-align:center; margin-top:40px;}
 
@@ -205,7 +239,7 @@
   <header class="topbar">
     <div class="brand-block">
       <div class="brand-row"><span class="brand-mark">TNV</span><h1>Candidate Tracker</h1></div>
-      <p class="tagline">Every candidate has a clock running. Track it like a parcel, from remit to offer.</p>
+      <p class="tagline">Every candidate has a clock running, against the times you actually agreed with the client.</p>
     </div>
     <div class="topbar-actions">
       <button class="btn primary" id="addBtn">+ Add candidate</button>
@@ -229,6 +263,7 @@
     <button data-tab="dashboard" class="active">Dashboard</button>
     <button data-tab="candidates">Candidates</button>
     <button data-tab="clients">By client</button>
+    <button data-tab="process">Process</button>
   </nav>
 
   <main>
@@ -257,10 +292,10 @@
             <tr>
               <th data-key="client">Client</th>
               <th data-key="candidateName">Candidate</th>
-              <th data-key="stage">Current stage</th>
+              <th data-key="stage">Current step</th>
               <th data-key="waitingOn">Waiting on</th>
-              <th data-key="owner">TNV owner</th>
-              <th data-key="days" class="sorted">Days in stage</th>
+              <th data-key="owner">Recruiter</th>
+              <th data-key="over" class="sorted">Days over target</th>
               <th data-key="total">Total elapsed</th>
             </tr>
           </thead>
@@ -270,6 +305,14 @@
     </section>
 
     <section id="tab-clients" hidden><div id="clientDetailWrap"></div></section>
+
+    <section id="tab-process" hidden>
+      <div class="section-heading">
+        <h2>Agreed process</h2>
+        <span class="hint">Global default → client → client + vacancy. Each level only overrides what you customize.</span>
+      </div>
+      <div id="processWrap"></div>
+    </section>
   </main>
 
   <footer>Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.</footer>
@@ -288,8 +331,11 @@
         <div><label>Client / company</label><input required type="text" id="f_client" placeholder="e.g. Acme Srl"></div>
         <div><label>Vacancy</label><input required type="text" id="f_vacancy" placeholder="e.g. Senior Backend Developer"></div>
         <div><label>Candidate name</label><input required type="text" id="f_candidateName"></div>
-        <div><label>TNV owner</label><input type="text" id="f_owner" placeholder="e.g. Adelaide"></div>
-        <div><label>Deadline (optional)</label><input type="date" id="f_deadline"></div>
+        <div><label>Recruiter (TNV)</label><input type="text" id="f_owner" placeholder="e.g. Adelaide"></div>
+        <div>
+          <label>Remit received</label>
+          <input type="date" id="f_remitDate">
+        </div>
         <div>
           <label>Outcome</label>
           <select id="f_outcome"></select>
@@ -297,50 +343,11 @@
         <div class="full"><label>Notes</label><textarea id="f_notes"></textarea></div>
       </div>
 
-      <div class="modal-section-title">Tracking timeline</div>
-      <div class="timeline" id="tlContainer"></div>
-
-      <div class="add-checkpoint" id="addCheckpointBox">
-        <div class="row">
-          <div class="field">
-            <label>Next checkpoint</label>
-            <select id="cp_preset"></select>
-          </div>
-          <div class="field" id="cp_customWrap" style="display:none;">
-            <label>Checkpoint name</label>
-            <input type="text" id="cp_customName" placeholder="e.g. Second interview">
-          </div>
-          <div class="field">
-            <label>Date reached</label>
-            <input type="date" id="cp_date">
-          </div>
-          <div class="field">
-            <label>Attribute time to</label>
-            <select id="cp_owner">
-              <option value="">— neutral —</option>
-              <option value="TNV">TNV</option>
-              <option value="Client">Client</option>
-              <option value="Candidate">Candidate</option>
-            </select>
-          </div>
-          <div class="field" style="flex:0 0 auto;">
-            <button type="button" class="btn" id="cp_addBtn">+ Add checkpoint</button>
-          </div>
-        </div>
+      <div class="modal-section-title">
+        <span>Tracking timeline<span id="tplSourceNote" class="sub"></span></span>
+        <button type="button" class="btn small" id="loadTemplateBtn">Load agreed process</button>
       </div>
-
-      <div class="modal-section-title">Currently waiting on</div>
-      <div class="form-grid">
-        <div class="full">
-          <label>Who needs to act next (drives the "days waiting" clock)</label>
-          <select id="f_waitingOn">
-            <option value="TNV">TNV</option>
-            <option value="Client">Client</option>
-            <option value="Candidate">Candidate</option>
-            <option value="—">Nobody / closed</option>
-          </select>
-        </div>
-      </div>
+      <div class="stepper" id="stepperContainer"></div>
 
     </div>
     <div class="modal-foot">
@@ -357,80 +364,55 @@
 (function(){
   "use strict";
 
-  var STORAGE_KEY = "tnv-candidate-tracker-v2";
-  var OLD_STORAGE_KEY = "tnv-candidate-tracker-v1";
+  var STORAGE_KEY = "tnv-candidate-tracker-v3";
+  var OLD_KEY_V2 = "tnv-candidate-tracker-v2";
+  var OLD_KEY_V1 = "tnv-candidate-tracker-v1";
+  var DEFAULT_TARGET_DAYS = 3;
 
-  // Default milestone template. owner = who the time BETWEEN the previous
-  // checkpoint and this one is attributed to (null = neutral / not counted).
-  var TEMPLATE = [
-    {label:"Remit received",            owner:null},
-    {label:"Candidate submitted",       owner:"TNV"},
-    {label:"Client screening complete", owner:"Client"},
-    {label:"Interview scheduled",       owner:"Client"},
-    {label:"Interview held",            owner:null},
-    {label:"Decision made",             owner:"Client"},
-    {label:"Offer made",                owner:"Client"},
-    {label:"Placed",                    owner:"Candidate"}
+  // The default chain every new template starts from.
+  var STANDARD_STEPS = [
+    {label:"Remit received",                 owner:null,       noTarget:true},
+    {label:"First candidate submitted",      owner:"TNV"},
+    {label:"Screening decision",             owner:"Client"},
+    {label:"Interview scheduled",            owner:"Client"},
+    {label:"Interview held",                 owner:null},
+    {label:"Decide if more interviews needed", owner:"Client"},
+    {label:"Decision to make offer",         owner:"Client"},
+    {label:"Offer made",                     owner:"Client"},
+    {label:"Candidate response",             owner:"Candidate"},
+    {label:"Contract sent",                  owner:"Client"},
+    {label:"Placed",                         owner:"Candidate"}
   ];
-  var TERMINAL_EXTRAS = [
-    {label:"Lost to another offer", owner:null, outcome:"Lost to another offer"},
-    {label:"Rejected by client",    owner:null, outcome:"Rejected by client"},
-    {label:"Withdrawn",             owner:null, outcome:"Withdrawn"}
+  // Extra options offered in "+ add other" pickers, not part of the default chain.
+  var EXTRA_LIBRARY = [
+    {label:"Additional interview scheduled", owner:"Client"},
+    {label:"Additional interview held",      owner:null},
+    {label:"Approval required (e.g. CEO)",   owner:"Client"},
+    {label:"Counter-offer negotiation",      owner:"Client"},
+    {label:"Lost to another offer",          owner:null, outcome:"Lost to another offer"},
+    {label:"Rejected by client",             owner:null, outcome:"Rejected by client"},
+    {label:"Withdrawn",                      owner:null, outcome:"Withdrawn"}
   ];
   var OUTCOMES = ["In process","Placed","Lost to another offer","Rejected by client","Withdrawn"];
   var OPEN_OUTCOME = "In process";
 
-  function templateEntry(label){
-    for(var i=0;i<TEMPLATE.length;i++) if(TEMPLATE[i].label===label) return TEMPLATE[i];
-    for(var j=0;j<TERMINAL_EXTRAS.length;j++) if(TERMINAL_EXTRAS[j].label===label) return TERMINAL_EXTRAS[j];
+  function libraryEntry(label){
+    var i;
+    for(i=0;i<STANDARD_STEPS.length;i++) if(STANDARD_STEPS[i].label===label) return STANDARD_STEPS[i];
+    for(i=0;i<EXTRA_LIBRARY.length;i++) if(EXTRA_LIBRARY[i].label===label) return EXTRA_LIBRARY[i];
     return null;
   }
-  function outcomeForCheckpoint(label){
+  function outcomeForLabel(label){
     if(label === "Placed") return "Placed";
-    var t = TERMINAL_EXTRAS.filter(function(x){return x.label===label;})[0];
-    return t ? t.outcome : null;
+    var e = EXTRA_LIBRARY.filter(function(x){return x.label===label;})[0];
+    return e && e.outcome ? e.outcome : null;
   }
 
-  var state = { candidates: [] };
-  var ui = { tab:"dashboard", sortKey:"days", sortDir:"desc",
-    filterClient:"", filterRisk:"", search:"", editingId:null, draftTimeline:[], draftWaitingOn:"TNV" };
+  var state = { globalTemplate: [], clientTemplates: {}, positionTemplates: {}, candidates: [] };
+  var ui = { tab:"dashboard", sortKey:"over", sortDir:"desc",
+    filterClient:"", filterRisk:"", search:"", editingId:null, draftTimeline:[], draftOutcome:OPEN_OUTCOME };
 
-  // ---------- persistence ----------
-  function load(){
-    try{
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){ state = JSON.parse(raw); }
-      else{
-        var old = localStorage.getItem(OLD_STORAGE_KEY);
-        if(old) state = migrateOld(JSON.parse(old));
-      }
-    }catch(e){ console.error("Load failed", e); }
-    if(!state.candidates) state.candidates = [];
-  }
-  function save(){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch(e){ alert("Could not save — your browser storage may be full or blocked."); }
-  }
-  // Convert v1 flat-stage records into a minimal two-point timeline so old data still opens.
-  function migrateOld(old){
-    var out = { candidates: [] };
-    (old.candidates||[]).forEach(function(c){
-      var tl = [];
-      if(c.dateSent) tl.push({id:uid(), name:"Candidate submitted", date:c.dateSent, owner:"TNV"});
-      if(c.stage && c.lastActionDate && c.stage!=="Submitted"){
-        tl.push({id:uid(), name:c.stage, date:c.lastActionDate, owner:null});
-      }
-      if(!tl.length) tl.push({id:uid(), name:"Remit received", date: c.dateSent || todayISO(), owner:null});
-      out.candidates.push({
-        id:c.id||uid(), client:c.client, vacancy:c.vacancy, candidateName:c.candidateName,
-        owner:c.owner||"", deadline:c.deadline||"", outcome:c.outcome||OPEN_OUTCOME,
-        notes:c.notes||"", waitingOn:c.waitingOn||"TNV", timeline: tl
-      });
-    });
-    return out;
-  }
-
-  // ---------- helpers ----------
+  // ---------- ids / dates ----------
   function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
   function todayISO(){ return new Date().toISOString().slice(0,10); }
   function daysBetween(iso1, iso2){
@@ -448,167 +430,277 @@
     var mid = Math.floor(s.length/2);
     return s.length % 2 ? s[mid] : (s[mid-1]+s[mid])/2;
   }
-  function isOpen(c){ return c.outcome === OPEN_OUTCOME; }
-  function sortedTimeline(c){
-    return (c.timeline||[]).slice().sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  function esc(s){ return String(s===undefined||s===null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function escAttr(s){ return esc(s).replace(/"/g,"&quot;"); }
+
+  // ---------- template helpers ----------
+  function newGlobalDefault(){
+    return STANDARD_STEPS.map(function(s){
+      return {id:uid(), label:s.label, owner:s.owner, targetDays: s.noTarget ? null : DEFAULT_TARGET_DAYS};
+    });
   }
-  function riskBand(days){
-    if(days <= 2) return {band:"green", label:"On track"};
-    if(days <= 5) return {band:"amber", label:"Slipping"};
-    if(days <= 10) return {band:"red", label:"At risk"};
+  function cloneSteps(steps){
+    return steps.map(function(s){ return {id:uid(), label:s.label, owner:s.owner, targetDays:s.targetDays}; });
+  }
+  function posKey(client, vacancy){ return client+"__::__"+vacancy; }
+  function resolveTemplate(client, vacancy){
+    var pk = posKey(client, vacancy);
+    if(state.positionTemplates[pk]) return {steps: state.positionTemplates[pk], level:"position"};
+    if(state.clientTemplates[client]) return {steps: state.clientTemplates[client], level:"client"};
+    return {steps: state.globalTemplate, level:"global"};
+  }
+  function levelLabel(level){
+    return level==="position" ? "this vacancy's own process" : level==="client" ? "this client's process" : "the global default process";
+  }
+
+  // ---------- persistence ----------
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ state = JSON.parse(raw); }
+      else{
+        var v2 = localStorage.getItem(OLD_KEY_V2);
+        var v1 = localStorage.getItem(OLD_KEY_V1);
+        if(v2) state = migrateFromV2(JSON.parse(v2));
+        else if(v1) state = migrateFromV2(migrateV1ToV2ish(JSON.parse(v1)));
+      }
+    }catch(e){ console.error("Load failed", e); }
+    if(!state.globalTemplate || !state.globalTemplate.length) state.globalTemplate = newGlobalDefault();
+    if(!state.clientTemplates) state.clientTemplates = {};
+    if(!state.positionTemplates) state.positionTemplates = {};
+    if(!state.candidates) state.candidates = [];
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ alert("Could not save — your browser storage may be full or blocked."); }
+  }
+  function migrateV1ToV2ish(old){
+    var out = { candidates: [] };
+    (old.candidates||[]).forEach(function(c){
+      var tl = [];
+      if(c.dateSent) tl.push({id:uid(), name:"Candidate submitted", date:c.dateSent, owner:"TNV"});
+      if(c.stage && c.lastActionDate) tl.push({id:uid(), name:c.stage, date:c.lastActionDate, owner:null});
+      if(!tl.length) tl.push({id:uid(), name:"Remit received", date: todayISO(), owner:null});
+      out.candidates.push({id:c.id||uid(), client:c.client, vacancy:c.vacancy, candidateName:c.candidateName,
+        owner:c.owner||"", outcome:c.outcome||OPEN_OUTCOME, notes:c.notes||"", timeline:tl});
+    });
+    return out;
+  }
+  // v2 timelines had free-form dated checkpoints with no target days; convert into
+  // a v3 timeline against the (new) global default, marking whatever was reached as "done"
+  // with target = default (so overDays will read 0 until re-checked — best effort only).
+  function migrateFromV2(old){
+    var g = newGlobalDefault();
+    var out = { globalTemplate: g, clientTemplates:{}, positionTemplates:{}, candidates: [] };
+    (old.candidates||[]).forEach(function(c){
+      var oldTl = (c.timeline||[]).slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});
+      var newTl = cloneSteps(g);
+      var remitDate = oldTl.length ? oldTl[0].date : todayISO();
+      newTl[0].targetDays = null;
+      var i;
+      for(i=0;i<newTl.length;i++){
+        if(i < oldTl.length){ newTl[i].actualDate = oldTl[i].date; newTl[i].label = oldTl[i].name || newTl[i].label; }
+        else newTl[i].actualDate = null;
+      }
+      if(newTl.length) newTl[0].actualDate = remitDate;
+      out.candidates.push({id:c.id||uid(), client:c.client, vacancy:c.vacancy, candidateName:c.candidateName,
+        owner:c.owner||"", outcome:c.outcome||OPEN_OUTCOME, notes:c.notes||"", timeline:newTl});
+    });
+    return out;
+  }
+
+  function isOpen(c){ return c.outcome === OPEN_OUTCOME; }
+
+  function riskFromOver(overDays){
+    if(overDays <= 0) return {band:"green", label:"On track"};
+    if(overDays <= 2) return {band:"amber", label:"Slipping"};
+    if(overDays <= 6) return {band:"red", label:"At risk"};
     return {band:"crit", label:"Overdue"};
   }
 
-  // Returns {segments, currentDays, currentBand, currentLabel, totalDays}
+  // ---------- analysis ----------
+  // Walks a candidate's ordered timeline. Entries with actualDate are "done";
+  // the first entry without one is "current" (critical path: its clock starts
+  // the moment the previous entry was completed). Everything after is "pending".
   function analyse(c){
-    var tl = sortedTimeline(c);
-    var segments = [];
+    var tl = c.timeline || [];
+    var segments = []; // {label, targetDays, owner, actualDays, overDays, status:'done'|'current'|'pending'}
+    var firstDate = tl.length ? tl[0].actualDate : null;
+    var lastDoneDate = firstDate;
+    var currentDays = null, currentTarget = null, currentOver = 0, currentBand = "closed", currentLabel = c.outcome, currentOwner = null;
+    var totalTargetDone = 0, totalOverDone = 0;
+
     for(var i=1;i<tl.length;i++){
-      var days = daysBetween(tl[i-1].date, tl[i].date);
-      segments.push({from:tl[i-1].name, to:tl[i].name, toDate:tl[i].date, days:days, owner:tl[i].owner, ongoing:false});
-    }
-    var result = {segments:segments, currentDays:null, currentBand:"closed", currentLabel:c.outcome, totalDays:null};
-    if(tl.length){
-      result.totalDays = daysBetween(tl[0].date, isOpen(c) ? todayISO() : tl[tl.length-1].date);
-      if(isOpen(c)){
-        var last = tl[tl.length-1];
-        var d = daysBetween(last.date, todayISO());
-        if(d<0) d=0;
-        var rb = riskBand(d);
-        result.currentDays = d; result.currentBand = rb.band; result.currentLabel = rb.label;
-        segments.push({from:last.name, to:"Now", toDate:todayISO(), days:d, owner:(c.waitingOn==="—"?null:c.waitingOn), ongoing:true});
+      var step = tl[i];
+      if(step.actualDate){
+        var days = daysBetween(lastDoneDate, step.actualDate);
+        var target = step.targetDays;
+        var over = target===null||target===undefined ? 0 : Math.max(0, days-target);
+        segments.push({label:step.label, targetDays:target, owner:step.owner, days:days, over:over, status:"done"});
+        totalTargetDone += (target||0); totalOverDone += over;
+        lastDoneDate = step.actualDate;
+      } else if(isOpen(c) && currentDays === null){
+        var elapsed = daysBetween(lastDoneDate, todayISO());
+        if(elapsed<0) elapsed=0;
+        var tgt = step.targetDays;
+        var ov = tgt===null||tgt===undefined ? 0 : Math.max(0, elapsed-tgt);
+        var rb = riskFromOver(ov);
+        segments.push({label:step.label, targetDays:tgt, owner:step.owner, days:elapsed, over:ov, status:"current"});
+        currentDays = elapsed; currentTarget = tgt; currentOver = ov; currentBand = rb.band; currentLabel = step.label; currentOwner = step.owner;
+      } else {
+        segments.push({label:step.label, targetDays:step.targetDays, owner:step.owner, days:null, over:null, status:"pending"});
       }
     }
-    return result;
+    var totalActual = firstDate ? daysBetween(firstDate, isOpen(c) ? todayISO() : lastDoneDate) : null;
+    var totalOver = totalOverDone + (isOpen(c) ? currentOver : 0);
+    return {segments:segments, currentDays:currentDays, currentOver: isOpen(c)?currentOver:null,
+      currentBand: isOpen(c)?currentBand:"closed", currentLabel: currentLabel, currentOwner: currentOwner,
+      totalActual: totalActual, totalOver: totalOver};
   }
-  function effortLabel(medianDays){
-    if(medianDays === null || medianDays === undefined) return null;
-    if(medianDays <= 3) return "Low";
-    if(medianDays <= 8) return "Medium";
-    return "High";
+  function currentStepName(c){
+    var tl = c.timeline||[];
+    for(var i=1;i<tl.length;i++) if(!tl[i].actualDate) return tl[i].label;
+    return tl.length ? tl[tl.length-1].label : "—";
+  }
+  function effortLabel(days){
+    if(days===null||days===undefined) return null;
+    if(days<=1) return "Low"; if(days<=4) return "Medium"; return "High";
   }
 
   // ---------- sample data ----------
   function sampleData(){
     function back(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
-    function tl(){ var a=[]; for(var i=0;i<arguments.length;i+=3){ a.push({id:uid(), name:arguments[i], date:back(arguments[i+1]), owner:arguments[i+2]}); } return a; }
-    return [
-      { id:uid(), client:"Acme Software Srl", vacancy:"Senior Backend Developer", candidateName:"Francesca Melis",
-        owner:"Adelaide", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"Strong candidate, currently also interviewing elsewhere.",
-        timeline: tl("Remit received",34,null, "Candidate submitted",31,"TNV", "Client screening complete",29,"Client") },
+    function step(label, owner, targetDays, actualBack){
+      return {id:uid(), label:label, owner:owner, targetDays:targetDays, actualDate: actualBack===undefined ? null : back(actualBack)};
+    }
+    var g = state.globalTemplate;
+    function fresh(){ return cloneSteps(g).map(function(s){ return Object.assign(s, {actualDate:null}); }); }
 
-      { id:uid(), client:"Acme Software Srl", vacancy:"Senior Backend Developer", candidateName:"Marco Deiana",
-        owner:"Adelaide", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"",
-        timeline: tl("Remit received",34,null, "Candidate submitted",20,"TNV") },
+    var list = [];
 
-      { id:uid(), client:"Acme Software Srl", vacancy:"QA Engineer", candidateName:"Giulia Pinna",
-        owner:"Matteo", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"TNV",
-        notes:"",
-        timeline: tl("Remit received",12,null, "Candidate submitted",9,"TNV") },
+    // Acme: fast client, one candidate stuck right now on screening decision.
+    var acme1 = fresh();
+    acme1[0].actualDate = back(20);
+    acme1[1].actualDate = back(17); acme1[1].targetDays=3;
+    // screening decision (index 2) left pending -> current, target 3, elapsed ~9 -> 6 over
+    list.push({id:uid(), client:"Acme Software Srl", vacancy:"Senior Backend Developer", candidateName:"Francesca Melis",
+      owner:"Adelaide", outcome:OPEN_OUTCOME, notes:"Strong candidate, also interviewing elsewhere.", timeline:acme1});
 
-      { id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Sara Cocco",
-        owner:"Matteo", deadline:back(-2), outcome:OPEN_OUTCOME, waitingOn:"TNV",
-        notes:"",
-        timeline: tl("Remit received",22,null, "Candidate submitted",14,"TNV", "Client screening complete",13,"Client", "Interview scheduled",13,"Client") },
+    var acme2 = fresh();
+    acme2[0].actualDate = back(9);
+    // still on "First candidate submitted" target, on track
+    list.push({id:uid(), client:"Acme Software Srl", vacancy:"QA Engineer", candidateName:"Giulia Pinna",
+      owner:"Matteo", outcome:OPEN_OUTCOME, notes:"", timeline:acme2});
 
-      { id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Luca Serra",
-        owner:"Matteo", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"Candidate told us he has another offer expiring soon.",
-        timeline: tl("Remit received",70,null, "Candidate submitted",45,"TNV", "Client screening complete",42,"Client",
-                     "Interview scheduled",41,"Client", "Interview held",40,null) },
+    // Meridiana: chronically slow at screening + decision.
+    var mer1 = fresh();
+    mer1[0].actualDate = back(30);
+    mer1[1].actualDate = back(27);
+    mer1[2].actualDate = back(18); // screening: target 3, took 9 -> 6 over
+    mer1[3].actualDate = back(16); // interview scheduled: target 3, took 2 -> on track
+    mer1[4].actualDate = back(15); // interview held
+    // decide if more interviews needed -> current, elapsed ~15, target 3 -> way over
+    list.push({id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Luca Serra",
+      owner:"Matteo", outcome:OPEN_OUTCOME, notes:"Candidate has a competing offer expiring soon.", timeline:mer1});
 
-      { id:uid(), client:"Isola Digitale", vacancy:"Frontend Developer", candidateName:"Elena Fadda",
-        owner:"Adelaide", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"",
-        timeline: tl("Remit received",10,null, "Candidate submitted",6,"TNV", "Client screening complete",5,"Client",
-                     "Interview scheduled",5,"Client", "Interview held",1,null) },
+    var mer2 = fresh();
+    mer2[0].actualDate = back(14);
+    mer2[1].actualDate = back(11);
+    // screening decision current, elapsed 11 days, target 3 -> 8 over
+    list.push({id:uid(), client:"Meridiana Tech SpA", vacancy:"Data Analyst", candidateName:"Sara Cocco",
+      owner:"Matteo", outcome:OPEN_OUTCOME, notes:"", timeline:mer2});
 
-      { id:uid(), client:"Isola Digitale", vacancy:"Frontend Developer", candidateName:"Davide Porcu",
-        owner:"Adelaide", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"Three weeks with no reply after a positive interview.",
-        timeline: tl("Remit received",80,null, "Candidate submitted",60,"TNV", "Client screening complete",55,"Client",
-                     "Interview scheduled",50,"Client", "Interview held",36,null, "Decision made",15,"Client") },
+    // Isola: one placed (clean history), one lost after a slow decision.
+    var iso1 = fresh();
+    iso1[0].actualDate = back(45); iso1[1].actualDate = back(42); iso1[2].actualDate = back(40);
+    iso1[3].actualDate = back(38); iso1[4].actualDate = back(34); iso1[5].actualDate = back(32);
+    iso1[6].actualDate = back(29); iso1[7].actualDate = back(26); iso1[8].actualDate = back(24);
+    iso1[9].actualDate = back(21); iso1[10].actualDate = back(3);
+    list.push({id:uid(), client:"Isola Digitale", vacancy:"Frontend Developer", candidateName:"Andrea Lai",
+      owner:"Adelaide", outcome:"Placed", notes:"Started 3 days ago.", timeline:iso1});
 
-      { id:uid(), client:"Isola Digitale", vacancy:"DevOps Engineer", candidateName:"Chiara Mura",
-        owner:"Matteo", deadline:"", outcome:OPEN_OUTCOME, waitingOn:"Client",
-        notes:"",
-        timeline: tl("Remit received",8,null, "Candidate submitted",5,"TNV") },
+    var iso2 = fresh();
+    iso2[0].actualDate = back(60); iso2[1].actualDate = back(55); iso2[2].actualDate = back(50);
+    iso2[3].actualDate = back(48); iso2[4].actualDate = back(44);
+    // decision to make offer took a long time then candidate was lost
+    var lostStep = {id:uid(), label:"Lost to another offer", owner:null, targetDays:null, actualDate: back(20)};
+    iso2 = iso2.slice(0,6).concat([lostStep]);
+    list.push({id:uid(), client:"Isola Digitale", vacancy:"DevOps Engineer", candidateName:"Davide Porcu",
+      owner:"Adelaide", outcome:"Lost to another offer", notes:"Client sat on the final decision for three weeks.", timeline:iso2});
 
-      { id:uid(), client:"Barbagia Robotics", vacancy:"Embedded Engineer", candidateName:"Andrea Lai",
-        owner:"Adelaide", deadline:"", outcome:"Placed", waitingOn:"—",
-        notes:"Started 3 days ago.",
-        timeline: tl("Remit received",45,null, "Candidate submitted",40,"TNV", "Client screening complete",38,"Client",
-                     "Interview scheduled",37,"Client", "Interview held",33,null, "Decision made",30,"Client",
-                     "Offer made",27,"Client", "Placed",3,"Candidate") },
-
-      { id:uid(), client:"Barbagia Robotics", vacancy:"Embedded Engineer", candidateName:"Simone Piras",
-        owner:"Adelaide", deadline:"", outcome:"Lost to another offer", waitingOn:"—",
-        notes:"Accepted a competing offer while the client sat on the final decision.",
-        timeline: tl("Remit received",44,null, "Candidate submitted",38,"TNV", "Client screening complete",36,"Client",
-                     "Interview scheduled",35,"Client", "Interview held",30,null, "Lost to another offer",10,null) }
-    ];
+    return list;
   }
 
-  // ---------- derived data ----------
+  // ---------- derived: clients / positions ----------
   function clientsList(){
+    var set = {}; state.candidates.forEach(function(c){ set[c.client]=true; });
+    Object.keys(state.clientTemplates).forEach(function(c){ set[c]=true; });
+    return Object.keys(set).sort();
+  }
+  function vacanciesForClient(client){
     var set = {};
-    state.candidates.forEach(function(c){ set[c.client]=true; });
+    state.candidates.filter(function(c){return c.client===client;}).forEach(function(c){ set[c.vacancy]=true; });
+    Object.keys(state.positionTemplates).forEach(function(k){
+      var parts = k.split("__::__");
+      if(parts[0]===client) set[parts[1]]=true;
+    });
     return Object.keys(set).sort();
   }
   function clientStats(clientName){
     var all = state.candidates.filter(function(c){ return c.client === clientName; });
     var open = all.filter(isOpen);
-    var openAnalysis = open.map(analyse);
+    var openA = open.map(analyse);
     var counts = {green:0, amber:0, red:0, crit:0};
-    openAnalysis.forEach(function(a){ counts[a.currentBand] = (counts[a.currentBand]||0)+1; });
-    var currentWaits = openAnalysis.map(function(a){ return a.currentDays; }).filter(function(d){return d!==null;});
-    var medCurrent = median(currentWaits);
+    openA.forEach(function(a){ counts[a.currentBand] = (counts[a.currentBand]||0)+1; });
+    var overs = openA.map(function(a){return a.currentOver;}).filter(function(d){return d!==null;});
+    var medOver = median(overs);
 
-    // Historical: every CLOSED segment attributed to "Client", across all candidates (open or closed).
-    var clientSegDays = [];
+    var byStep = {};
     all.forEach(function(c){
       analyse(c).segments.forEach(function(s){
-        if(!s.ongoing && s.owner === "Client") clientSegDays.push(s.days);
+        if(s.status==="done" && s.targetDays!==null && s.targetDays!==undefined){
+          byStep[s.label] = byStep[s.label] || [];
+          byStep[s.label].push(s.over);
+        }
       });
     });
-    var medHistorical = median(clientSegDays);
+    var problems = Object.keys(byStep).map(function(label){
+      var arr = byStep[label];
+      var avg = arr.reduce(function(a,b){return a+b;},0)/arr.length;
+      return {label:label, avgOver:avg, count:arr.length};
+    }).filter(function(p){return p.avgOver>0;}).sort(function(a,b){return b.avgOver-a.avgOver;});
 
     var placed = all.filter(function(c){return c.outcome==="Placed";}).length;
     var lost = all.filter(function(c){return c.outcome==="Lost to another offer";}).length;
-    return {name:clientName, all:all, open:open, counts:counts, medianCurrentWait:medCurrent,
-      medianHistoricalClient:medHistorical, effort:effortLabel(medHistorical!==null?medHistorical:medCurrent),
-      placed:placed, lost:lost};
+    return {name:clientName, all:all, open:open, counts:counts, medianOver:medOver,
+      effort:effortLabel(medOver), problems:problems, placed:placed, lost:lost};
   }
 
-  // ---------- rendering ----------
+  // ---------- rendering: dashboard ----------
   function renderAll(){
-    renderStatStrip(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail();
+    renderStatStrip(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail(); renderProcessTab();
   }
-
   function renderStatStrip(){
     var open = state.candidates.filter(isOpen);
     var openA = open.map(analyse);
     var counts = {green:0, amber:0, red:0, crit:0};
     openA.forEach(function(a){ counts[a.currentBand]=(counts[a.currentBand]||0)+1; });
-    var waits = openA.map(function(a){return a.currentDays;}).filter(function(d){return d!==null;});
-    var med = median(waits);
+    var overs = openA.map(function(a){return a.currentOver;}).filter(function(d){return d!==null;});
+    var med = median(overs);
     var stats = [
       {n: open.length, l:"Active candidates", cls:""},
       {n: counts.green||0, l:"On track", cls:"green"},
       {n: counts.amber||0, l:"Slipping", cls:"amber"},
       {n: (counts.red||0)+(counts.crit||0), l:"At risk / overdue", cls:"red"},
-      {n: med===null ? "—" : med.toFixed(1)+"d", l:"Median current wait", cls:""}
+      {n: med===null ? "—" : med.toFixed(1)+"d", l:"Median days over target", cls:""}
     ];
     document.getElementById("statStrip").innerHTML = stats.map(function(s){
       return '<div class="stat '+s.cls+'"><div class="n">'+s.n+'</div><div class="l">'+s.l+'</div></div>';
     }).join("");
   }
-
   function renderClientGrid(){
     var wrap = document.getElementById("clientGridWrap");
-    var names = clientsList();
+    var names = state.candidates.length ? Array.from(new Set(state.candidates.map(function(c){return c.client;}))).sort() : [];
     if(!names.length){ wrap.innerHTML = emptyStateHTML(); bindEmptyState(); return; }
     var cards = names.map(function(name){
       var s = clientStats(name);
@@ -616,13 +708,14 @@
       ["green","amber","red","crit"].forEach(function(band){
         for(var i=0;i<(s.counts[band]||0);i++) dots += '<span class="dot '+band+'"></span>';
       });
-      var histTxt = s.medianHistoricalClient===null ? "—" : s.medianHistoricalClient.toFixed(1)+" days";
-      var effortTag = s.effort ? '<span class="effort-tag '+s.effort+'">'+s.effort+' effort</span>' : "";
+      var medTxt = s.medianOver===null ? "—" : s.medianOver.toFixed(1)+"d over";
+      var topProblem = s.problems.length ? esc(s.problems[0].label)+" (avg +"+s.problems[0].avgOver.toFixed(1)+"d)" : "no recurring overrun yet";
       return '<div class="client-card" data-client="'+escAttr(name)+'">'
         + '<div class="top"><h3>'+esc(name)+'</h3><span class="count">'+s.open.length+' active</span></div>'
         + '<div class="risk-dots">'+(dots || '<span style="color:var(--muted); font-size:12px;">no active candidates</span>')+'</div>'
-        + '<div class="stat-line">Typical client response time: <b>'+histTxt+'</b></div>'
-        + effortTag + '</div>';
+        + '<div class="stat-line">Median right now: <b>'+medTxt+'</b></div>'
+        + '<div class="stat-line">Biggest hold-up: <b>'+topProblem+'</b></div>'
+        + '</div>';
     }).join("");
     wrap.innerHTML = '<div class="client-grid">'+cards+'</div>';
     wrap.querySelectorAll(".client-card").forEach(function(card){
@@ -635,7 +728,6 @@
       });
     });
   }
-
   function emptyStateHTML(){
     return '<div class="empty-state"><h3>No candidates yet</h3>'
       + '<p>Add your first candidate, or load sample data to see how the timeline works.</p>'
@@ -647,15 +739,15 @@
     if(a) a.addEventListener("click", function(){ openModal(); });
     if(s) s.addEventListener("click", loadSampleData);
   }
-
   function populateClientFilter(){
     var sel = document.getElementById("filterClient");
     var current = sel.value;
-    var names = clientsList();
+    var names = Array.from(new Set(state.candidates.map(function(c){return c.client;}))).sort();
     sel.innerHTML = '<option value="">All clients</option>' + names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("");
     sel.value = names.indexOf(current) >= 0 ? current : "";
   }
 
+  // ---------- candidates table ----------
   function filteredCandidates(){
     var list = state.candidates.slice();
     if(ui.filterClient) list = list.filter(function(c){ return c.client === ui.filterClient; });
@@ -668,19 +760,14 @@
     list.sort(function(a,b){
       var dir = ui.sortDir === "asc" ? 1 : -1;
       var ka, kb;
-      if(ui.sortKey === "days"){ ka = a._a.currentDays===null?-1:a._a.currentDays; kb = b._a.currentDays===null?-1:b._a.currentDays; }
-      else if(ui.sortKey === "total"){ ka = a._a.totalDays===null?-1:a._a.totalDays; kb = b._a.totalDays===null?-1:b._a.totalDays; }
-      else if(ui.sortKey === "stage"){ ka=(currentStageName(a)||"").toLowerCase(); kb=(currentStageName(b)||"").toLowerCase(); }
-      else { ka = (a[ui.sortKey]||"").toString().toLowerCase(); kb = (b[ui.sortKey]||"").toString().toLowerCase(); }
-      if(ka < kb) return -1*dir; if(ka > kb) return 1*dir; return 0;
+      if(ui.sortKey === "over"){ ka=a._a.currentOver===null?-1:a._a.currentOver; kb=b._a.currentOver===null?-1:b._a.currentOver; }
+      else if(ui.sortKey === "total"){ ka=a._a.totalActual===null?-1:a._a.totalActual; kb=b._a.totalActual===null?-1:b._a.totalActual; }
+      else if(ui.sortKey === "stage"){ ka=currentStepName(a).toLowerCase(); kb=currentStepName(b).toLowerCase(); }
+      else { ka=(a[ui.sortKey]||"").toString().toLowerCase(); kb=(b[ui.sortKey]||"").toString().toLowerCase(); }
+      if(ka<kb) return -1*dir; if(ka>kb) return 1*dir; return 0;
     });
     return list;
   }
-  function currentStageName(c){
-    var tl = sortedTimeline(c);
-    return tl.length ? tl[tl.length-1].name : "—";
-  }
-
   function renderCandidatesTable(){
     var tbody = document.getElementById("candTbody");
     var list = filteredCandidates();
@@ -690,14 +777,15 @@
       tbody.innerHTML = list.map(function(c){
         var a = c._a;
         var badge = a.currentBand === "closed"
-          ? '<span class="badge closed">'+esc(a.currentLabel)+'</span>'
-          : '<span class="badge '+a.currentBand+'">'+a.currentDays+'d · '+esc(a.currentLabel)+'</span>';
-        var totalTxt = a.totalDays===null ? "—" : a.totalDays+"d";
+          ? '<span class="badge closed">'+esc(c.outcome)+'</span>'
+          : '<span class="badge '+a.currentBand+'">'+(a.currentOver>0?'+':'')+a.currentOver+'d</span>';
+        var totalTxt = a.totalActual===null ? "—" : a.totalActual+"d";
+        var waitingOn = isOpen(c) ? (a.currentOwner || "—") : "—";
         return '<tr data-id="'+c.id+'">'
           + '<td>'+esc(c.client)+'</td>'
           + '<td class="name-cell"><b>'+esc(c.candidateName)+'</b><div class="sub">'+esc(c.vacancy)+'</div></td>'
-          + '<td><span class="stage-pill">'+esc(currentStageName(c))+'</span></td>'
-          + '<td class="waiting-tag">'+esc(isOpen(c) ? (c.waitingOn||"—") : "—")+'</td>'
+          + '<td><span class="stage-pill">'+esc(currentStepName(c))+'</span></td>'
+          + '<td>'+(waitingOn!=="—" ? '<span class="owner-tag '+waitingOn+'">'+esc(waitingOn)+'</span>' : '—')+'</td>'
           + '<td>'+esc(c.owner||"—")+'</td>'
           + '<td class="num">'+badge+'</td>'
           + '<td class="num">'+totalTxt+'</td>'
@@ -713,30 +801,192 @@
     });
   }
 
+  // ---------- by-client tab ----------
   function renderClientDetail(){
     var wrap = document.getElementById("clientDetailWrap");
-    var names = clientsList();
+    var names = Array.from(new Set(state.candidates.map(function(c){return c.client;}))).sort();
     if(!names.length){ wrap.innerHTML = emptyStateHTML(); bindEmptyState(); return; }
     wrap.innerHTML = names.map(function(name){
       var s = clientStats(name);
-      var histTxt = s.medianHistoricalClient===null ? "—" : s.medianHistoricalClient.toFixed(1)+" days";
+      var medTxt = s.medianOver===null ? "—" : s.medianOver.toFixed(1)+" days";
       var atRisk = (s.counts.red||0)+(s.counts.crit||0);
-      var ceoLine = s.medianHistoricalClient===null ? "" :
-        '<div class="ceo-line">Framed for the client: on average, once a candidate is in your hands, it takes <b>'+histTxt+'</b> to hear back — across screening, scheduling, decisions and offers.</div>';
+      var problemRows = s.problems.slice(0,5).map(function(p){
+        return '<tr><td>'+esc(p.label)+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
+      }).join("");
+      var problemTable = s.problems.length
+        ? '<table class="problem-table"><thead><tr><th>Step</th><th>Avg over target</th><th>Occurrences</th></tr></thead><tbody>'+problemRows+'</tbody></table>'
+        : '<div class="ceo-line">No step has consistently overrun its target yet.</div>';
+      var ceoLine = s.problems.length
+        ? '<div class="ceo-line">Framed for the client: the recurring hold-up is <b>'+esc(s.problems[0].label)+'</b> — averaging <b>'+s.problems[0].avgOver.toFixed(1)+' days</b> over the agreed target, across '+s.problems[0].count+' candidate'+(s.problems[0].count===1?'':'s')+'.</div>'
+        : '';
       return '<div class="client-detail-card" data-detail="'+escAttr(name)+'">'
         + '<h3>'+esc(name)+'</h3>'
         + '<div class="client-kpis">'
         + kpi(s.open.length, "Active")
         + kpi(atRisk, "At risk / overdue")
-        + kpi(histTxt, "Typical client response")
+        + kpi(medTxt, "Median days over (now)")
         + kpi(s.placed, "Placed")
         + kpi(s.lost, "Lost to other offers")
-        + '</div>' + ceoLine + '</div>';
+        + '</div>'
+        + '<div class="section-heading" style="margin-bottom:4px;"><h2 style="font-size:14px;">Where the time goes</h2></div>'
+        + problemTable + ceoLine
+        + '</div>';
     }).join("");
   }
   function kpi(n,l){ return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
 
-  // ---------- modal: static fields + timeline editor ----------
+  // ---------- Process tab ----------
+  function renderProcessTab(){
+    var wrap = document.getElementById("processWrap");
+    var html = renderTemplateBlock("Global default", "Applies to any client or vacancy with no customization of its own.",
+      state.globalTemplate, {kind:"global"});
+    var names = clientsList();
+    if(names.length){
+      html += '<div class="template-block"><h3>Clients</h3><div class="sub">Click a client to view or customize their process.</div>';
+      names.forEach(function(name){
+        var hasClientTpl = !!state.clientTemplates[name];
+        html += '<details class="client-tpl"><summary><div class="client-block-header">'
+          + '<b>'+esc(name)+'</b><span class="status">'+(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
+        if(hasClientTpl){
+          html += renderStepListEditor(state.clientTemplates[name], {kind:"client", client:name});
+        } else {
+          html += '<div style="padding:8px 0;"><button class="btn small" data-action="customize-client" data-client="'+escAttr(name)+'">Customize this client\'s process</button></div>';
+        }
+        var vacs = vacanciesForClient(name);
+        if(vacs.length){
+          html += '<div class="vacancy-list"><div class="sub" style="margin-bottom:6px;">Vacancies at '+esc(name)+'</div>';
+          vacs.forEach(function(v){
+            var pk = posKey(name, v);
+            var hasPosTpl = !!state.positionTemplates[pk];
+            html += '<div class="vacancy-row"><span class="name">'+esc(v)+'</span>';
+            if(hasPosTpl){
+              html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button></span>';
+            } else {
+              html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button></span>';
+            }
+            html += '</div>';
+            if(hasPosTpl && ui.openPosition === pk){
+              html += renderStepListEditor(state.positionTemplates[pk], {kind:"position", client:name, vacancy:v});
+            }
+          });
+          html += '</div>';
+        }
+        html += '</details>';
+      });
+      html += '</div>';
+    }
+    wrap.innerHTML = html;
+    bindProcessTabEvents(wrap);
+  }
+  function renderTemplateBlock(title, sub, steps, ctx){
+    return '<div class="template-block"><h3>'+esc(title)+'</h3><div class="sub">'+esc(sub)+'</div>'+renderStepListEditor(steps, ctx)+'</div>';
+  }
+  function renderStepListEditor(steps, ctx){
+    var ctxAttr = 'data-kind="'+ctx.kind+'" data-client="'+escAttr(ctx.client||"")+'" data-vacancy="'+escAttr(ctx.vacancy||"")+'"';
+    var rows = steps.map(function(s, idx){
+      var days = s.targetDays===null||s.targetDays===undefined ? '<span style="color:var(--muted); font-size:12px;">start marker</span>'
+        : '<input type="number" min="0" class="target-edit tpl-days-input" data-id="'+s.id+'" '+ctxAttr+' value="'+s.targetDays+'"> d';
+      var ownerTag = s.owner ? '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>' : '<span style="color:var(--muted); font-size:11px;">neutral</span>';
+      return '<div class="tpl-row">'
+        + '<div class="tpl-reorder">'
+        + '<button type="button" class="icon-btn tpl-move" data-dir="up" data-id="'+s.id+'" '+ctxAttr+' '+(idx===0?'disabled':'')+'>▲</button>'
+        + '<button type="button" class="icon-btn tpl-move" data-dir="down" data-id="'+s.id+'" '+ctxAttr+' '+(idx===steps.length-1?'disabled':'')+'>▼</button>'
+        + '</div>'
+        + '<div class="tpl-label">'+esc(s.label)+'</div>'
+        + '<div class="tpl-owner">'+ownerTag+'</div>'
+        + '<div>'+days+'</div>'
+        + (idx===0 ? '' : '<button type="button" class="icon-btn tpl-remove" data-id="'+s.id+'" '+ctxAttr+'>✕</button>')
+        + '</div>';
+    }).join("");
+    var pickerOptions = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){
+      return !steps.some(function(x){return x.label===s.label;});
+    });
+    var picker = '<div class="add-step-form"><div class="row">'
+      + '<div class="field"><label>Add step</label><select class="tpl-add-select" '+ctxAttr+'>'
+      + pickerOptions.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(o.label)+'</option>'; }).join("")
+      + '<option value="__custom__">Custom…</option></select></div>'
+      + '<div class="field tpl-custom-name-wrap" style="display:none;"><label>Step name</label><input type="text" class="tpl-custom-name"></div>'
+      + '<div class="field" style="flex:0 0 80px;"><label>Target days</label><input type="number" min="0" class="tpl-add-days" value="'+DEFAULT_TARGET_DAYS+'"></div>'
+      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn small tpl-add-btn" '+ctxAttr+'>+ Add</button></div>'
+      + '</div></div>';
+    return '<div class="tpl-list">'+rows+'</div>'+picker;
+  }
+  function getStepsFor(kind, client, vacancy){
+    if(kind==="global") return state.globalTemplate;
+    if(kind==="client") return state.clientTemplates[client];
+    return state.positionTemplates[posKey(client, vacancy)];
+  }
+  function bindProcessTabEvents(wrap){
+    wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var client = btn.dataset.client;
+        var resolved = resolveTemplate(client, "__none__");
+        state.clientTemplates[client] = cloneSteps(resolved.steps);
+        save(); renderProcessTab();
+      });
+    });
+    wrap.querySelectorAll('[data-action="customize-position"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var client = btn.dataset.client, vacancy = btn.dataset.vacancy;
+        var resolved = resolveTemplate(client, vacancy);
+        state.positionTemplates[posKey(client,vacancy)] = cloneSteps(resolved.steps);
+        ui.openPosition = posKey(client,vacancy);
+        save(); renderProcessTab();
+      });
+    });
+    wrap.querySelectorAll('[data-action="edit-position"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        ui.openPosition = posKey(btn.dataset.client, btn.dataset.vacancy);
+        renderProcessTab();
+      });
+    });
+    wrap.querySelectorAll(".tpl-days-input").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var steps = getStepsFor(inp.dataset.kind, inp.dataset.client, inp.dataset.vacancy);
+        var s = steps.filter(function(x){return x.id===inp.dataset.id;})[0];
+        if(s){ s.targetDays = Math.max(0, parseInt(inp.value,10)||0); save(); }
+      });
+    });
+    wrap.querySelectorAll(".tpl-move").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
+        var swapWith = btn.dataset.dir==="up" ? idx-1 : idx+1;
+        if(swapWith<0 || swapWith>=steps.length || idx<=0 || swapWith<=0) return; // never move the start marker or swap into its slot
+        var tmp = steps[idx]; steps[idx]=steps[swapWith]; steps[swapWith]=tmp;
+        save(); renderProcessTab();
+      });
+    });
+    wrap.querySelectorAll(".tpl-remove").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        var idx = steps.findIndex(function(x){return x.id===btn.dataset.id;});
+        if(idx>0) steps.splice(idx,1);
+        save(); renderProcessTab();
+      });
+    });
+    wrap.querySelectorAll(".tpl-add-select").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        var wrapEl = sel.closest(".add-step-form").querySelector(".tpl-custom-name-wrap");
+        wrapEl.style.display = sel.value==="__custom__" ? "block" : "none";
+      });
+    });
+    wrap.querySelectorAll(".tpl-add-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var form = btn.closest(".add-step-form");
+        var sel = form.querySelector(".tpl-add-select");
+        var label = sel.value==="__custom__" ? form.querySelector(".tpl-custom-name").value.trim() : sel.value;
+        var days = Math.max(0, parseInt(form.querySelector(".tpl-add-days").value,10)||0);
+        if(!label) return;
+        var lib = libraryEntry(label);
+        var steps = getStepsFor(btn.dataset.kind, btn.dataset.client, btn.dataset.vacancy);
+        steps.push({id:uid(), label:label, owner: lib?lib.owner:null, targetDays: days});
+        save(); renderProcessTab();
+      });
+    });
+  }
+
+  // ---------- Candidate modal ----------
   var modal = document.getElementById("candModal");
   fillSelect("f_outcome", OUTCOMES);
   function fillSelect(id, options){
@@ -752,14 +1002,20 @@
     document.getElementById("f_vacancy").value = c ? c.vacancy : "";
     document.getElementById("f_candidateName").value = c ? c.candidateName : "";
     document.getElementById("f_owner").value = c ? c.owner : "";
-    document.getElementById("f_deadline").value = c ? (c.deadline||"") : "";
     document.getElementById("f_outcome").value = c ? c.outcome : OPEN_OUTCOME;
     document.getElementById("f_notes").value = c ? (c.notes||"") : "";
-    document.getElementById("f_waitingOn").value = c ? (c.waitingOn||"TNV") : "TNV";
 
-    ui.draftTimeline = c ? sortedTimeline(c).map(function(cp){ return Object.assign({}, cp); })
-                         : [{id:uid(), name:"Remit received", date: todayISO(), owner:null}];
-    renderTimelineEditor();
+    if(c){
+      document.getElementById("f_remitDate").value = c.timeline && c.timeline[0] ? c.timeline[0].actualDate : todayISO();
+      ui.draftTimeline = (c.timeline||[]).map(function(s){ return Object.assign({}, s); });
+      document.getElementById("loadTemplateBtn").textContent = "Reload agreed process";
+    } else {
+      document.getElementById("f_remitDate").value = todayISO();
+      ui.draftTimeline = [];
+      document.getElementById("loadTemplateBtn").textContent = "Load agreed process";
+    }
+    document.getElementById("tplSourceNote").textContent = "";
+    renderStepper();
     modal.showModal();
   }
   function closeModal(){ modal.close(); ui.editingId = null; }
@@ -768,111 +1024,175 @@
   document.getElementById("modalClose").addEventListener("click", closeModal);
   document.getElementById("cancelBtn").addEventListener("click", closeModal);
 
-  function nextSuggestedStage(){
-    if(!ui.draftTimeline.length) return TEMPLATE[0].label;
-    var lastName = ui.draftTimeline[ui.draftTimeline.length-1].name;
-    var idx = -1;
-    for(var i=0;i<TEMPLATE.length;i++) if(TEMPLATE[i].label===lastName) idx = i;
-    if(idx >= 0 && idx < TEMPLATE.length-1) return TEMPLATE[idx+1].label;
-    return null; // custom / terminal — user should type a custom checkpoint
-  }
-
-  function renderTimelineEditor(){
-    var box = document.getElementById("tlContainer");
-    var tl = ui.draftTimeline;
-    var html = "";
-    for(var i=0;i<tl.length;i++){
-      var isLast = i === tl.length-1;
-      var isOngoingRow = isLast && document.getElementById("f_outcome").value === OPEN_OUTCOME;
-      html += '<div class="tl-item'+(isOngoingRow?' ongoing':'')+'">'
-        + '<div class="tl-dot"></div>'
-        + '<div class="tl-row"><span class="tl-name">'+esc(tl[i].name)+'</span>'
-        + '<span class="tl-date">'+fmtDate(tl[i].date)+(tl.length>1?' <button type="button" class="tl-remove" data-idx="'+i+'" title="Remove checkpoint">✕</button>':'')+'</span></div>';
-      if(i>0){
-        var days = daysBetween(tl[i-1].date, tl[i].date);
-        var rb = riskBand(days<0?0:days);
-        var ownerTag = tl[i].owner ? '<span class="owner-tag '+tl[i].owner+'">'+tl[i].owner+'</span>' : '';
-        html += '<div class="tl-gap"><span class="tl-gap-days '+(days>2?rb.band:'')+'">'+days+'d</span>'+ownerTag+'</div>';
-      }
-      html += '</div>';
+  document.getElementById("loadTemplateBtn").addEventListener("click", function(){
+    var client = document.getElementById("f_client").value.trim();
+    var vacancy = document.getElementById("f_vacancy").value.trim();
+    if(!client || !vacancy){ alert("Enter the client and vacancy first."); return; }
+    var doneCount = ui.draftTimeline.filter(function(s){return s.actualDate;}).length;
+    if(doneCount > 1 && !confirm("This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?")) return;
+    var resolved = resolveTemplate(client, vacancy);
+    var doneSoFar = ui.draftTimeline.filter(function(s){return s.actualDate;});
+    var fresh = cloneSteps(resolved.steps);
+    if(doneSoFar.length){
+      // keep whatever's actually happened, append pending steps beyond what's done, matched by position
+      ui.draftTimeline = doneSoFar.concat(fresh.slice(doneSoFar.length));
+    } else {
+      fresh[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
+      ui.draftTimeline = fresh;
     }
-    // ongoing "now" row
-    if(document.getElementById("f_outcome").value === OPEN_OUTCOME && tl.length){
-      var lastCp = tl[tl.length-1];
-      var d = daysBetween(lastCp.date, todayISO()); if(d<0) d=0;
-      var rb2 = riskBand(d);
-      var wOn = document.getElementById("f_waitingOn").value;
-      var ownerTag2 = wOn && wOn!=="—" ? '<span class="owner-tag '+wOn+'">'+wOn+'</span>' : '';
-      html += '<div class="tl-gap" style="padding-left:26px;"><span class="tl-gap-days '+rb2.band+'">'+d+'d so far</span>'+ownerTag2+' <span style="color:var(--muted);">— ongoing</span></div>';
+    document.getElementById("tplSourceNote").textContent = " — loaded from " + levelLabel(resolved.level);
+    renderStepper();
+  });
+
+  function renderStepper(){
+    var box = document.getElementById("stepperContainer");
+    var tl = ui.draftTimeline;
+    if(!tl.length){
+      box.innerHTML = '<div class="empty-state" style="padding:24px;"><p style="margin:0;">No timeline yet. Click "Load agreed process" above to pull in the steps you\'ve agreed with this client.</p></div>';
+      return;
+    }
+    var html = "";
+    var foundCurrent = false;
+    var lastDoneDate = tl[0].actualDate;
+    for(var i=0;i<tl.length;i++){
+      var s = tl[i];
+      var status = i===0 ? "done" : (s.actualDate ? "done" : (!foundCurrent ? "current" : "pending"));
+      if(status==="current") foundCurrent = true;
+      html += renderStepRow(s, i, status, i>0?lastDoneDate:null);
+      if(s.actualDate) lastDoneDate = s.actualDate;
+      if(i < tl.length-1 && (status==="done" || status==="current")){
+        html += '<div class="insert-row"><button type="button" class="tl-insert-btn" data-after="'+i+'">+ insert step here</button></div>';
+      }
     }
     box.innerHTML = html;
+    bindStepperEvents();
+  }
+  function renderStepRow(s, idx, status, prevDate){
+    var dotClass = status;
+    var body = '<div class="step-row '+dotClass+'"><div class="step-dot"></div><div class="step-main">';
+    body += '<div class="step-title-row"><span class="step-label">'+esc(s.label)+'</span>';
+    if(status==="done"){
+      var days = daysBetween(prevDate, s.actualDate);
+      var over = (s.targetDays===null||s.targetDays===undefined) ? 0 : Math.max(0, days-s.targetDays);
+      var badge = s.targetDays===null||s.targetDays===undefined ? '' : overBadge(over);
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
+      body += '<div class="step-meta">';
+      if(s.targetDays!==null && s.targetDays!==undefined) body += '<span>target '+s.targetDays+'d, took '+days+'d</span>'+badge;
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      body += '</div>';
+      if(idx>0){
+        body += '<div class="step-actions"><button type="button" class="btn ghost small tl-edit-date" data-id="'+s.id+'">Edit date</button>'
+          + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
+      }
+    } else if(status==="current"){
+      var elapsed = daysBetween(prevDate, todayISO()); if(elapsed<0) elapsed=0;
+      var target = s.targetDays;
+      var over2 = (target===null||target===undefined) ? 0 : Math.max(0, elapsed-target);
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">in progress</span></div>';
+      body += '<div class="step-meta">';
+      body += '<span>'+elapsed+'d so far</span>';
+      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(target===null?0:target)+'">d</span>';
+      if(target!==null && target!==undefined) body += overBadge(over2);
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      body += '</div>';
+      body += '<div class="step-actions">'
+        + '<button type="button" class="btn small tl-complete" data-id="'+s.id+'">Mark complete…</button>'
+        + '<div class="mini-form" id="complete-form-'+s.id+'"><div class="row">'
+        + '<div class="field"><label>Date reached</label><input type="date" class="tl-complete-date" value="'+todayISO()+'"></div>'
+        + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-complete-confirm" data-id="'+s.id+'">Confirm</button></div>'
+        + '</div></div>'
+        + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Skip this step</button>'
+        + '</div>';
+    } else { // pending
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">upcoming</span></div>';
+      body += '<div class="step-meta">';
+      body += '<span>target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?0:s.targetDays)+'">d</span>';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      body += '</div>';
+      body += '<div class="step-actions"><button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
+    }
+    body += '</div></div>';
+    return body;
+  }
+  function overBadge(over){
+    var rb = riskFromOver(over);
+    if(over<=0) return '<span class="over-badge green">on target</span>';
+    return '<span class="over-badge '+rb.band+'">+'+over+'d over</span>';
+  }
+
+  function bindStepperEvents(){
+    var box = document.getElementById("stepperContainer");
     box.querySelectorAll(".tl-remove").forEach(function(btn){
-      btn.addEventListener("click", function(e){
-        e.preventDefault();
-        var idx = parseInt(btn.dataset.idx,10);
-        ui.draftTimeline.splice(idx,1);
-        renderTimelineEditor(); renderCheckpointPicker();
+      btn.addEventListener("click", function(){
+        var idx = ui.draftTimeline.findIndex(function(x){return x.id===btn.dataset.id;});
+        if(idx>=0){ ui.draftTimeline.splice(idx,1); renderStepper(); }
       });
     });
-    renderCheckpointPicker();
+    box.querySelectorAll(".tl-target-edit").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var s = ui.draftTimeline.find(function(x){return x.id===inp.dataset.id;});
+        if(s) s.targetDays = Math.max(0, parseInt(inp.value,10)||0);
+      });
+    });
+    box.querySelectorAll(".tl-edit-date").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var s = ui.draftTimeline.find(function(x){return x.id===btn.dataset.id;});
+        if(!s) return;
+        var v = prompt("New date for \""+s.label+"\" (YYYY-MM-DD):", s.actualDate);
+        if(v && /^\d{4}-\d{2}-\d{2}$/.test(v)){ s.actualDate = v; renderStepper(); }
+      });
+    });
+    box.querySelectorAll(".tl-complete").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var f = document.getElementById("complete-form-"+btn.dataset.id);
+        if(f) f.classList.toggle("open");
+      });
+    });
+    box.querySelectorAll(".tl-complete-confirm").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var s = ui.draftTimeline.find(function(x){return x.id===btn.dataset.id;});
+        var form = document.getElementById("complete-form-"+btn.dataset.id);
+        var dateVal = form.querySelector(".tl-complete-date").value || todayISO();
+        if(s){ s.actualDate = dateVal; renderStepper(); }
+      });
+    });
+    box.querySelectorAll(".tl-insert-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ openInsertPicker(parseInt(btn.dataset.after,10)); });
+    });
   }
-
-  function renderCheckpointPicker(){
-    var presetSel = document.getElementById("cp_preset");
-    var used = {}; ui.draftTimeline.forEach(function(cp){ used[cp.name]=true; });
-    var suggested = nextSuggestedStage();
-    var opts = [];
-    TEMPLATE.forEach(function(t){ if(!used[t.label]) opts.push(t.label); });
-    TERMINAL_EXTRAS.forEach(function(t){ if(!used[t.label]) opts.push(t.label); });
-    opts.push("Custom…");
-    presetSel.innerHTML = opts.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(o)+'</option>'; }).join("");
-    if(suggested && opts.indexOf(suggested)>=0) presetSel.value = suggested;
-    document.getElementById("cp_date").value = todayISO();
-    toggleCustomField();
-    var entry = templateEntry(presetSel.value);
-    document.getElementById("cp_owner").value = entry && entry.owner ? entry.owner : "";
-  }
-  function toggleCustomField(){
-    var presetSel = document.getElementById("cp_preset");
-    document.getElementById("cp_customWrap").style.display = presetSel.value === "Custom…" ? "block" : "none";
-  }
-  document.getElementById("cp_preset").addEventListener("change", function(){
-    toggleCustomField();
-    var entry = templateEntry(this.value);
-    document.getElementById("cp_owner").value = entry && entry.owner ? entry.owner : "";
-  });
-  document.getElementById("f_outcome").addEventListener("change", renderTimelineEditor);
-  document.getElementById("f_waitingOn").addEventListener("change", renderTimelineEditor);
-
-  document.getElementById("cp_addBtn").addEventListener("click", function(){
-    var presetSel = document.getElementById("cp_preset");
-    var name = presetSel.value === "Custom…" ? document.getElementById("cp_customName").value.trim() : presetSel.value;
-    var date = document.getElementById("cp_date").value;
-    var owner = document.getElementById("cp_owner").value || null;
-    if(!name || !date){ alert("Give the checkpoint a name and a date."); return; }
-    ui.draftTimeline.push({id:uid(), name:name, date:date, owner:owner});
-    ui.draftTimeline.sort(function(a,b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
-    var autoOutcome = outcomeForCheckpoint(name);
+  function openInsertPicker(afterIdx){
+    var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
+    var opts = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){return !used[s.label];}).map(function(s){return s.label;});
+    var list = opts.concat(["Custom…"]);
+    var choice = prompt("Insert which step after \""+ui.draftTimeline[afterIdx].label+"\"?\n\n"+list.map(function(l,i){return (i+1)+". "+l;}).join("\n")+"\n\nType the number, or the exact custom name:");
+    if(!choice) return;
+    var idx = parseInt(choice,10);
+    var label = (idx>=1 && idx<=list.length) ? list[idx-1] : choice.trim();
+    if(label === "Custom…") { label = prompt("Custom step name:"); if(!label) return; }
+    var daysStr = prompt("Target days for \""+label+"\":", String(DEFAULT_TARGET_DAYS));
+    var days = Math.max(0, parseInt(daysStr,10)||0);
+    var lib = libraryEntry(label);
+    var newStep = {id:uid(), label:label, owner: lib?lib.owner:null, targetDays: days, actualDate:null};
+    ui.draftTimeline.splice(afterIdx+1, 0, newStep);
+    var autoOutcome = outcomeForLabel(label);
     if(autoOutcome) document.getElementById("f_outcome").value = autoOutcome;
-    document.getElementById("cp_customName").value = "";
-    renderTimelineEditor();
-  });
+    renderStepper();
+  }
 
   document.getElementById("candForm").addEventListener("submit", function(e){
     e.preventDefault();
-    if(!ui.draftTimeline.length){ alert("Add at least one checkpoint (e.g. Remit received)."); return; }
+    if(!ui.draftTimeline.length){ alert('Click "Load agreed process" to build a timeline first.'); return; }
     var data = {
       client: document.getElementById("f_client").value.trim(),
       vacancy: document.getElementById("f_vacancy").value.trim(),
       candidateName: document.getElementById("f_candidateName").value.trim(),
       owner: document.getElementById("f_owner").value.trim(),
-      deadline: document.getElementById("f_deadline").value,
       outcome: document.getElementById("f_outcome").value,
       notes: document.getElementById("f_notes").value.trim(),
-      waitingOn: document.getElementById("f_waitingOn").value,
       timeline: ui.draftTimeline
     };
     if(!data.client || !data.vacancy || !data.candidateName){ return; }
+    if(data.timeline[0]) data.timeline[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
     if(ui.editingId){
       var idx = state.candidates.findIndex(function(x){return x.id===ui.editingId;});
       state.candidates[idx] = Object.assign({id:ui.editingId}, data);
@@ -882,7 +1202,6 @@
     }
     save(); closeModal(); renderAll();
   });
-
   document.getElementById("deleteBtn").addEventListener("click", function(){
     if(!ui.editingId) return;
     if(!confirm("Delete this candidate? This can't be undone.")) return;
@@ -894,7 +1213,7 @@
   function setTab(name){
     ui.tab = name;
     document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("active", b.dataset.tab === name); });
-    ["dashboard","candidates","clients"].forEach(function(t){ document.getElementById("tab-"+t).hidden = (t !== name); });
+    ["dashboard","candidates","clients","process"].forEach(function(t){ document.getElementById("tab-"+t).hidden = (t !== name); });
   }
   document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ setTab(b.dataset.tab); }); });
 
@@ -928,34 +1247,34 @@
         var parsed = JSON.parse(ev.target.result);
         if(!parsed || !Array.isArray(parsed.candidates)) throw new Error("bad shape");
         var mode = state.candidates.length ? confirm("Replace current data with the imported file? Cancel to merge instead.") : true;
-        if(mode){ state = parsed; }
+        if(mode){ state = parsed; if(!state.globalTemplate) state.globalTemplate = newGlobalDefault(); if(!state.clientTemplates) state.clientTemplates={}; if(!state.positionTemplates) state.positionTemplates={}; }
         else {
           var ids = {}; state.candidates.forEach(function(c){ids[c.id]=true;});
-          parsed.candidates.forEach(function(c){ if(!ids[c.id]) state.candidates.push(c); });
+          (parsed.candidates||[]).forEach(function(c){ if(!ids[c.id]) state.candidates.push(c); });
         }
         save(); renderAll();
       }catch(err){ alert("That doesn't look like a valid export file."); }
     };
     reader.readAsText(file); e.target.value = "";
   });
-
   document.getElementById("exportCsv").addEventListener("click", function(){
-    var cols = ["client","vacancy","candidateName","owner","deadline","outcome","waitingOn","notes"];
-    var header = cols.concat(["currentStage","daysInStage","status","totalElapsedDays","timeline"]).join(",");
+    var cols = ["client","vacancy","candidateName","owner","outcome","notes"];
+    var header = cols.concat(["currentStep","daysOverTarget","totalElapsedDays","timeline"]).join(",");
     var rows = state.candidates.map(function(c){
       var a = analyse(c);
       var vals = cols.map(function(k){ return csvCell(c[k]); });
-      vals.push(csvCell(currentStageName(c)));
-      vals.push(csvCell(a.currentDays===null?"":a.currentDays));
-      vals.push(csvCell(a.currentLabel));
-      vals.push(csvCell(a.totalDays===null?"":a.totalDays));
-      var tlStr = sortedTimeline(c).map(function(cp){ return cp.name+" ("+fmtDate(cp.date)+")"; }).join(" -> ");
+      vals.push(csvCell(currentStepName(c)));
+      vals.push(csvCell(a.currentOver===null?"":a.currentOver));
+      vals.push(csvCell(a.totalActual===null?"":a.totalActual));
+      var tlStr = (c.timeline||[]).map(function(s){
+        return s.label+(s.actualDate?" ("+fmtDate(s.actualDate)+")":" (pending, target "+(s.targetDays===null?"-":s.targetDays)+"d)");
+      }).join(" -> ");
       vals.push(csvCell(tlStr));
       return vals.join(",");
     });
     downloadFile(header+"\n"+rows.join("\n"), "tnv-candidates-"+todayISO()+".csv", "text/csv");
   });
-  function csvCell(v){ v = (v===undefined||v===null)?"":String(v); if(/[",\n]/.test(v)) v='"'+v.replace(/"/g,'""')+'"'; return v; }
+  function csvCell(v){ v=(v===undefined||v===null)?"":String(v); if(/[",\n]/.test(v)) v='"'+v.replace(/"/g,'""')+'"'; return v; }
 
   document.getElementById("loadSample").addEventListener("click", loadSampleData);
   function loadSampleData(){
@@ -964,7 +1283,7 @@
     save(); renderAll();
   }
   document.getElementById("clearAll").addEventListener("click", function(){
-    if(!confirm("Delete ALL candidates from this browser? This can't be undone.")) return;
+    if(!confirm("Delete ALL candidates from this browser? This also does not touch your process templates. Continue?")) return;
     state.candidates = []; save(); renderAll();
   });
 
@@ -975,9 +1294,6 @@
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   }
-
-  function esc(s){ return String(s===undefined||s===null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  function escAttr(s){ return esc(s).replace(/"/g,"&quot;"); }
 
   load();
   renderAll();
