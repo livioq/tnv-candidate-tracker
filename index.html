@@ -605,8 +605,9 @@
     var segments = []; // {label, targetDays, owner, actualDays, overDays, status:'done'|'current'|'pending'}
     var firstDate = tl.length ? tl[0].actualDate : null;
     var lastDoneDate = firstDate;
-    var currentDays = null, currentTarget = null, currentOver = 0, currentBand = "closed", currentLabel = c.outcome, currentOwner = null, currentSince = null;
+    var currentDays = null, currentTarget = null, currentLabel = c.outcome, currentOwner = null, currentSince = null;
     var totalTargetDone = 0, totalOverDone = 0;
+    var targetElapsedThroughNow = 0; // cumulative target for every step reached so far (done + current)
 
     for(var i=1;i<tl.length;i++){
       var step = tl[i];
@@ -616,23 +617,36 @@
         var over = target===null||target===undefined ? 0 : Math.max(0, days-target);
         segments.push({label:step.label, targetDays:target, owner:step.owner, days:days, over:over, status:"done"});
         totalTargetDone += (target||0); totalOverDone += over;
+        targetElapsedThroughNow += (target||0);
         lastDoneDate = step.actualDate;
       } else if(isOpen(c) && currentDays === null){
         var elapsed = daysBetween(lastDoneDate, todayISO());
         if(elapsed<0) elapsed=0;
         var tgt = step.targetDays;
-        var ov = tgt===null||tgt===undefined ? 0 : Math.max(0, elapsed-tgt);
-        var rb = riskFromOver(ov);
-        segments.push({label:step.label, targetDays:tgt, owner:step.owner, days:elapsed, over:ov, status:"current"});
-        currentDays = elapsed; currentTarget = tgt; currentOver = ov; currentBand = rb.band; currentLabel = step.label; currentOwner = step.owner; currentSince = lastDoneDate;
+        var stepOver = tgt===null||tgt===undefined ? 0 : Math.max(0, elapsed-tgt);
+        segments.push({label:step.label, targetDays:tgt, owner:step.owner, days:elapsed, over:stepOver, status:"current"});
+        currentDays = elapsed; currentTarget = tgt; currentLabel = step.label; currentOwner = step.owner; currentSince = lastDoneDate;
+        targetElapsedThroughNow += (tgt||0);
       } else {
         segments.push({label:step.label, targetDays:step.targetDays, owner:step.owner, days:null, over:null, status:"pending"});
       }
     }
     var totalActual = firstDate ? daysBetween(firstDate, isOpen(c) ? todayISO() : lastDoneDate) : null;
-    var totalOver = totalOverDone + (isOpen(c) ? currentOver : 0);
-    return {segments:segments, currentDays:currentDays, currentOver: isOpen(c)?currentOver:null,
-      currentBand: isOpen(c)?currentBand:"closed", currentLabel: currentLabel, currentOwner: currentOwner,
+
+    // "Days over target": where the process should be today — the cumulative target time
+    // for every step reached so far — versus where it actually is today. A candidate that
+    // ran ahead of schedule on earlier steps can offset a slower one, rather than the
+    // figure only ever reflecting whichever single step happens to be running right now.
+    var currentOver = null, currentBand = "closed";
+    if(isOpen(c) && currentDays !== null){
+      var actualElapsedToday = daysBetween(firstDate, todayISO());
+      currentOver = actualElapsedToday - targetElapsedThroughNow;
+      currentBand = riskFromOver(currentOver).band;
+    }
+
+    var totalOver = totalOverDone + (currentOver!==null ? Math.max(0, currentOver) : 0);
+    return {segments:segments, currentDays:currentDays, currentOver: currentOver,
+      currentBand: currentBand, currentLabel: currentLabel, currentOwner: currentOwner,
       currentSince: currentSince, lastDate: lastDoneDate,
       totalActual: totalActual, totalOver: totalOver};
   }
