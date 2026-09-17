@@ -1468,20 +1468,28 @@
     var client = document.getElementById("f_client").value.trim();
     var vacancy = document.getElementById("f_vacancy").value.trim();
     if(!client || !vacancy){ alert("Enter the client and vacancy first."); return; }
-    var doneCount = ui.draftTimeline.filter(function(s){return s.actualDate;}).length;
-    if(doneCount > 1 && !confirm("This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?")) return;
-    var resolved = resolveTemplate(client, vacancy);
     var doneSoFar = ui.draftTimeline.filter(function(s){return s.actualDate;});
+    var progressBeyondRemit = doneSoFar.length > 1;
+    if(progressBeyondRemit && !confirm("This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?")) return;
+    var resolved = resolveTemplate(client, vacancy);
     var fresh = cloneSteps(resolved.steps);
-    if(doneSoFar.length){
-      // keep whatever's actually happened, append pending steps beyond what's done, matched by position
-      ui.draftTimeline = doneSoFar.concat(fresh.slice(doneSoFar.length));
+    // The Remit received field above is always the source of truth for step 0's date,
+    // whether this is a fresh load or a reload over an already-progressed candidate.
+    fresh[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
+    if(progressBeyondRemit){
+      // keep whatever's actually happened after remit, append pending steps beyond what's done, matched by position
+      ui.draftTimeline = [fresh[0]].concat(doneSoFar.slice(1), fresh.slice(doneSoFar.length));
     } else {
-      fresh[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
       ui.draftTimeline = fresh;
     }
     document.getElementById("tplSourceNote").textContent = " — loaded from " + levelLabel(resolved.level);
     renderStepper();
+  });
+  document.getElementById("f_remitDate").addEventListener("change", function(){
+    if(ui.draftTimeline.length && ui.draftTimeline[0]){
+      ui.draftTimeline[0].actualDate = this.value || todayISO();
+      renderStepper();
+    }
   });
 
   function renderStepper(){
@@ -1525,7 +1533,14 @@
     var dotClass = status;
     var body = '<div class="step-row '+dotClass+'"><div class="step-dot"></div><div class="step-main">';
     body += '<div class="step-title-row"><span class="step-label">'+esc(s.label)+'</span>';
-    if(status==="done"){
+    if(status==="done" && idx===0){
+      // Start marker — there's no previous step to measure elapsed days against.
+      // Its date is set (and kept in sync) via the "Remit received" field above.
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
+      body += '<div class="step-meta">';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      body += '</div>';
+    } else if(status==="done"){
       var days = daysBetween(prevDate, s.actualDate);
       var over = hasTarget(s) ? Math.max(0, days-s.targetDays) : 0;
       var badge = hasTarget(s) ? overBadge(over) : '';
