@@ -72,6 +72,7 @@
   button.btn:disabled{opacity:.4; cursor:not-allowed;}
   button.icon-btn{background:none; border:none; cursor:pointer; color:var(--muted); font-size:13px; padding:2px 5px; border-radius:var(--radius);}
   button.icon-btn:hover{color:var(--ink); background:var(--bg);}
+  button.icon-btn.danger:hover{color:var(--red); background:var(--red-bg);}
 
   .menu-wrap{position:relative;}
   .menu-pop{position:absolute; right:0; top:calc(100% + 6px); background:var(--paper); border:1px solid var(--border-strong); border-radius:var(--radius); min-width:190px; box-shadow:0 6px 20px rgba(0,0,0,.12); z-index:20; padding:6px; display:none;}
@@ -733,6 +734,41 @@
     save();
     return true;
   }
+  // Deletes only apply to the setup metadata (client/position list and their templates).
+  // Candidates already on file are never touched — if any exist for the client/position,
+  // the delete is blocked so the app never ends up with an orphaned candidate.
+  function deleteClient(name){
+    var count = state.candidates.filter(function(c){ return c.client === name; }).length;
+    if(count > 0){
+      alert(count+" candidate"+(count===1?"":"s")+" still reference \""+name+"\". Delete or reassign "+(count===1?"it":"them")+" first.");
+      return false;
+    }
+    if(!confirm('Delete client "'+name+'" and all its positions? This can\'t be undone.')) return false;
+    var idx = state.clientList.indexOf(name);
+    if(idx !== -1) state.clientList.splice(idx,1);
+    delete state.clientTemplates[name];
+    delete state.vacancyList[name];
+    Object.keys(state.positionTemplates).forEach(function(pk){
+      if(pk.split("__::__")[0] === name) delete state.positionTemplates[pk];
+    });
+    save();
+    return true;
+  }
+  function deletePosition(client, vacancy){
+    var count = state.candidates.filter(function(c){ return c.client === client && c.vacancy === vacancy; }).length;
+    if(count > 0){
+      alert(count+" candidate"+(count===1?"":"s")+" still reference \""+vacancy+"\". Delete or reassign "+(count===1?"it":"them")+" first.");
+      return false;
+    }
+    if(!confirm('Delete position "'+vacancy+'" at '+client+'? This can\'t be undone.')) return false;
+    if(state.vacancyList[client]){
+      var idx = state.vacancyList[client].indexOf(vacancy);
+      if(idx !== -1) state.vacancyList[client].splice(idx,1);
+    }
+    delete state.positionTemplates[posKey(client, vacancy)];
+    save();
+    return true;
+  }
   function clientStats(clientName){
     var all = state.candidates.filter(function(c){ return c.client === clientName; });
     var open = all.filter(isOpen);
@@ -990,7 +1026,8 @@
       names.forEach(function(name){
         var hasClientTpl = !!state.clientTemplates[name];
         html += '<details class="client-tpl"><summary><div class="client-block-header">'
-          + '<span><b>'+esc(name)+'</b> <button type="button" class="icon-btn" data-action="rename-client" data-client="'+escAttr(name)+'" title="Rename client">✎</button></span>'
+          + '<span><b>'+esc(name)+'</b> <button type="button" class="icon-btn" data-action="rename-client" data-client="'+escAttr(name)+'" title="Rename client">✎</button>'
+          + '<button type="button" class="icon-btn danger" data-action="delete-client" data-client="'+escAttr(name)+'" title="Delete client">✕</button></span>'
           + '<span class="status">'+(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
         if(hasClientTpl){
           html += renderStepListEditor(state.clientTemplates[name], {kind:"client", client:name});
@@ -1006,10 +1043,11 @@
           var hasPosTpl = !!state.positionTemplates[pk];
           html += '<div class="vacancy-row"><span class="name">'+esc(v)+'</span>';
           if(hasPosTpl){
-            html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button></span>';
+            html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button>';
           } else {
-            html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button></span>';
+            html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button>';
           }
+          html += ' <button class="icon-btn danger" data-action="delete-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'" title="Delete position">✕</button></span>';
           html += '</div>';
           if(hasPosTpl && ui.openPosition === pk){
             html += renderStepListEditor(state.positionTemplates[pk], {kind:"position", client:name, vacancy:v});
@@ -1120,6 +1158,18 @@
         var oldName = btn.dataset.client;
         var newName = prompt('Rename "'+oldName+'" to:', oldName);
         if(renameClient(oldName, newName)){ renderAll(); }
+      });
+    });
+    wrap.querySelectorAll('[data-action="delete-client"]').forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation(); // stay inside <summary> without toggling it
+        if(deleteClient(btn.dataset.client)){ renderAll(); }
+      });
+    });
+    wrap.querySelectorAll('[data-action="delete-position"]').forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(deletePosition(btn.dataset.client, btn.dataset.vacancy)){ renderAll(); }
       });
     });
     wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
