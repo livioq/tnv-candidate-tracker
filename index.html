@@ -712,6 +712,27 @@
     save();
     return true;
   }
+  // Renames a client everywhere it's referenced: the client list itself, its
+  // template overrides, its positions' templates, and every candidate on file.
+  function renameClient(oldName, newName){
+    newName = (newName||"").trim();
+    if(!newName || newName === oldName) return false;
+    if(clientsList().indexOf(newName) !== -1){ alert('A client named "'+newName+'" already exists.'); return false; }
+    var idx = state.clientList.indexOf(oldName);
+    if(idx !== -1) state.clientList[idx] = newName;
+    if(state.clientTemplates[oldName]){ state.clientTemplates[newName] = state.clientTemplates[oldName]; delete state.clientTemplates[oldName]; }
+    if(state.vacancyList[oldName]){ state.vacancyList[newName] = state.vacancyList[oldName]; delete state.vacancyList[oldName]; }
+    Object.keys(state.positionTemplates).forEach(function(pk){
+      var parts = pk.split("__::__");
+      if(parts[0] === oldName){
+        state.positionTemplates[posKey(newName, parts[1])] = state.positionTemplates[pk];
+        delete state.positionTemplates[pk];
+      }
+    });
+    state.candidates.forEach(function(c){ if(c.client === oldName) c.client = newName; });
+    save();
+    return true;
+  }
   function clientStats(clientName){
     var all = state.candidates.filter(function(c){ return c.client === clientName; });
     var open = all.filter(isOpen);
@@ -969,7 +990,8 @@
       names.forEach(function(name){
         var hasClientTpl = !!state.clientTemplates[name];
         html += '<details class="client-tpl"><summary><div class="client-block-header">'
-          + '<b>'+esc(name)+'</b><span class="status">'+(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
+          + '<span><b>'+esc(name)+'</b> <button type="button" class="icon-btn" data-action="rename-client" data-client="'+escAttr(name)+'" title="Rename client">✎</button></span>'
+          + '<span class="status">'+(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
         if(hasClientTpl){
           html += renderStepListEditor(state.clientTemplates[name], {kind:"client", client:name});
         } else {
@@ -1092,6 +1114,14 @@
     wrap.querySelectorAll('[data-action="add-vacancy"]').forEach(function(btn){
       btn.addEventListener("click", function(){ openWizardAddPosition(btn.dataset.client); });
     });
+    wrap.querySelectorAll('[data-action="rename-client"]').forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation(); // stay inside <summary> without toggling it
+        var oldName = btn.dataset.client;
+        var newName = prompt('Rename "'+oldName+'" to:', oldName);
+        if(renameClient(oldName, newName)){ renderAll(); }
+      });
+    });
     wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
       btn.addEventListener("click", function(){
         var client = btn.dataset.client;
@@ -1173,27 +1203,65 @@
 
     if(wizard.stage === "new-client"){
       title.textContent = "New client";
+      body.innerHTML = '<label>Client name</label><input type="text" id="wz_clientName" value="'+escAttr(wizard.client||"")+'" placeholder="e.g. Acme Srl">';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_next">Next</button>';
+      document.getElementById("wz_cancel").addEventListener("click", closeWizard);
+      document.getElementById("wz_next").addEventListener("click", function(){
+        var name = document.getElementById("wz_clientName").value.trim();
+        if(!name){ alert("Enter a client name."); return; }
+        wizard.client = name;
+        wizard.stage = "client-defaults";
+        renderWizard();
+      });
+      var nameInput = document.getElementById("wz_clientName");
+      nameInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("wz_next").click(); } });
+      nameInput.focus();
+      return;
+    }
+
+    if(wizard.stage === "client-defaults"){
+      title.textContent = "Default timetable — " + wizard.client;
       var previewRows = state.globalTemplate.map(function(s){
         return '<div class="row-line"><span>'+esc(s.label)+'</span><span class="mono">'+(hasTarget(s)?s.targetDays+"d":"—")+'</span></div>';
       }).join("");
-      body.innerHTML = '<label>Client name</label><input type="text" id="wz_clientName" placeholder="e.g. Acme Srl">'
-        + '<div class="sub" style="margin-top:12px;">Starts from the global default process below — you can customize this client\'s own steps and timings afterwards, or change the defaults for every future client from File ▾ → Global defaults.</div>'
+      body.innerHTML = '<div class="sub">This becomes '+esc(wizard.client)+'\'s own default — every position you add for them inherits it unless you customize that position too.</div>'
+        + '<div class="wizard-choice-row">'
+        + '<button type="button" class="wizard-choice" id="wz_useGlobal"><b>Use global default timetable</b><span>Same steps and timings as the global default</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_customizeClient"><b>Customize this client\'s default timetable</b><span>Adjust steps or timings just for '+esc(wizard.client)+'</span></button>'
+        + '</div>'
         + '<div class="wizard-preview">'+previewRows+'</div>';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_save">Save</button>';
-      document.getElementById("wz_cancel").addEventListener("click", closeWizard);
-      document.getElementById("wz_save").addEventListener("click", function(){
-        var name = document.getElementById("wz_clientName").value.trim();
-        if(!name){ alert("Enter a client name."); return; }
-        addClient(name);
-        wizard.client = name;
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>';
+      document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "new-client"; renderWizard(); });
+      document.getElementById("wz_useGlobal").addEventListener("click", function(){
+        addClient(wizard.client);
         wizard.stage = "new-position";
         wizard.positionName = "";
         renderWizard();
       });
-      var nameInput = document.getElementById("wz_clientName");
-      nameInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("wz_save").click(); } });
-      nameInput.focus();
+      document.getElementById("wz_customizeClient").addEventListener("click", function(){
+        wizard.steps = cloneSteps(state.globalTemplate);
+        wizard.stage = "modify-client";
+        renderWizard();
+      });
+      return;
+    }
+
+    if(wizard.stage === "modify-client"){
+      title.textContent = "Customize default timetable — " + wizard.client;
+      body.innerHTML = renderStepListEditor(wizard.steps, {kind:"wizard"});
+      bindStepListEditor(body, renderWizard);
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_saveClientSteps">Save client</button>';
+      document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "client-defaults"; renderWizard(); });
+      document.getElementById("wz_saveClientSteps").addEventListener("click", function(){
+        addClient(wizard.client);
+        state.clientTemplates[wizard.client] = cloneSteps(wizard.steps);
+        save();
+        wizard.stage = "new-position";
+        wizard.positionName = "";
+        renderWizard();
+      });
       return;
     }
 
