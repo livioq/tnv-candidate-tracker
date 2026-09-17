@@ -276,23 +276,28 @@
 
   <header class="topbar">
     <div class="brand-block">
-      <div class="brand-row"><span class="brand-mark">TNV</span><h1>Candidate Tracker</h1></div>
-      <p class="tagline">Every candidate has a clock running, against the times you actually agreed with the client.</p>
+      <div class="brand-row"><span class="brand-mark">TNV</span><h1 data-i18n="Candidate Tracker">Candidate Tracker</h1></div>
+      <p class="tagline" data-i18n="Every candidate has a clock running, against the times you actually agreed with the client.">Every candidate has a clock running, against the times you actually agreed with the client.</p>
     </div>
     <div class="topbar-actions">
       <span id="ctaWrap"></span>
+      <select id="langSelect" class="btn" style="padding:9px 8px;">
+        <option value="en">EN</option>
+        <option value="it">IT</option>
+        <option value="sc">SC</option>
+      </select>
       <div class="menu-wrap">
         <button class="btn" id="menuBtn">File ▾</button>
         <div class="menu-pop" id="menuPop">
-          <button id="openGlobalDefaults">Global defaults…</button>
+          <button id="openGlobalDefaults" data-i18n="Global defaults…">Global defaults…</button>
           <hr>
-          <button id="exportJson">Export JSON (backup)</button>
-          <button id="importJsonBtn">Import JSON</button>
+          <button id="exportJson" data-i18n="Export JSON (backup)">Export JSON (backup)</button>
+          <button id="importJsonBtn" data-i18n="Import JSON">Import JSON</button>
           <hr>
-          <button id="exportCsv">Export CSV (for Excel / email)</button>
+          <button id="exportCsv" data-i18n="Export CSV (for Excel / email)">Export CSV (for Excel / email)</button>
           <hr>
-          <button id="loadSample">Load sample data</button>
-          <button id="clearAll" style="color:var(--red);">Clear all data</button>
+          <button id="loadSample" data-i18n="Load sample data">Load sample data</button>
+          <button id="clearAll" style="color:var(--red);" data-i18n="Clear all data">Clear all data</button>
         </div>
         <input type="file" id="importJsonFile" accept="application/json">
       </div>
@@ -300,46 +305,46 @@
   </header>
 
   <nav class="tabs">
-    <button data-tab="dashboard" class="active">Dashboard</button>
-    <button data-tab="candidates">Candidates</button>
-    <button data-tab="insights">Insights</button>
-    <button data-tab="clients">Clients</button>
+    <button data-tab="dashboard" class="active" data-i18n="Dashboard">Dashboard</button>
+    <button data-tab="candidates" data-i18n="Candidates">Candidates</button>
+    <button data-tab="insights" data-i18n="Insights">Insights</button>
+    <button data-tab="clients" data-i18n="Clients">Clients</button>
   </nav>
 
   <main>
     <section id="tab-dashboard">
       <div class="stat-strip" id="statStrip"></div>
-      <div class="section-heading"><h2>Where the delays are</h2><span class="hint">Every client's biggest recurring hold-up, ranked — the whole picture, in one place</span></div>
+      <div class="section-heading"><h2 data-i18n="Where the delays are">Where the delays are</h2><span class="hint" data-i18n="Every client's biggest recurring hold-up, ranked — the whole picture, in one place">Every client's biggest recurring hold-up, ranked — the whole picture, in one place</span></div>
       <div id="delayWrap" style="margin-bottom:28px;"></div>
-      <div class="section-heading"><h2>Clients</h2><span class="hint">Click a client for the full breakdown</span></div>
+      <div class="section-heading"><h2 data-i18n="Clients">Clients</h2><span class="hint" data-i18n="Click a client for the full breakdown">Click a client for the full breakdown</span></div>
       <div id="clientGridWrap"></div>
     </section>
 
     <section id="tab-candidates" hidden>
       <div class="filters">
-        <input type="search" id="searchBox" placeholder="Search candidate, client, vacancy…">
-        <select id="filterClient"><option value="">All clients</option></select>
+        <input type="search" id="searchBox" placeholder="Search candidate, client, vacancy…" data-i18n-ph="Search candidate, client, vacancy…">
+        <select id="filterClient"><option value="" data-i18n="All clients">All clients</option></select>
         <select id="filterRisk">
-          <option value="">All statuses</option>
-          <option value="green">On track</option>
-          <option value="amber">Slipping</option>
-          <option value="red">At risk</option>
-          <option value="crit">Overdue</option>
-          <option value="closed">Closed</option>
+          <option value="" data-i18n="All statuses">All statuses</option>
+          <option value="green" data-i18n="On track">On track</option>
+          <option value="amber" data-i18n="Slipping">Slipping</option>
+          <option value="red" data-i18n="At risk">At risk</option>
+          <option value="crit" data-i18n="Overdue">Overdue</option>
+          <option value="closed" data-i18n="Closed">Closed</option>
         </select>
       </div>
       <div class="table-scroll">
         <table id="candTable">
           <thead>
             <tr>
-              <th data-key="client">Client</th>
-              <th data-key="candidateName">Candidate</th>
-              <th data-key="stage">Current step</th>
-              <th data-key="since">Since</th>
-              <th data-key="waitingOn">Waiting on</th>
-              <th data-key="owner">Recruiter</th>
-              <th data-key="over" class="sorted">Days over target</th>
-              <th data-key="total">Total elapsed</th>
+              <th data-key="client" data-i18n="Client">Client</th>
+              <th data-key="candidateName" data-i18n="Candidate">Candidate</th>
+              <th data-key="stage" data-i18n="Current step">Current step</th>
+              <th data-key="since" data-i18n="Since">Since</th>
+              <th data-key="waitingOn" data-i18n="Waiting on">Waiting on</th>
+              <th data-key="owner" data-i18n="Recruiter">Recruiter</th>
+              <th data-key="over" class="sorted" data-i18n="Days over target">Days over target</th>
+              <th data-key="total" data-i18n="Total elapsed">Total elapsed</th>
             </tr>
           </thead>
           <tbody id="candTbody"></tbody>
@@ -351,53 +356,53 @@
 
     <section id="tab-clients" hidden>
       <div class="section-heading">
-        <h2>Clients</h2>
-        <span class="hint">Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.</span>
+        <h2 data-i18n="Clients">Clients</h2>
+        <span class="hint" data-i18n="Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.">Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.</span>
       </div>
       <div id="processWrap"></div>
     </section>
   </main>
 
-  <footer>Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.</footer>
+  <footer data-i18n="Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.">Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.</footer>
 </div>
 
 <dialog id="candModal">
   <form method="dialog" id="candForm">
     <div class="modal-head">
-      <h2 id="modalTitle">Add candidate</h2>
-      <button type="button" class="btn ghost small" id="modalClose">Close</button>
+      <h2 id="modalTitle" data-i18n="Add candidate">Add candidate</h2>
+      <button type="button" class="btn ghost small" id="modalClose" data-i18n="Close">Close</button>
     </div>
     <div class="modal-body">
 
-      <div class="modal-section-title">Candidate</div>
+      <div class="modal-section-title" data-i18n="Candidate">Candidate</div>
       <div class="form-grid">
-        <div><label>Client / company</label><select required id="f_client"></select></div>
-        <div><label>Vacancy / position</label><select required id="f_vacancy"></select></div>
-        <div><label>Candidate name</label><input required type="text" id="f_candidateName"></div>
-        <div><label>Recruiter (TNV)</label><input type="text" id="f_owner" placeholder="e.g. Adelaide"></div>
+        <div><label data-i18n="Client / company">Client / company</label><select required id="f_client"></select></div>
+        <div><label data-i18n="Vacancy / position">Vacancy / position</label><select required id="f_vacancy"></select></div>
+        <div><label data-i18n="Candidate name">Candidate name</label><input required type="text" id="f_candidateName"></div>
+        <div><label data-i18n="Recruiter (TNV)">Recruiter (TNV)</label><input type="text" id="f_owner" placeholder="e.g. Adelaide" data-i18n-ph="e.g. Adelaide"></div>
         <div>
-          <label>Remit received</label>
+          <label data-i18n="Remit received">Remit received</label>
           <input type="date" id="f_remitDate">
         </div>
         <div>
-          <label>Outcome</label>
+          <label data-i18n="Outcome">Outcome</label>
           <select id="f_outcome"></select>
         </div>
-        <div class="full"><label>Notes</label><textarea id="f_notes"></textarea></div>
+        <div class="full"><label data-i18n="Notes">Notes</label><textarea id="f_notes"></textarea></div>
       </div>
 
       <div class="modal-section-title">
-        <span>Tracking timeline<span id="tplSourceNote" class="sub"></span></span>
-        <button type="button" class="btn small" id="loadTemplateBtn">Load agreed process</button>
+        <span><span data-i18n="Tracking timeline">Tracking timeline</span><span id="tplSourceNote" class="sub"></span></span>
+        <button type="button" class="btn small" id="loadTemplateBtn" data-i18n="Load agreed process">Load agreed process</button>
       </div>
       <div class="stepper" id="stepperContainer"></div>
 
     </div>
     <div class="modal-foot">
-      <button type="button" class="btn danger" id="deleteBtn" style="display:none;">Delete candidate</button>
+      <button type="button" class="btn danger" id="deleteBtn" style="display:none;" data-i18n="Delete candidate">Delete candidate</button>
       <div style="display:flex; gap:8px; margin-left:auto;">
-        <button type="button" class="btn" id="cancelBtn">Cancel</button>
-        <button type="submit" class="btn primary" id="saveBtn">Save candidate</button>
+        <button type="button" class="btn" id="cancelBtn" data-i18n="Cancel">Cancel</button>
+        <button type="submit" class="btn primary" id="saveBtn" data-i18n="Save candidate">Save candidate</button>
       </div>
     </div>
   </form>
@@ -405,11 +410,11 @@
 
 <dialog id="globalDefaultsModal">
   <div class="modal-head">
-    <h2>Global defaults</h2>
-    <button type="button" class="btn ghost small" id="globalDefaultsClose">Close</button>
+    <h2 data-i18n="Global defaults">Global defaults</h2>
+    <button type="button" class="btn ghost small" id="globalDefaultsClose" data-i18n="Close">Close</button>
   </div>
   <div class="modal-body">
-    <p class="sub" style="margin-top:-4px;">The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.</p>
+    <p class="sub" style="margin-top:-4px;" data-i18n="The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.">The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.</p>
     <div id="globalDefaultsBody"></div>
   </div>
 </dialog>
@@ -417,7 +422,7 @@
 <dialog id="wizardModal">
   <div class="modal-head">
     <h2 id="wizardTitle">New client</h2>
-    <button type="button" class="btn ghost small" id="wizardClose">Close</button>
+    <button type="button" class="btn ghost small" id="wizardClose" data-i18n="Close">Close</button>
   </div>
   <div class="modal-body" id="wizardBody"></div>
   <div class="modal-foot" id="wizardFoot"></div>
@@ -504,6 +509,464 @@
   function esc(s){ return String(s===undefined||s===null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function escAttr(s){ return esc(s).replace(/"/g,"&quot;"); }
 
+  // ---------- i18n ----------
+  // Identity-keyed translation: every dictionary key is the literal English string as it
+  // appears in the source, so no separate key-naming scheme is needed and a missing
+  // translation gracefully falls back to the English original instead of breaking.
+  var IT = {
+    "Candidate Tracker":"Tracciamento candidati",
+    "Every candidate has a clock running, against the times you actually agreed with the client.":"Ogni candidato ha un cronometro che corre, rispetto ai tempi che hai davvero concordato con il cliente.",
+    "Global defaults…":"Impostazioni globali…",
+    "Export JSON (backup)":"Esporta JSON (backup)",
+    "Import JSON":"Importa JSON",
+    "Export CSV (for Excel / email)":"Esporta CSV (per Excel / email)",
+    "Load sample data":"Carica dati di esempio",
+    "Clear all data":"Cancella tutti i dati",
+    "Dashboard":"Dashboard",
+    "Candidates":"Candidati",
+    "Insights":"Analisi",
+    "Clients":"Clienti",
+    "Where the delays are":"Dove sono i ritardi",
+    "Every client's biggest recurring hold-up, ranked — the whole picture, in one place":"Il principale ostacolo ricorrente di ogni cliente, in classifica — tutto il quadro in un unico posto",
+    "Click a client for the full breakdown":"Clicca su un cliente per il dettaglio completo",
+    "No candidates yet — nothing to diagnose.":"Ancora nessun candidato — niente da analizzare.",
+    "No step is consistently overrunning its target across any client yet.":"Nessuna fase supera ancora sistematicamente il proprio obiettivo, per nessun cliente.",
+    "Client":"Cliente",
+    "Step":"Fase",
+    "Avg over target":"Media oltre obiettivo",
+    "Occurrences":"Occorrenze",
+    "Active candidates":"Candidati attivi",
+    "On track":"In linea",
+    "Slipping":"In lieve ritardo",
+    "At risk":"A rischio",
+    "Overdue":"Scaduto",
+    "At risk / overdue":"A rischio / scaduto",
+    "Median days over target":"Mediana giorni oltre obiettivo",
+    " active":" attivi",
+    "no active candidates":"nessun candidato attivo",
+    "Median right now":"Mediana attuale",
+    "Biggest hold-up":"Ostacolo principale",
+    "no recurring overrun yet":"nessun ritardo ricorrente per ora",
+    "Set up your first client":"Configura il tuo primo cliente",
+    "Before you can track a candidate, add the client, then add at least one position for them. Steps and timings default from the global process until you customize them.":"Prima di poter tracciare un candidato, aggiungi il cliente, poi aggiungi almeno una posizione per lui. Fasi e tempistiche seguono il processo globale finché non le personalizzi.",
+    "+ Create client":"+ Crea cliente",
+    "+ Add position":"+ Aggiungi posizione",
+    "then you can add a candidate":"poi potrai aggiungere un candidato",
+    "+ Add candidate":"+ Aggiungi candidato",
+    "Add a position to get started":"Aggiungi una posizione per iniziare",
+    "You have a client set up, but no position yet. Add one, then you can add a candidate for it.":"Hai configurato un cliente, ma nessuna posizione ancora. Aggiungine una, poi potrai aggiungere un candidato.",
+    "No candidates yet":"Ancora nessun candidato",
+    "Add your first candidate, or load sample data to see how the timeline works.":"Aggiungi il tuo primo candidato, oppure carica dati di esempio per vedere come funziona la timeline.",
+    "Search candidate, client, vacancy…":"Cerca candidato, cliente, posizione…",
+    "All clients":"Tutti i clienti",
+    "All statuses":"Tutti gli stati",
+    "Closed":"Chiuso",
+    "Candidate":"Candidato",
+    "Current step":"Fase attuale",
+    "Since":"Dal",
+    "Waiting on":"In attesa di",
+    "Recruiter":"Recruiter",
+    "Days over target":"Giorni oltre obiettivo",
+    "Total elapsed":"Totale trascorso",
+    "No candidates match these filters.":"Nessun candidato corrisponde a questi filtri.",
+    "Active":"Attivi",
+    "Median days over (now)":"Mediana giorni oltre (ora)",
+    "Placed":"Assunto",
+    "Lost to other offers":"Persi per altre offerte",
+    "Where the time goes":"Dove va il tempo",
+    "No step has consistently overrun its target yet.":"Nessuna fase ha ancora superato sistematicamente il proprio obiettivo.",
+    "Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.":"Aggiungi un cliente, poi aggiungi le posizioni al suo interno. Una posizione usa il processo del cliente a meno che tu non lo modifichi; un cliente usa il default globale (File ▾ → Impostazioni globali) a meno che tu non lo personalizzi.",
+    "Your clients":"I tuoi clienti",
+    "+ Add client":"+ Aggiungi cliente",
+    "No clients yet. Add one to set up their positions ahead of the first candidate.":"Ancora nessun cliente. Aggiungine uno per configurare le posizioni prima del primo candidato.",
+    "Click a client to view or customize their process, and manage their positions.":"Clicca su un cliente per vedere o personalizzare il suo processo e gestire le sue posizioni.",
+    "Customized":"Personalizzato",
+    "Using global default":"Usa il default globale",
+    "Customize this client's process":"Personalizza il processo di questo cliente",
+    "Positions at ":"Posizioni presso ",
+    " (add one before you can add a candidate here)":" (aggiungine una prima di poter aggiungere un candidato qui)",
+    "Using client default":"Usa il default del cliente",
+    "customize":"personalizza",
+    "edit":"modifica",
+    "No positions yet.":"Ancora nessuna posizione.",
+    "Rename client":"Rinomina cliente",
+    "Delete client":"Elimina cliente",
+    "Delete position":"Elimina posizione",
+    "start marker":"punto di partenza",
+    "neutral":"neutro",
+    "Add step":"Aggiungi fase",
+    "Custom…":"Personalizzato…",
+    "Step name":"Nome fase",
+    "Target days":"Giorni obiettivo",
+    "+ Add":"+ Aggiungi",
+    "Global defaults":"Impostazioni globali",
+    "Close":"Chiudi",
+    "The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.":"Le regole generali per i nuovi clienti — fasi e tempistiche predefinite. Si applicano a qualsiasi cliente (o posizione) privo di una propria personalizzazione.",
+    "Add position — choose client":"Aggiungi posizione — scegli cliente",
+    "Cancel":"Annulla",
+    "Next":"Avanti",
+    "New client":"Nuovo cliente",
+    "Client name":"Nome cliente",
+    "e.g. Acme Srl":"es. Acme Srl",
+    "Enter a client name.":"Inserisci il nome del cliente.",
+    "Default timetable — ":"Tempistica predefinita — ",
+    "This becomes ":"Questo diventa il default proprio di ",
+    "'s own default — every position you add for them inherits it unless you customize that position too.":" — ogni posizione che aggiungi per lui la eredita, a meno che tu non personalizzi anche quella posizione.",
+    "Use global default timetable":"Usa la tempistica predefinita globale",
+    "Same steps and timings as the global default":"Stesse fasi e tempistiche del default globale",
+    "Customize this client's default timetable":"Personalizza la tempistica predefinita di questo cliente",
+    "Adjust steps or timings just for ":"Modifica fasi o tempistiche solo per ",
+    "Back":"Indietro",
+    "Customize default timetable — ":"Personalizza tempistica predefinita — ",
+    "Save client":"Salva cliente",
+    "Add position — ":"Aggiungi posizione — ",
+    "Position name":"Nome posizione",
+    "e.g. Senior Backend Developer":"es. Senior Backend Developer",
+    "Use company default timetable":"Usa la tempistica predefinita aziendale",
+    "Inherits from ":"Eredita da ",
+    "Modify timetable":"Modifica tempistica",
+    "Adjust steps or timings just for this position":"Modifica fasi o tempistiche solo per questa posizione",
+    "Enter a position name.":"Inserisci il nome della posizione.",
+    "Modify timetable — ":"Modifica tempistica — ",
+    "Save position":"Salva posizione",
+    "Position added":"Posizione aggiunta",
+    "\" added for ":"\" aggiunta per ",
+    "You can now add a candidate for this position.":"Ora puoi aggiungere un candidato per questa posizione.",
+    "+ Add another position for ":"+ Aggiungi un'altra posizione per ",
+    "Return to home":"Torna alla home",
+    "this vacancy's own process":"il processo proprio di questa posizione",
+    "this client's process":"il processo di questo cliente",
+    "the global default process":"il processo predefinito globale",
+    "Add candidate":"Aggiungi candidato",
+    "Edit candidate":"Modifica candidato",
+    "Client / company":"Cliente / azienda",
+    "Vacancy / position":"Posizione",
+    "Candidate name":"Nome candidato",
+    "Recruiter (TNV)":"Recruiter (TNV)",
+    "e.g. Adelaide":"es. Adelaide",
+    "Remit received":"Incarico ricevuto",
+    "Outcome":"Esito",
+    "Notes":"Note",
+    "Tracking timeline":"Timeline di tracciamento",
+    "Load agreed process":"Carica processo concordato",
+    "Reload agreed process":"Ricarica processo concordato",
+    "Delete candidate":"Elimina candidato",
+    "Save candidate":"Salva candidato",
+    "Select client…":"Seleziona cliente…",
+    "Select position…":"Seleziona posizione…",
+    "No timeline yet. Click \"Load agreed process\" above to pull in the steps you've agreed with this client.":"Ancora nessuna timeline. Clicca \"Carica processo concordato\" qui sopra per importare le fasi concordate con questo cliente.",
+    "+ insert step here":"+ inserisci fase qui",
+    "in progress":"in corso",
+    "Target":"Obiettivo",
+    "Actual":"Effettivo",
+    "Edit completion date":"Modifica data di completamento",
+    "Date completed":"Data di completamento",
+    "Save":"Salva",
+    "Remove":"Rimuovi",
+    "upcoming":"in arrivo",
+    "Skip this step":"Salta questa fase",
+    "Mark complete…":"Segna come completata…",
+    "Confirm":"Conferma",
+    "so far":"finora",
+    "on target":"in linea con l'obiettivo",
+    " over target":" oltre obiettivo",
+    "over":"oltre",
+    "Timeline":"Timeline",
+    "pending, target ":"in sospeso, obiettivo ",
+    "Date reached":"Data raggiunta",
+    "Ad-hoc steps like this have no predicted target — just what actually happened.":"Le fasi estemporanee come questa non hanno un obiettivo predefinito — solo quello che è successo davvero.",
+    "Could not save — your browser storage may be full or blocked.":"Salvataggio non riuscito — la memoria del browser potrebbe essere piena o bloccata.",
+    " — loaded from ":" — caricato da ",
+    "Enter the client and vacancy first.":"Inserisci prima il cliente e la posizione.",
+    "This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?":"Questo candidato ha già dei progressi registrati. Ricaricando il modello si manterranno le fasi completate ma verranno sostituite quelle ancora in sospeso. Continuare?",
+    "Add a client and at least one position for them first (Clients tab) before adding a candidate.":"Aggiungi prima un cliente e almeno una posizione per lui (scheda Clienti) prima di aggiungere un candidato.",
+    "Click \"Load agreed process\" to build a timeline first.":"Clicca \"Carica processo concordato\" per creare prima una timeline.",
+    "Delete this candidate? This can't be undone.":"Eliminare questo candidato? L'operazione non può essere annullata.",
+    "Replace current data with the imported file? Cancel to merge instead.":"Sostituire i dati attuali con il file importato? Annulla per unirli invece.",
+    "That doesn't look like a valid export file.":"Questo non sembra un file di esportazione valido.",
+    "This adds sample candidates alongside your existing data. Continue?":"Questo aggiunge candidati di esempio ai tuoi dati esistenti. Continuare?",
+    "Delete ALL candidates from this browser? This also does not touch your process templates. Continue?":"Eliminare TUTTI i candidati da questo browser? Questo non tocca i modelli di processo. Continuare?",
+    "First candidate submitted":"Primo candidato inviato",
+    "Screening decision":"Decisione di screening",
+    "Interview scheduled":"Colloquio fissato",
+    "Interview held":"Colloquio svolto",
+    "Decide if more interviews needed":"Decidere se servono altri colloqui",
+    "Decision to make offer":"Decisione di fare un'offerta",
+    "Offer made":"Offerta fatta",
+    "Candidate response":"Risposta del candidato",
+    "Contract sent":"Contratto inviato",
+    "Additional interview scheduled":"Colloquio aggiuntivo fissato",
+    "Additional interview held":"Colloquio aggiuntivo svolto",
+    "Approval required (e.g. CEO)":"Approvazione richiesta (es. CEO)",
+    "Counter-offer negotiation":"Negoziazione controproposta",
+    "Lost to another offer":"Perso per un'altra offerta",
+    "Rejected by client":"Rifiutato dal cliente",
+    "Withdrawn":"Ritirato",
+    "In process":"In corso",
+    "Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.":"I dati sono salvati solo in questo browser (localStorage). Usa Esporta CSV per condividere un'istantanea, oppure Esporta JSON per il backup o per spostarti tra dispositivi."
+  };
+  var SC = {
+    "Candidate Tracker":"Controllu de is Candidatos",
+    "Every candidate has a clock running, against the times you actually agreed with the client.":"Dogna candidatu tenet unu tempus chi currit, in cunfrontu a is tempus chi as acordadu de veras cun su cliente.",
+    "Global defaults…":"Impostatziones globales…",
+    "Export JSON (backup)":"Esporta JSON (backup)",
+    "Import JSON":"Importa JSON",
+    "Export CSV (for Excel / email)":"Esporta CSV (pro Excel / email)",
+    "Load sample data":"Carriga datos de esempru",
+    "Clear all data":"Cantzella totu is datos",
+    "Dashboard":"Dashboard",
+    "Candidates":"Candidatos",
+    "Insights":"Analisi",
+    "Clients":"Clientes",
+    "Where the delays are":"Inue sunt is ritardos",
+    "Every client's biggest recurring hold-up, ranked — the whole picture, in one place":"S'impedimentu prus mannu e repetidu de dogna cliente, in classifica — totu su cuadru in unu logu solu",
+    "Click a client for the full breakdown":"Incarca in d-unu cliente pro su detàlliu cumpletu",
+    "No candidates yet — nothing to diagnose.":"Galu perunu candidatu — nudda de analizare.",
+    "No step is consistently overrunning its target across any client yet.":"Peruna fase superat galu de manera sistemàtica s'obietivu suo, in perunu cliente.",
+    "Client":"Cliente",
+    "Step":"Fase",
+    "Avg over target":"Media in prus de s'obietivu",
+    "Occurrences":"Bortas",
+    "Active candidates":"Candidatos ativos",
+    "On track":"In lìnia",
+    "Slipping":"In ritardu lébiu",
+    "At risk":"A perìgulu",
+    "Overdue":"Iscadidu",
+    "At risk / overdue":"A perìgulu / iscadidu",
+    "Median days over target":"Mediana dies in prus de s'obietivu",
+    " active":" ativos",
+    "no active candidates":"perunu candidatu ativu",
+    "Median right now":"Mediana de imoe",
+    "Biggest hold-up":"Impedimentu prus mannu",
+    "no recurring overrun yet":"perunu ritardu repetidu galu",
+    "Set up your first client":"Cunfigura su primu cliente tuo",
+    "Before you can track a candidate, add the client, then add at least one position for them. Steps and timings default from the global process until you customize them.":"Prima de poder controllare unu candidatu, agiunghe su cliente, e agiunghe a su mancu una positzione pro issu. Fases e tempisticas sighint su protzessu globale finas a chi no las personalizas.",
+    "+ Create client":"+ Crea cliente",
+    "+ Add position":"+ Agiunghe positzione",
+    "then you can add a candidate":"a pustis podes agiunghere unu candidatu",
+    "+ Add candidate":"+ Agiunghe candidatu",
+    "Add a position to get started":"Agiunghe una positzione pro incumintzare",
+    "You have a client set up, but no position yet. Add one, then you can add a candidate for it.":"As cunfiguradu unu cliente, ma peruna positzione galu. Agiunghinde una, a pustis podes agiunghere unu candidatu.",
+    "No candidates yet":"Galu perunu candidatu",
+    "Add your first candidate, or load sample data to see how the timeline works.":"Agiunghe su primu candidatu tuo, o carriga datos de esempru pro bìdere comente funtzionat sa timeline.",
+    "Search candidate, client, vacancy…":"Chirca candidatu, cliente, positzione…",
+    "All clients":"Totu is clientes",
+    "All statuses":"Totu is istados",
+    "Closed":"Serradu",
+    "Candidate":"Candidatu",
+    "Current step":"Fase atuale",
+    "Since":"Dae su",
+    "Waiting on":"In atesa de",
+    "Recruiter":"Recruiter",
+    "Days over target":"Dies in prus de s'obietivu",
+    "Total elapsed":"Totale colau",
+    "No candidates match these filters.":"Perunu candidatu currispondet a custos filtros.",
+    "Active":"Ativos",
+    "Median days over (now)":"Mediana dies in prus (imoe)",
+    "Placed":"Assuntu",
+    "Lost to other offers":"Pèrdidos pro àteras ofertas",
+    "Where the time goes":"Inue nde bàsciat su tempus",
+    "No step has consistently overrun its target yet.":"Peruna fase at superadu galu de manera sistemàtica s'obietivu suo.",
+    "Add a client, then add positions within it. A position uses the client's process unless you modify it; a client uses the global default (File ▾ → Global defaults) unless you customize it.":"Agiunghe unu cliente, a pustis agiunghe is positziones intro de issu. Una positzione impreat su protzessu de su cliente si no lu modificas; unu cliente impreat su default globale (File ▾ → Impostatziones globales) si no lu personalizas.",
+    "Your clients":"Is clientes tuos",
+    "+ Add client":"+ Agiunghe cliente",
+    "No clients yet. Add one to set up their positions ahead of the first candidate.":"Galu perunu cliente. Agiunghinde unu pro cunfigurare is positziones ainnantis de su primu candidatu.",
+    "Click a client to view or customize their process, and manage their positions.":"Incarca in d-unu cliente pro bìdere o personalizare su protzessu suo, e gestire is positziones suas.",
+    "Customized":"Personalizadu",
+    "Using global default":"Impreat su default globale",
+    "Customize this client's process":"Personaliza su protzessu de custu cliente",
+    "Positions at ":"Positziones in ",
+    " (add one before you can add a candidate here)":" (agiunghinde una prima de poder agiunghere unu candidatu inoghe)",
+    "Using client default":"Impreat su default de su cliente",
+    "customize":"personaliza",
+    "edit":"modìfica",
+    "No positions yet.":"Galu peruna positzione.",
+    "Rename client":"Muda nùmene a su cliente",
+    "Delete client":"Cantzella cliente",
+    "Delete position":"Cantzella positzione",
+    "start marker":"puntu de partèntzia",
+    "neutral":"neutrale",
+    "Add step":"Agiunghe fase",
+    "Custom…":"Personalizadu…",
+    "Step name":"Nùmene de sa fase",
+    "Target days":"Dies obietivu",
+    "+ Add":"+ Agiunghe",
+    "Global defaults":"Impostatziones globales",
+    "Close":"Serra",
+    "The overall rules for new clients — default steps and timings. Applies to any client (and any position) with no customization of its own.":"Is règulas generales pro is clientes noos — fases e tempisticas predefinidas. Balet pro cale si siat cliente (e positzione) chene una personalizatzione sua.",
+    "Add position — choose client":"Agiunghe positzione — scebera cliente",
+    "Cancel":"Annulla",
+    "Next":"Avanti",
+    "New client":"Cliente nou",
+    "Client name":"Nùmene de su cliente",
+    "e.g. Acme Srl":"es. Acme Srl",
+    "Enter a client name.":"Inserta su nùmene de su cliente.",
+    "Default timetable — ":"Tempistica predefinida — ",
+    "This becomes ":"Custu devenit su default propriu de ",
+    "'s own default — every position you add for them inherits it unless you customize that position too.":" — dogna positzione chi agiunghes pro issu la eredat, si no personalizas fintzas cussa positzione.",
+    "Use global default timetable":"Impreat sa tempistica predefinida globale",
+    "Same steps and timings as the global default":"Matessi fases e tempisticas de su default globale",
+    "Customize this client's default timetable":"Personaliza sa tempistica predefinida de custu cliente",
+    "Adjust steps or timings just for ":"Modìfica fases o tempisticas isceti pro ",
+    "Back":"A segus",
+    "Customize default timetable — ":"Personaliza tempistica predefinida — ",
+    "Save client":"Sarva cliente",
+    "Add position — ":"Agiunghe positzione — ",
+    "Position name":"Nùmene de sa positzione",
+    "e.g. Senior Backend Developer":"es. Senior Backend Developer",
+    "Use company default timetable":"Impreat sa tempistica predefinida de s'aziendas",
+    "Inherits from ":"Eredat dae ",
+    "Modify timetable":"Modìfica tempistica",
+    "Adjust steps or timings just for this position":"Modìfica fases o tempisticas isceti pro custa positzione",
+    "Enter a position name.":"Inserta su nùmene de sa positzione.",
+    "Modify timetable — ":"Modìfica tempistica — ",
+    "Save position":"Sarva positzione",
+    "Position added":"Positzione agiunta",
+    "\" added for ":"\" agiunta pro ",
+    "You can now add a candidate for this position.":"Immoe podes agiunghere unu candidatu pro custa positzione.",
+    "+ Add another position for ":"+ Agiunghe un'àtera positzione pro ",
+    "Return to home":"Torra a sa home",
+    "this vacancy's own process":"su protzessu propriu de custa positzione",
+    "this client's process":"su protzessu de custu cliente",
+    "the global default process":"su protzessu predefinidu globale",
+    "Add candidate":"Agiunghe candidatu",
+    "Edit candidate":"Modìfica candidatu",
+    "Client / company":"Cliente / aziendas",
+    "Vacancy / position":"Positzione",
+    "Candidate name":"Nùmene de su candidatu",
+    "Recruiter (TNV)":"Recruiter (TNV)",
+    "e.g. Adelaide":"es. Adelaide",
+    "Remit received":"Incàrrigu retzidu",
+    "Outcome":"Resurtadu",
+    "Notes":"Notas",
+    "Tracking timeline":"Timeline de controllu",
+    "Load agreed process":"Carriga protzessu acordadu",
+    "Reload agreed process":"Torra a carrigare protzessu acordadu",
+    "Delete candidate":"Cantzella candidatu",
+    "Save candidate":"Sarva candidatu",
+    "Select client…":"Scebera cliente…",
+    "Select position…":"Scebera positzione…",
+    "No timeline yet. Click \"Load agreed process\" above to pull in the steps you've agreed with this client.":"Galu peruna timeline. Incarca \"Carriga protzessu acordadu\" in artu pro importare is fases acordadas cun custu cliente.",
+    "+ insert step here":"+ inserta fase inoghe",
+    "in progress":"in cursu",
+    "Target":"Obietivu",
+    "Actual":"Efetivu",
+    "Edit completion date":"Modìfica data de cumprimentu",
+    "Date completed":"Data de cumprimentu",
+    "Save":"Sarva",
+    "Remove":"Boga",
+    "upcoming":"chi at a bènnere",
+    "Skip this step":"Sartia custa fase",
+    "Mark complete…":"Sinnala comente cumprida…",
+    "Confirm":"Cunfirma",
+    "so far":"a immoe",
+    "on target":"in lìnia cun s'obietivu",
+    " over target":" in prus de s'obietivu",
+    "over":"in prus",
+    "Timeline":"Timeline",
+    "pending, target ":"pendente, obietivu ",
+    "Date reached":"Data lograda",
+    "Ad-hoc steps like this have no predicted target — just what actually happened.":"Is fases estemporàneas comente custa no tenent un'obietivu predefinidu — isceti cuddu chi est acontèssidu de veras.",
+    "Could not save — your browser storage may be full or blocked.":"No fait a sarvare — sa memoria de su browser podet essere prena o blocada.",
+    " — loaded from ":" — carrigadu dae ",
+    "Enter the client and vacancy first.":"Inserta prima su cliente e sa positzione.",
+    "This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?":"Custu candidatu tenet giai progressos registrados. Torrende a carrigare su modellu s'ant a mantènnere is fases cumpridas ma s'ant a sostituire is fases ancora pendentes. Sighire?",
+    "Add a client and at least one position for them first (Clients tab) before adding a candidate.":"Agiunghe prima unu cliente e a su mancu una positzione pro issu (ischeda Clientes) prima de agiunghere unu candidatu.",
+    "Click \"Load agreed process\" to build a timeline first.":"Incarca \"Carriga protzessu acordadu\" pro creare prima una timeline.",
+    "Delete this candidate? This can't be undone.":"Cantzellare custu candidatu? Non si podet annullare.",
+    "Replace current data with the imported file? Cancel to merge instead.":"Sostituire is datos atuales cun su file importadu? Annulla pro los unire invetzes.",
+    "That doesn't look like a valid export file.":"Custu no parit unu file de esportatzione vàlidu.",
+    "This adds sample candidates alongside your existing data. Continue?":"Custu agiunghet candidatos de esempru a costàgiu de is datos tuos esistentes. Sighire?",
+    "Delete ALL candidates from this browser? This also does not touch your process templates. Continue?":"Cantzellare TOTU is candidatos dae custu browser? Custu no toccat is modellos de protzessu. Sighire?",
+    "First candidate submitted":"Primu candidatu imbiadu",
+    "Screening decision":"Detzisione de screening",
+    "Interview scheduled":"Cullòcuiu fissadu",
+    "Interview held":"Cullòcuiu fatu",
+    "Decide if more interviews needed":"Detzìdere si serbint àteros cullòcuios",
+    "Decision to make offer":"Detzisione de fàghere un'oferta",
+    "Offer made":"Oferta fata",
+    "Candidate response":"Risposta de su candidatu",
+    "Contract sent":"Contratu imbiadu",
+    "Additional interview scheduled":"Cullòcuiu additzionale fissadu",
+    "Additional interview held":"Cullòcuiu additzionale fatu",
+    "Approval required (e.g. CEO)":"Aprovatzione rechesta (es. CEO)",
+    "Counter-offer negotiation":"Negotziatzione de contra-oferta",
+    "Lost to another offer":"Pèrdidu pro un'àtera oferta",
+    "Rejected by client":"Refudadu dae su cliente",
+    "Withdrawn":"Ritiradu",
+    "In process":"In cursu",
+    "Data is stored only in this browser (localStorage). Use Export CSV to share a snapshot, or Export JSON to back up / move between devices.":"Is datos sunt sarvados isceti in custu browser (localStorage). Impreat Esporta CSV pro cumpartzire un'istantànea, o Esporta JSON pro fàghere backup o mòvere intre dispositivos."
+  };
+  var I18N = { it: IT, sc: SC };
+  var lang = "en";
+  try{ lang = localStorage.getItem("tnv-lang") || "en"; }catch(e){}
+  function setLang(l){
+    lang = l;
+    try{ localStorage.setItem("tnv-lang", l); }catch(e){}
+    document.documentElement.lang = l === "it" ? "it" : l === "sc" ? "sc" : "en";
+    applyStaticI18n();
+    fillSelect("f_outcome", OUTCOMES);
+    renderAll();
+    if(document.getElementById("candModal").hasAttribute("open")) renderStepper();
+    if(document.getElementById("wizardModal").hasAttribute("open")) renderWizard();
+    if(document.getElementById("globalDefaultsModal").hasAttribute("open")) renderGlobalDefaultsModal();
+  }
+  function t(s){
+    if(lang === "en" || !s) return s;
+    var d = I18N[lang];
+    return (d && Object.prototype.hasOwnProperty.call(d, s)) ? d[s] : s;
+  }
+  function applyStaticI18n(){
+    document.querySelectorAll("[data-i18n]").forEach(function(el){ el.textContent = t(el.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ el.placeholder = t(el.getAttribute("data-i18n-ph")); });
+    document.querySelectorAll("#langSelect option").forEach(function(o){ o.selected = o.value === lang; });
+  }
+  // Composite, grammar-sensitive messages get their own per-language sentence rather than
+  // being stitched from identity-keyed fragments, since word order and pluralization don't
+  // line up across English/Italian/Sardinian.
+  function msgTopHoldup(clientName, stepLabel, avgOver){
+    var c = esc(clientName), s = esc(t(stepLabel)), n = avgOver.toFixed(1);
+    if(lang==="it") return "Ostacolo principale in assoluto: <b>"+c+" — "+s+"</b>, con una media di <b>"+n+" giorni</b> oltre l'obiettivo.";
+    if(lang==="sc") return "Impedimentu prus mannu in totu: <b>"+c+" — "+s+"</b>, cun una media de <b>"+n+" dies</b> in prus de s'obietivu.";
+    return "Top hold-up overall: <b>"+c+" — "+s+"</b>, averaging <b>"+n+" days</b> over target.";
+  }
+  function msgClientFramed(stepLabel, avgOver, count){
+    var s = esc(t(stepLabel)), n = avgOver.toFixed(1);
+    if(lang==="it") return "Inquadrato per il cliente: l'ostacolo ricorrente è <b>"+s+"</b> — con una media di <b>"+n+" giorni</b> oltre l'obiettivo concordato, su "+count+" candidat"+(count===1?"o":"i")+".";
+    if(lang==="sc") return "Ammustradu pro su cliente: s'impedimentu repetidu est <b>"+s+"</b> — cun una media de <b>"+n+" dies</b> in prus de s'obietivu acordadu, in "+count+" candidatu"+(count===1?"":"s")+".";
+    return "Framed for the client: the recurring hold-up is <b>"+s+"</b> — averaging <b>"+n+" days</b> over the agreed target, across "+count+" candidate"+(count===1?"":"s")+".";
+  }
+  function msgCandidatesReference(count, name){
+    var n = esc(name);
+    if(lang==="it") return count+" candidat"+(count===1?"o":"i")+(count===1?" fa":" fanno")+" ancora riferimento a \""+n+"\". "+(count===1?"Eliminalo o riassegnalo":"Eliminali o riassegnali")+" prima.";
+    if(lang==="sc") return count+" candidatu"+(count===1?"":"s")+" ancora"+(count===1?" faet":" faent")+" riferimentu a \""+n+"\". "+(count===1?"Cantzellalu o assigna·lu torra":"Cantzellalos o assigna·los torra")+" prima.";
+    return count+" candidate"+(count===1?"":"s")+" still reference \""+n+"\". Delete or reassign "+(count===1?"it":"them")+" first.";
+  }
+  function msgConfirmDeleteClient(name){
+    var n = esc(name);
+    if(lang==="it") return "Eliminare il cliente \""+n+"\" e tutte le sue posizioni? L'operazione non può essere annullata.";
+    if(lang==="sc") return "Cantzellare su cliente \""+n+"\" e totu is positziones suas? Non si podet annullare.";
+    return "Delete client \""+n+"\" and all its positions? This can't be undone.";
+  }
+  function msgConfirmDeletePosition(vacancy, client){
+    var v = esc(vacancy), c = esc(client);
+    if(lang==="it") return "Eliminare la posizione \""+v+"\" presso "+c+"? L'operazione non può essere annullata.";
+    if(lang==="sc") return "Cantzellare sa positzione \""+v+"\" in "+c+"? Non si podet annullare.";
+    return "Delete position \""+v+"\" at "+c+"? This can't be undone.";
+  }
+  function msgRenamePrompt(oldName){
+    var n = esc(oldName);
+    if(lang==="it") return "Rinomina \""+n+"\" in:";
+    if(lang==="sc") return "Muda su nùmene \""+n+"\" in:";
+    return "Rename \""+n+"\" to:";
+  }
+  function msgClientExists(newName){
+    var n = esc(newName);
+    if(lang==="it") return "Esiste già un cliente chiamato \""+n+"\".";
+    if(lang==="sc") return "Esistit giai unu cliente numenadu \""+n+"\".";
+    return "A client named \""+n+"\" already exists.";
+  }
+
   // ---------- template helpers ----------
   function newGlobalDefault(){
     return STANDARD_STEPS.map(function(s){
@@ -521,7 +984,7 @@
     return {steps: state.globalTemplate, level:"global"};
   }
   function levelLabel(level){
-    return level==="position" ? "this vacancy's own process" : level==="client" ? "this client's process" : "the global default process";
+    return t(level==="position" ? "this vacancy's own process" : level==="client" ? "this client's process" : "the global default process");
   }
 
   // ---------- persistence ----------
@@ -545,7 +1008,7 @@
   }
   function save(){
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch(e){ alert("Could not save — your browser storage may be full or blocked."); }
+    catch(e){ alert(t("Could not save — your browser storage may be full or blocked.")); }
   }
   function migrateV1ToV2ish(old){
     var out = { candidates: [] };
@@ -762,7 +1225,7 @@
   function renameClient(oldName, newName){
     newName = (newName||"").trim();
     if(!newName || newName === oldName) return false;
-    if(clientsList().indexOf(newName) !== -1){ alert('A client named "'+newName+'" already exists.'); return false; }
+    if(clientsList().indexOf(newName) !== -1){ alert(msgClientExists(newName)); return false; }
     var idx = state.clientList.indexOf(oldName);
     if(idx !== -1) state.clientList[idx] = newName;
     if(state.clientTemplates[oldName]){ state.clientTemplates[newName] = state.clientTemplates[oldName]; delete state.clientTemplates[oldName]; }
@@ -784,10 +1247,10 @@
   function deleteClient(name){
     var count = state.candidates.filter(function(c){ return c.client === name; }).length;
     if(count > 0){
-      alert(count+" candidate"+(count===1?"":"s")+" still reference \""+name+"\". Delete or reassign "+(count===1?"it":"them")+" first.");
+      alert(msgCandidatesReference(count, name));
       return false;
     }
-    if(!confirm('Delete client "'+name+'" and all its positions? This can\'t be undone.')) return false;
+    if(!confirm(msgConfirmDeleteClient(name))) return false;
     var idx = state.clientList.indexOf(name);
     if(idx !== -1) state.clientList.splice(idx,1);
     delete state.clientTemplates[name];
@@ -801,10 +1264,10 @@
   function deletePosition(client, vacancy){
     var count = state.candidates.filter(function(c){ return c.client === client && c.vacancy === vacancy; }).length;
     if(count > 0){
-      alert(count+" candidate"+(count===1?"":"s")+" still reference \""+vacancy+"\". Delete or reassign "+(count===1?"it":"them")+" first.");
+      alert(msgCandidatesReference(count, vacancy));
       return false;
     }
-    if(!confirm('Delete position "'+vacancy+'" at '+client+'? This can\'t be undone.')) return false;
+    if(!confirm(msgConfirmDeletePosition(vacancy, client))) return false;
     if(state.vacancyList[client]){
       var idx = state.vacancyList[client].indexOf(vacancy);
       if(idx !== -1) state.vacancyList[client].splice(idx,1);
@@ -850,23 +1313,23 @@
   function renderTopbarCTA(){
     var wrap = document.getElementById("ctaWrap");
     if(!clientsList().length){
-      wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Create client</button>';
+      wrap.innerHTML = '<button class="btn primary" id="addBtn">'+t("+ Create client")+'</button>';
       document.getElementById("addBtn").addEventListener("click", function(){ openWizardNewClient(); });
       return;
     }
     if(!readyForCandidates()){
-      wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add position</button>'
-        + '<span class="hint" style="margin-left:8px;">then you can add a candidate</span>';
+      wrap.innerHTML = '<button class="btn primary" id="addBtn">'+t("+ Add position")+'</button>'
+        + '<span class="hint" style="margin-left:8px;">'+t("then you can add a candidate")+'</span>';
       document.getElementById("addBtn").addEventListener("click", function(){ openWizardAddPositionFromHome(); });
       return;
     }
-    wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add candidate</button>';
+    wrap.innerHTML = '<button class="btn primary" id="addBtn">'+t("+ Add candidate")+'</button>';
     document.getElementById("addBtn").addEventListener("click", function(){ openModal(); });
   }
   function renderDelayOverview(){
     var wrap = document.getElementById("delayWrap");
     var names = Array.from(new Set(state.candidates.map(function(c){return c.client;}))).sort();
-    if(!names.length){ wrap.innerHTML = '<div class="ceo-line">No candidates yet — nothing to diagnose.</div>'; return; }
+    if(!names.length){ wrap.innerHTML = '<div class="ceo-line">'+t("No candidates yet — nothing to diagnose.")+'</div>'; return; }
     var flat = [];
     names.forEach(function(name){
       clientStats(name).problems.forEach(function(p){
@@ -874,12 +1337,12 @@
       });
     });
     flat.sort(function(a,b){ return b.avgOver-a.avgOver; });
-    if(!flat.length){ wrap.innerHTML = '<div class="ceo-line">No step is consistently overrunning its target across any client yet.</div>'; return; }
+    if(!flat.length){ wrap.innerHTML = '<div class="ceo-line">'+t("No step is consistently overrunning its target across any client yet.")+'</div>'; return; }
     var rows = flat.slice(0,8).map(function(p){
-      return '<tr><td>'+esc(p.client)+'</td><td>'+esc(p.label)+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
+      return '<tr><td>'+esc(p.client)+'</td><td>'+esc(t(p.label))+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
     }).join("");
-    wrap.innerHTML = '<table class="problem-table"><thead><tr><th>Client</th><th>Step</th><th>Avg over target</th><th>Occurrences</th></tr></thead><tbody>'+rows+'</tbody></table>'
-      + '<div class="ceo-line">Top hold-up overall: <b>'+esc(flat[0].client)+' — '+esc(flat[0].label)+'</b>, averaging <b>'+flat[0].avgOver.toFixed(1)+' days</b> over target.</div>';
+    wrap.innerHTML = '<table class="problem-table"><thead><tr><th>'+t("Client")+'</th><th>'+t("Step")+'</th><th>'+t("Avg over target")+'</th><th>'+t("Occurrences")+'</th></tr></thead><tbody>'+rows+'</tbody></table>'
+      + '<div class="ceo-line">'+msgTopHoldup(flat[0].client, flat[0].label, flat[0].avgOver)+'</div>';
   }
   function renderStatStrip(){
     var open = state.candidates.filter(isOpen);
@@ -896,7 +1359,7 @@
       {n: med===null ? "—" : med.toFixed(1)+"d", l:"Median days over target", cls:""}
     ];
     document.getElementById("statStrip").innerHTML = stats.map(function(s){
-      return '<div class="stat '+s.cls+'"><div class="n">'+s.n+'</div><div class="l">'+s.l+'</div></div>';
+      return '<div class="stat '+s.cls+'"><div class="n">'+s.n+'</div><div class="l">'+t(s.l)+'</div></div>';
     }).join("");
   }
   function renderClientGrid(){
@@ -910,12 +1373,12 @@
         for(var i=0;i<(s.counts[band]||0);i++) dots += '<span class="dot '+band+'"></span>';
       });
       var medTxt = s.medianOver===null ? "—" : s.medianOver.toFixed(1)+"d over";
-      var topProblem = s.problems.length ? esc(s.problems[0].label)+" (avg +"+s.problems[0].avgOver.toFixed(1)+"d)" : "no recurring overrun yet";
+      var topProblem = s.problems.length ? esc(t(s.problems[0].label))+" (avg +"+s.problems[0].avgOver.toFixed(1)+"d)" : t("no recurring overrun yet");
       return '<div class="client-card" data-client="'+escAttr(name)+'">'
-        + '<div class="top"><h3>'+esc(name)+'</h3><span class="count">'+s.open.length+' active</span></div>'
-        + '<div class="risk-dots">'+(dots || '<span style="color:var(--muted); font-size:12px;">no active candidates</span>')+'</div>'
-        + '<div class="stat-line">Median right now: <b>'+medTxt+'</b></div>'
-        + '<div class="stat-line">Biggest hold-up: <b>'+topProblem+'</b></div>'
+        + '<div class="top"><h3>'+esc(name)+'</h3><span class="count">'+s.open.length+t(" active")+'</span></div>'
+        + '<div class="risk-dots">'+(dots || '<span style="color:var(--muted); font-size:12px;">'+t("no active candidates")+'</span>')+'</div>'
+        + '<div class="stat-line">'+t("Median right now")+': <b>'+medTxt+'</b></div>'
+        + '<div class="stat-line">'+t("Biggest hold-up")+': <b>'+topProblem+'</b></div>'
         + '</div>';
     }).join("");
     wrap.innerHTML = '<div class="client-grid">'+cards+'</div>';
@@ -937,21 +1400,21 @@
 
   function emptyStateHTML(){
     if(!clientsList().length){
-      return '<div class="empty-state"><h3>Set up your first client</h3>'
-        + '<p>Before you can track a candidate, add the client, then add at least one position for them. Steps and timings default from the global process until you customize them.</p>'
-        + '<div class="btn-row"><button class="btn primary" id="emptyCreateClientBtn">+ Create client</button>'
-        + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
+      return '<div class="empty-state"><h3>'+t("Set up your first client")+'</h3>'
+        + '<p>'+t("Before you can track a candidate, add the client, then add at least one position for them. Steps and timings default from the global process until you customize them.")+'</p>'
+        + '<div class="btn-row"><button class="btn primary" id="emptyCreateClientBtn">'+t("+ Create client")+'</button>'
+        + '<button class="btn" id="emptySampleBtn">'+t("Load sample data")+'</button></div></div>';
     }
     if(!readyForCandidates()){
-      return '<div class="empty-state"><h3>Add a position to get started</h3>'
-        + '<p>You have a client set up, but no position yet. Add one, then you can add a candidate for it.</p>'
-        + '<div class="btn-row"><button class="btn primary" id="emptyGoProcessBtn">+ Add position</button>'
-        + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
+      return '<div class="empty-state"><h3>'+t("Add a position to get started")+'</h3>'
+        + '<p>'+t("You have a client set up, but no position yet. Add one, then you can add a candidate for it.")+'</p>'
+        + '<div class="btn-row"><button class="btn primary" id="emptyGoProcessBtn">'+t("+ Add position")+'</button>'
+        + '<button class="btn" id="emptySampleBtn">'+t("Load sample data")+'</button></div></div>';
     }
-    return '<div class="empty-state"><h3>No candidates yet</h3>'
-      + '<p>Add your first candidate, or load sample data to see how the timeline works.</p>'
-      + '<div class="btn-row"><button class="btn primary" id="emptyAddBtn">+ Add candidate</button>'
-      + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
+    return '<div class="empty-state"><h3>'+t("No candidates yet")+'</h3>'
+      + '<p>'+t("Add your first candidate, or load sample data to see how the timeline works.")+'</p>'
+      + '<div class="btn-row"><button class="btn primary" id="emptyAddBtn">'+t("+ Add candidate")+'</button>'
+      + '<button class="btn" id="emptySampleBtn">'+t("Load sample data")+'</button></div></div>';
   }
   function bindEmptyState(){
     var a = document.getElementById("emptyAddBtn"), s = document.getElementById("emptySampleBtn");
@@ -995,12 +1458,12 @@
     var tbody = document.getElementById("candTbody");
     var list = filteredCandidates();
     if(!list.length){
-      tbody.innerHTML = '<tr><td colspan="8" style="padding:26px; text-align:center; color:var(--muted);">No candidates match these filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="padding:26px; text-align:center; color:var(--muted);">'+t("No candidates match these filters.")+'</td></tr>';
     } else {
       tbody.innerHTML = list.map(function(c){
         var a = c._a;
         var badge = a.currentBand === "closed"
-          ? '<span class="badge closed">'+esc(c.outcome)+'</span>'
+          ? '<span class="badge closed">'+esc(t(c.outcome))+'</span>'
           : '<span class="badge '+a.currentBand+'">'+(a.currentOver>0?'+':'')+a.currentOver+'d</span>';
         var totalTxt = a.totalActual===null ? "—" : a.totalActual+"d";
         var waitingOn = isOpen(c) ? (a.currentOwner || "—") : "—";
@@ -1009,9 +1472,9 @@
         return '<tr data-id="'+c.id+'">'
           + '<td>'+esc(c.client)+'</td>'
           + '<td class="name-cell"><b>'+esc(c.candidateName)+'</b><div class="sub">'+esc(c.vacancy)+'</div></td>'
-          + '<td><span class="stage-pill">'+esc(currentStepName(c))+'</span></td>'
+          + '<td><span class="stage-pill">'+esc(t(currentStepName(c)))+'</span></td>'
           + '<td class="mono" style="font-size:12.5px; color:var(--muted);">'+fmtDate(sinceDate)+'</td>'
-          + '<td>'+(waitingOn!=="—" ? '<span class="owner-tag '+waitingOn+'">'+esc(waitingOn)+'</span>' : '—')+'</td>'
+          + '<td>'+(waitingOn!=="—" ? '<span class="owner-tag '+waitingOn+'">'+esc(t(waitingOn))+'</span>' : '—')+'</td>'
           + '<td>'+esc(c.owner||"—")+'</td>'
           + '<td class="num">'+badge+'</td>'
           + '<td class="num">'+totalTxt+'</td>'
@@ -1038,24 +1501,24 @@
       var medTxt = s.medianOver===null ? "—" : s.medianOver.toFixed(1)+" days";
       var atRisk = (s.counts.red||0)+(s.counts.crit||0);
       var problemRows = s.problems.slice(0,5).map(function(p){
-        return '<tr><td>'+esc(p.label)+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
+        return '<tr><td>'+esc(t(p.label))+'</td><td class="mono">+'+p.avgOver.toFixed(1)+'d avg</td><td class="mono">'+p.count+'×</td></tr>';
       }).join("");
       var problemTable = s.problems.length
-        ? '<table class="problem-table"><thead><tr><th>Step</th><th>Avg over target</th><th>Occurrences</th></tr></thead><tbody>'+problemRows+'</tbody></table>'
-        : '<div class="ceo-line">No step has consistently overrun its target yet.</div>';
+        ? '<table class="problem-table"><thead><tr><th>'+t("Step")+'</th><th>'+t("Avg over target")+'</th><th>'+t("Occurrences")+'</th></tr></thead><tbody>'+problemRows+'</tbody></table>'
+        : '<div class="ceo-line">'+t("No step has consistently overrun its target yet.")+'</div>';
       var ceoLine = s.problems.length
-        ? '<div class="ceo-line">Framed for the client: the recurring hold-up is <b>'+esc(s.problems[0].label)+'</b> — averaging <b>'+s.problems[0].avgOver.toFixed(1)+' days</b> over the agreed target, across '+s.problems[0].count+' candidate'+(s.problems[0].count===1?'':'s')+'.</div>'
+        ? '<div class="ceo-line">'+msgClientFramed(s.problems[0].label, s.problems[0].avgOver, s.problems[0].count)+'</div>'
         : '';
       return '<div class="client-detail-card" data-detail="'+escAttr(name)+'">'
         + '<h3>'+esc(name)+'</h3>'
         + '<div class="client-kpis">'
-        + kpi(s.open.length, "Active")
-        + kpi(atRisk, "At risk / overdue")
-        + kpi(medTxt, "Median days over (now)")
-        + kpi(s.placed, "Placed")
-        + kpi(s.lost, "Lost to other offers")
+        + kpi(s.open.length, t("Active"))
+        + kpi(atRisk, t("At risk / overdue"))
+        + kpi(medTxt, t("Median days over (now)"))
+        + kpi(s.placed, t("Placed"))
+        + kpi(s.lost, t("Lost to other offers"))
         + '</div>'
-        + '<div class="section-heading" style="margin-bottom:4px;"><h2 style="font-size:14px;">Where the time goes</h2></div>'
+        + '<div class="section-heading" style="margin-bottom:4px;"><h2 style="font-size:14px;">'+t("Where the time goes")+'</h2></div>'
         + problemTable + ceoLine
         + '</div>';
     }).join("");
@@ -1067,42 +1530,42 @@
     var wrap = document.getElementById("processWrap");
     var names = clientsList();
     var html = '<div class="template-block"><div class="client-block-header" style="margin-bottom:'+(names.length?'10px':'0')+';">'
-      + '<h3 style="margin:0;">Your clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>';
+      + '<h3 style="margin:0;">'+t("Your clients")+'</h3><button class="btn small" id="addClientBtn">'+t("+ Add client")+'</button></div>';
     if(!names.length){
-      html += '<div class="sub">No clients yet. Add one to set up their positions ahead of the first candidate.</div>';
+      html += '<div class="sub">'+t("No clients yet. Add one to set up their positions ahead of the first candidate.")+'</div>';
     } else {
-      html += '<div class="sub" style="margin-bottom:8px;">Click a client to view or customize their process, and manage their positions.</div>';
+      html += '<div class="sub" style="margin-bottom:8px;">'+t("Click a client to view or customize their process, and manage their positions.")+'</div>';
       names.forEach(function(name){
         var hasClientTpl = !!state.clientTemplates[name];
         html += '<details class="client-tpl"><summary><div class="client-block-header">'
-          + '<span><b>'+esc(name)+'</b> <button type="button" class="icon-btn" data-action="rename-client" data-client="'+escAttr(name)+'" title="Rename client">✎</button>'
-          + '<button type="button" class="icon-btn danger" data-action="delete-client" data-client="'+escAttr(name)+'" title="Delete client">✕</button></span>'
-          + '<span class="status">'+(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
+          + '<span><b>'+esc(name)+'</b> <button type="button" class="icon-btn" data-action="rename-client" data-client="'+escAttr(name)+'" title="'+escAttr(t("Rename client"))+'">✎</button>'
+          + '<button type="button" class="icon-btn danger" data-action="delete-client" data-client="'+escAttr(name)+'" title="'+escAttr(t("Delete client"))+'">✕</button></span>'
+          + '<span class="status">'+t(hasClientTpl?'Customized':'Using global default')+'</span></div></summary>';
         if(hasClientTpl){
           html += renderStepListEditor(state.clientTemplates[name], {kind:"client", client:name});
         } else {
-          html += '<div style="padding:8px 0;"><button class="btn small" data-action="customize-client" data-client="'+escAttr(name)+'">Customize this client\'s process</button></div>';
+          html += '<div style="padding:8px 0;"><button class="btn small" data-action="customize-client" data-client="'+escAttr(name)+'">'+t("Customize this client's process")+'</button></div>';
         }
         var vacs = vacanciesForClient(name);
         html += '<div class="vacancy-list"><div class="client-block-header" style="margin-bottom:6px;">'
-          + '<div class="sub" style="margin:0;">Positions at '+esc(name)+(vacs.length?'':' (add one before you can add a candidate here)')+'</div>'
-          + '<button class="btn small" data-action="add-vacancy" data-client="'+escAttr(name)+'">+ Add position</button></div>';
+          + '<div class="sub" style="margin:0;">'+t("Positions at ")+esc(name)+(vacs.length?'':t(" (add one before you can add a candidate here)"))+'</div>'
+          + '<button class="btn small" data-action="add-vacancy" data-client="'+escAttr(name)+'">'+t("+ Add position")+'</button></div>';
         vacs.forEach(function(v){
           var pk = posKey(name, v);
           var hasPosTpl = !!state.positionTemplates[pk];
           html += '<div class="vacancy-row"><span class="name">'+esc(v)+'</span>';
           if(hasPosTpl){
-            html += '<span class="status">Customized <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">edit</button>';
+            html += '<span class="status">'+t("Customized")+' <button class="icon-btn" data-action="edit-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">'+t("edit")+'</button>';
           } else {
-            html += '<span class="status">'+(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">customize</button>';
+            html += '<span class="status">'+t(hasClientTpl?"Using client default":"Using global default")+' <button class="icon-btn" data-action="customize-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'">'+t("customize")+'</button>';
           }
-          html += ' <button class="icon-btn danger" data-action="delete-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'" title="Delete position">✕</button></span>';
+          html += ' <button class="icon-btn danger" data-action="delete-position" data-client="'+escAttr(name)+'" data-vacancy="'+escAttr(v)+'" title="'+escAttr(t("Delete position"))+'">✕</button></span>';
           html += '</div>';
           if(hasPosTpl && ui.openPosition === pk){
             html += renderStepListEditor(state.positionTemplates[pk], {kind:"position", client:name, vacancy:v});
           }
         });
-        if(!vacs.length) html += '<div class="sub">No positions yet.</div>';
+        if(!vacs.length) html += '<div class="sub">'+t("No positions yet.")+'</div>';
         html += '</div>';
         html += '</details>';
       });
@@ -1114,15 +1577,15 @@
   function renderStepListEditor(steps, ctx){
     var ctxAttr = 'data-kind="'+ctx.kind+'" data-client="'+escAttr(ctx.client||"")+'" data-vacancy="'+escAttr(ctx.vacancy||"")+'"';
     var rows = steps.map(function(s, idx){
-      var days = s.targetDays===null||s.targetDays===undefined ? '<span style="color:var(--muted); font-size:12px;">start marker</span>'
+      var days = s.targetDays===null||s.targetDays===undefined ? '<span style="color:var(--muted); font-size:12px;">'+t("start marker")+'</span>'
         : '<input type="number" min="0" class="target-edit tpl-days-input" data-id="'+s.id+'" '+ctxAttr+' value="'+s.targetDays+'"> d';
-      var ownerTag = s.owner ? '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>' : '<span style="color:var(--muted); font-size:11px;">neutral</span>';
+      var ownerTag = s.owner ? '<span class="owner-tag '+s.owner+'">'+t(s.owner)+'</span>' : '<span style="color:var(--muted); font-size:11px;">'+t("neutral")+'</span>';
       return '<div class="tpl-row">'
         + '<div class="tpl-reorder">'
         + '<button type="button" class="icon-btn tpl-move" data-dir="up" data-id="'+s.id+'" '+ctxAttr+' '+(idx===0?'disabled':'')+'>▲</button>'
         + '<button type="button" class="icon-btn tpl-move" data-dir="down" data-id="'+s.id+'" '+ctxAttr+' '+(idx===steps.length-1?'disabled':'')+'>▼</button>'
         + '</div>'
-        + '<div class="tpl-label">'+esc(s.label)+'</div>'
+        + '<div class="tpl-label">'+esc(t(s.label))+'</div>'
         + '<div class="tpl-owner">'+ownerTag+'</div>'
         + '<div>'+days+'</div>'
         + (idx===0 ? '' : '<button type="button" class="icon-btn tpl-remove" data-id="'+s.id+'" '+ctxAttr+'>✕</button>')
@@ -1132,12 +1595,12 @@
       return !steps.some(function(x){return x.label===s.label;});
     });
     var picker = '<div class="add-step-form"><div class="row">'
-      + '<div class="field"><label>Add step</label><select class="tpl-add-select" '+ctxAttr+'>'
-      + pickerOptions.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(o.label)+'</option>'; }).join("")
-      + '<option value="__custom__">Custom…</option></select></div>'
-      + '<div class="field tpl-custom-name-wrap" style="display:none;"><label>Step name</label><input type="text" class="tpl-custom-name"></div>'
-      + '<div class="field" style="flex:0 0 80px;"><label>Target days</label><input type="number" min="0" class="tpl-add-days" value="'+DEFAULT_TARGET_DAYS+'"></div>'
-      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn small tpl-add-btn" '+ctxAttr+'>+ Add</button></div>'
+      + '<div class="field"><label>'+t("Add step")+'</label><select class="tpl-add-select" '+ctxAttr+'>'
+      + pickerOptions.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(t(o.label))+'</option>'; }).join("")
+      + '<option value="__custom__">'+t("Custom…")+'</option></select></div>'
+      + '<div class="field tpl-custom-name-wrap" style="display:none;"><label>'+t("Step name")+'</label><input type="text" class="tpl-custom-name"></div>'
+      + '<div class="field" style="flex:0 0 80px;"><label>'+t("Target days")+'</label><input type="number" min="0" class="tpl-add-days" value="'+DEFAULT_TARGET_DAYS+'"></div>'
+      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn small tpl-add-btn" '+ctxAttr+'>'+t("+ Add")+'</button></div>'
       + '</div></div>';
     return '<div class="tpl-list">'+rows+'</div>'+picker;
   }
@@ -1205,7 +1668,7 @@
       btn.addEventListener("click", function(e){
         e.preventDefault(); e.stopPropagation(); // stay inside <summary> without toggling it
         var oldName = btn.dataset.client;
-        var newName = prompt('Rename "'+oldName+'" to:', oldName);
+        var newName = prompt(msgRenamePrompt(oldName), oldName);
         if(renameClient(oldName, newName)){ renderAll(); }
       });
     });
@@ -1285,12 +1748,12 @@
     var foot = document.getElementById("wizardFoot");
 
     if(wizard.stage === "pick-client"){
-      title.textContent = "Add position — choose client";
-      body.innerHTML = '<label>Client</label><select id="wz_pickClient">'
+      title.textContent = t("Add position — choose client");
+      body.innerHTML = '<label>'+t("Client")+'</label><select id="wz_pickClient">'
         + clientsList().map(function(c){ return '<option value="'+escAttr(c)+'">'+esc(c)+'</option>'; }).join("")
         + '</select>';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_next">Next</button>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">'+t("Cancel")+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_next">'+t("Next")+'</button>';
       document.getElementById("wz_cancel").addEventListener("click", closeWizard);
       document.getElementById("wz_next").addEventListener("click", function(){
         wizard.client = document.getElementById("wz_pickClient").value;
@@ -1301,14 +1764,14 @@
     }
 
     if(wizard.stage === "new-client"){
-      title.textContent = "New client";
-      body.innerHTML = '<label>Client name</label><input type="text" id="wz_clientName" value="'+escAttr(wizard.client||"")+'" placeholder="e.g. Acme Srl">';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_next">Next</button>';
+      title.textContent = t("New client");
+      body.innerHTML = '<label>'+t("Client name")+'</label><input type="text" id="wz_clientName" value="'+escAttr(wizard.client||"")+'" placeholder="'+escAttr(t("e.g. Acme Srl"))+'">';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">'+t("Cancel")+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_next">'+t("Next")+'</button>';
       document.getElementById("wz_cancel").addEventListener("click", closeWizard);
       document.getElementById("wz_next").addEventListener("click", function(){
         var name = document.getElementById("wz_clientName").value.trim();
-        if(!name){ alert("Enter a client name."); return; }
+        if(!name){ alert(t("Enter a client name.")); return; }
         wizard.client = name;
         wizard.stage = "client-defaults";
         renderWizard();
@@ -1320,17 +1783,17 @@
     }
 
     if(wizard.stage === "client-defaults"){
-      title.textContent = "Default timetable — " + wizard.client;
+      title.textContent = t("Default timetable — ") + wizard.client;
       var previewRows = state.globalTemplate.map(function(s){
-        return '<div class="row-line"><span>'+esc(s.label)+'</span><span class="mono">'+(hasTarget(s)?s.targetDays+"d":"—")+'</span></div>';
+        return '<div class="row-line"><span>'+esc(t(s.label))+'</span><span class="mono">'+(hasTarget(s)?s.targetDays+"d":"—")+'</span></div>';
       }).join("");
-      body.innerHTML = '<div class="sub">This becomes '+esc(wizard.client)+'\'s own default — every position you add for them inherits it unless you customize that position too.</div>'
+      body.innerHTML = '<div class="sub">'+t("This becomes ")+esc(wizard.client)+t("'s own default — every position you add for them inherits it unless you customize that position too.")+'</div>'
         + '<div class="wizard-choice-row">'
-        + '<button type="button" class="wizard-choice" id="wz_useGlobal"><b>Use global default timetable</b><span>Same steps and timings as the global default</span></button>'
-        + '<button type="button" class="wizard-choice" id="wz_customizeClient"><b>Customize this client\'s default timetable</b><span>Adjust steps or timings just for '+esc(wizard.client)+'</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_useGlobal"><b>'+t("Use global default timetable")+'</b><span>'+t("Same steps and timings as the global default")+'</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_customizeClient"><b>'+t("Customize this client's default timetable")+'</b><span>'+t("Adjust steps or timings just for ")+esc(wizard.client)+'</span></button>'
         + '</div>'
         + '<div class="wizard-preview">'+previewRows+'</div>';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">'+t("Back")+'</button>';
       document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "new-client"; renderWizard(); });
       document.getElementById("wz_useGlobal").addEventListener("click", function(){
         addClient(wizard.client);
@@ -1347,11 +1810,11 @@
     }
 
     if(wizard.stage === "modify-client"){
-      title.textContent = "Customize default timetable — " + wizard.client;
+      title.textContent = t("Customize default timetable — ") + wizard.client;
       body.innerHTML = renderStepListEditor(wizard.steps, {kind:"wizard"});
       bindStepListEditor(body, renderWizard);
-      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_saveClientSteps">Save client</button>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">'+t("Back")+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_saveClientSteps">'+t("Save client")+'</button>';
       document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "client-defaults"; renderWizard(); });
       document.getElementById("wz_saveClientSteps").addEventListener("click", function(){
         addClient(wizard.client);
@@ -1365,17 +1828,17 @@
     }
 
     if(wizard.stage === "new-position"){
-      title.textContent = "Add position — " + wizard.client;
-      body.innerHTML = '<label>Position name</label><input type="text" id="wz_positionName" value="'+escAttr(wizard.positionName)+'" placeholder="e.g. Senior Backend Developer">'
+      title.textContent = t("Add position — ") + wizard.client;
+      body.innerHTML = '<label>'+t("Position name")+'</label><input type="text" id="wz_positionName" value="'+escAttr(wizard.positionName)+'" placeholder="'+escAttr(t("e.g. Senior Backend Developer"))+'">'
         + '<div class="wizard-choice-row">'
-        + '<button type="button" class="wizard-choice" id="wz_useDefault"><b>Use company default timetable</b><span>Inherits from '+esc(levelLabel(resolveTemplate(wizard.client, "__none__").level))+'</span></button>'
-        + '<button type="button" class="wizard-choice" id="wz_modify"><b>Modify timetable</b><span>Adjust steps or timings just for this position</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_useDefault"><b>'+t("Use company default timetable")+'</b><span>'+t("Inherits from ")+esc(levelLabel(resolveTemplate(wizard.client, "__none__").level))+'</span></button>'
+        + '<button type="button" class="wizard-choice" id="wz_modify"><b>'+t("Modify timetable")+'</b><span>'+t("Adjust steps or timings just for this position")+'</span></button>'
         + '</div>';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">Cancel</button>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_cancel">'+t("Cancel")+'</button>';
       document.getElementById("wz_cancel").addEventListener("click", closeWizard);
       document.getElementById("wz_useDefault").addEventListener("click", function(){
         var name = document.getElementById("wz_positionName").value.trim();
-        if(!name){ alert("Enter a position name."); return; }
+        if(!name){ alert(t("Enter a position name.")); return; }
         addVacancy(wizard.client, name);
         wizard.positionName = name;
         wizard.stage = "saved";
@@ -1383,7 +1846,7 @@
       });
       document.getElementById("wz_modify").addEventListener("click", function(){
         var name = document.getElementById("wz_positionName").value.trim();
-        if(!name){ alert("Enter a position name."); return; }
+        if(!name){ alert(t("Enter a position name.")); return; }
         wizard.positionName = name;
         wizard.steps = cloneSteps(resolveTemplate(wizard.client, "__none__").steps);
         wizard.stage = "modify-position";
@@ -1394,11 +1857,11 @@
     }
 
     if(wizard.stage === "modify-position"){
-      title.textContent = "Modify timetable — " + wizard.positionName;
+      title.textContent = t("Modify timetable — ") + wizard.positionName;
       body.innerHTML = renderStepListEditor(wizard.steps, {kind:"wizard"});
       bindStepListEditor(body, renderWizard);
-      foot.innerHTML = '<button type="button" class="btn" id="wz_back">Back</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_saveSteps">Save position</button>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_back">'+t("Back")+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_saveSteps">'+t("Save position")+'</button>';
       document.getElementById("wz_back").addEventListener("click", function(){ wizard.stage = "new-position"; renderWizard(); });
       document.getElementById("wz_saveSteps").addEventListener("click", function(){
         addVacancy(wizard.client, wizard.positionName);
@@ -1411,11 +1874,11 @@
     }
 
     if(wizard.stage === "saved"){
-      title.textContent = "Position added";
-      body.innerHTML = '<div class="wizard-done"><h3>"'+esc(wizard.positionName)+'" added for '+esc(wizard.client)+'</h3>'
-        + '<p class="sub">You can now add a candidate for this position.</p></div>';
-      foot.innerHTML = '<button type="button" class="btn" id="wz_addAnother">+ Add another position for '+esc(wizard.client)+'</button>'
-        + '<span></span><button type="button" class="btn primary" id="wz_home">Return to home</button>';
+      title.textContent = t("Position added");
+      body.innerHTML = '<div class="wizard-done"><h3>"'+esc(wizard.positionName)+t("\" added for ")+esc(wizard.client)+'</h3>'
+        + '<p class="sub">'+t("You can now add a candidate for this position.")+'</p></div>';
+      foot.innerHTML = '<button type="button" class="btn" id="wz_addAnother">'+t("+ Add another position for ")+esc(wizard.client)+'</button>'
+        + '<span></span><button type="button" class="btn primary" id="wz_home">'+t("Return to home")+'</button>';
       document.getElementById("wz_addAnother").addEventListener("click", function(){
         wizard.stage = "new-position"; wizard.positionName = ""; wizard.steps = [];
         renderWizard();
@@ -1431,7 +1894,9 @@
   var modal = document.getElementById("candModal");
   fillSelect("f_outcome", OUTCOMES);
   function fillSelect(id, options){
-    document.getElementById(id).innerHTML = options.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(o)+'</option>'; }).join("");
+    var current = document.getElementById(id).value;
+    document.getElementById(id).innerHTML = options.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(t(o))+'</option>'; }).join("");
+    if(options.indexOf(current) !== -1) document.getElementById(id).value = current;
   }
 
   // Client and position are set up ahead of time on the Process tab — this modal
@@ -1442,7 +1907,7 @@
     // Keep an existing candidate's own client selectable even if its positions
     // were later removed — editing must never silently lose its own data.
     if(selected && names.indexOf(selected)===-1) names = names.concat([selected]).sort();
-    sel.innerHTML = '<option value="">Select client…</option>'
+    sel.innerHTML = '<option value="">'+t("Select client…")+'</option>'
       + names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("");
     sel.value = selected && names.indexOf(selected)>=0 ? selected : "";
   }
@@ -1450,7 +1915,7 @@
     var sel = document.getElementById("f_vacancy");
     var vacs = client ? vacanciesForClient(client) : [];
     if(selected && vacs.indexOf(selected)===-1) vacs = vacs.concat([selected]).sort();
-    sel.innerHTML = '<option value="">Select position…</option>'
+    sel.innerHTML = '<option value="">'+t("Select position…")+'</option>'
       + vacs.map(function(v){ return '<option value="'+escAttr(v)+'">'+esc(v)+'</option>'; }).join("");
     sel.value = selected && vacs.indexOf(selected)>=0 ? selected : "";
     sel.disabled = !client;
@@ -1474,19 +1939,19 @@
     var fresh = cloneSteps(resolved.steps);
     fresh[0].actualDate = document.getElementById("f_remitDate").value || todayISO();
     ui.draftTimeline = fresh;
-    document.getElementById("tplSourceNote").textContent = " — loaded from " + levelLabel(resolved.level);
+    document.getElementById("tplSourceNote").textContent = t(" — loaded from ") + levelLabel(resolved.level);
     renderStepper();
   }
 
   function openModal(id){
     if(!id && !readyForCandidates()){
-      alert("Add a client and at least one position for them first (Clients tab) before adding a candidate.");
+      alert(t("Add a client and at least one position for them first (Clients tab) before adding a candidate."));
       setTab("clients");
       return;
     }
     ui.editingId = id || null;
     var c = id ? state.candidates.find(function(x){return x.id===id;}) : null;
-    document.getElementById("modalTitle").textContent = c ? "Edit candidate" : "Add candidate";
+    document.getElementById("modalTitle").textContent = c ? t("Edit candidate") : t("Add candidate");
     document.getElementById("deleteBtn").style.display = c ? "inline-block" : "none";
     populateClientSelect(c ? c.client : "");
     populateVacancySelect(c ? c.client : "", c ? c.vacancy : "");
@@ -1516,10 +1981,10 @@
   document.getElementById("loadTemplateBtn").addEventListener("click", function(){
     var client = document.getElementById("f_client").value.trim();
     var vacancy = document.getElementById("f_vacancy").value.trim();
-    if(!client || !vacancy){ alert("Enter the client and vacancy first."); return; }
+    if(!client || !vacancy){ alert(t("Enter the client and vacancy first.")); return; }
     var doneSoFar = ui.draftTimeline.filter(function(s){return s.actualDate;});
     var progressBeyondRemit = doneSoFar.length > 1;
-    if(progressBeyondRemit && !confirm("This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?")) return;
+    if(progressBeyondRemit && !confirm(t("This candidate already has progress logged. Reloading the template will keep completed steps but replace the remaining pending steps. Continue?"))) return;
     var resolved = resolveTemplate(client, vacancy);
     var fresh = cloneSteps(resolved.steps);
     // The Remit received field above is always the source of truth for step 0's date,
@@ -1531,7 +1996,7 @@
     } else {
       ui.draftTimeline = fresh;
     }
-    document.getElementById("tplSourceNote").textContent = " — loaded from " + levelLabel(resolved.level);
+    document.getElementById("tplSourceNote").textContent = t(" — loaded from ") + levelLabel(resolved.level);
     renderStepper();
   });
   document.getElementById("f_remitDate").addEventListener("change", function(){
@@ -1545,7 +2010,7 @@
     var box = document.getElementById("stepperContainer");
     var tl = ui.draftTimeline;
     if(!tl.length){
-      box.innerHTML = '<div class="empty-state" style="padding:24px;"><p style="margin:0;">No timeline yet. Click "Load agreed process" above to pull in the steps you\'ve agreed with this client.</p></div>';
+      box.innerHTML = '<div class="empty-state" style="padding:24px;"><p style="margin:0;">'+t("No timeline yet. Click \"Load agreed process\" above to pull in the steps you've agreed with this client.")+'</p></div>';
       return;
     }
     var html = renderTimelineBar(tl);
@@ -1558,7 +2023,7 @@
       html += renderStepRow(s, i, status, i>0?lastDoneDate:null);
       if(s.actualDate) lastDoneDate = s.actualDate;
       if(i < tl.length-1 && status==="done"){
-        html += '<div class="insert-row"><button type="button" class="tl-insert-btn" data-after="'+i+'">+ insert step here</button>'
+        html += '<div class="insert-row"><button type="button" class="tl-insert-btn" data-after="'+i+'">'+t("+ insert step here")+'</button>'
           + renderInsertForm(i) + '</div>';
       }
     }
@@ -1600,32 +2065,32 @@
     for(var d=0; d<count; d++){
       cells += '<span class="day-cell '+band+(ongoing&&d===count-1?' ongoing':'')+'"></span>';
     }
-    var title = label+" — "+n+"d"+(over>0 ? " (+"+over+"d over target)" : "");
-    return '<div class="tl-segment" title="'+escAttr(title)+'"><div class="cells">'+cells+'</div><div class="seg-label">'+esc(label)+'</div></div>';
+    var title = t(label)+" — "+n+"d"+(over>0 ? " (+"+over+"d"+t(" over target")+")" : "");
+    return '<div class="tl-segment" title="'+escAttr(title)+'"><div class="cells">'+cells+'</div><div class="seg-label">'+esc(t(label))+'</div></div>';
   }
   function renderInsertForm(afterIdx){
     var used = {}; ui.draftTimeline.forEach(function(s){used[s.label]=true;});
     var opts = STANDARD_STEPS.concat(EXTRA_LIBRARY).filter(function(s){return !used[s.label];});
     return '<div class="mini-form" id="insert-form-'+afterIdx+'"><div class="row">'
-      + '<div class="field"><label>Step</label><select class="tl-insert-select" data-after="'+afterIdx+'">'
-      + opts.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(o.label)+'</option>'; }).join("")
-      + '<option value="__custom__">Custom…</option></select></div>'
-      + '<div class="field tl-insert-custom-wrap" style="display:none;"><label>Step name</label><input type="text" class="tl-insert-custom-name"></div>'
-      + '<div class="field"><label>Date reached</label><input type="date" class="tl-insert-date" value="'+todayISO()+'"></div>'
-      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-insert-confirm" data-after="'+afterIdx+'">+ Add</button></div>'
-      + '</div><div class="sub" style="margin-top:6px;">Ad-hoc steps like this have no predicted target — just what actually happened.</div></div>';
+      + '<div class="field"><label>'+t("Step")+'</label><select class="tl-insert-select" data-after="'+afterIdx+'">'
+      + opts.map(function(o){ return '<option value="'+escAttr(o.label)+'">'+esc(t(o.label))+'</option>'; }).join("")
+      + '<option value="__custom__">'+t("Custom…")+'</option></select></div>'
+      + '<div class="field tl-insert-custom-wrap" style="display:none;"><label>'+t("Step name")+'</label><input type="text" class="tl-insert-custom-name"></div>'
+      + '<div class="field"><label>'+t("Date reached")+'</label><input type="date" class="tl-insert-date" value="'+todayISO()+'"></div>'
+      + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-insert-confirm" data-after="'+afterIdx+'">'+t("+ Add")+'</button></div>'
+      + '</div><div class="sub" style="margin-top:6px;">'+t("Ad-hoc steps like this have no predicted target — just what actually happened.")+'</div></div>';
   }
   function hasTarget(s){ return s.targetDays!==null && s.targetDays!==undefined; }
   function renderStepRow(s, idx, status, prevDate){
     var dotClass = status;
     var body = '<div class="step-row '+dotClass+'"><div class="step-dot"></div><div class="step-main">';
-    body += '<div class="step-title-row"><span class="step-label">'+esc(s.label)+'</span>';
+    body += '<div class="step-title-row"><span class="step-label">'+esc(t(s.label))+'</span>';
     if(status==="done" && idx===0){
       // Start marker — there's no previous step to measure elapsed days against.
       // Its date is set (and kept in sync) via the "Remit received" field above.
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
       body += '<div class="step-meta">';
-      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+t(s.owner)+'</span>';
       body += '</div>';
     } else if(status==="done"){
       var days = daysBetween(prevDate, s.actualDate);
@@ -1633,56 +2098,56 @@
       var badge = hasTarget(s) ? overBadge(over) : '';
       body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+fmtDate(s.actualDate)+'</span></div>';
       body += '<div class="step-meta-lines">';
-      if(hasTarget(s)) body += '<div class="meta-line predicted">Target: '+s.targetDays+'d</div>';
-      body += '<div class="meta-line actual">Actual: <b>'+days+'d</b>'+(badge?' '+badge:'')+'</div>';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">'+t("Target")+': '+s.targetDays+'d</div>';
+      body += '<div class="meta-line actual">'+t("Actual")+': <b>'+days+'d</b>'+(badge?' '+badge:'')+'</div>';
       body += '</div>';
       body += '<div class="step-meta">';
-      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+t(s.owner)+'</span>';
       body += '</div>';
       if(idx>0){
         body += '<div class="step-actions">'
-          + '<button type="button" class="btn ghost small tl-edit-days" data-id="'+s.id+'">Edit completion date</button>'
+          + '<button type="button" class="btn ghost small tl-edit-days" data-id="'+s.id+'">'+t("Edit completion date")+'</button>'
           + '<div class="mini-form" id="edit-form-'+s.id+'"><div class="row">'
-          + '<div class="field"><label>Date completed</label><input type="date" class="tl-date-input" value="'+s.actualDate+'"></div>'
-          + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-edit-confirm" data-id="'+s.id+'">Save</button></div>'
+          + '<div class="field"><label>'+t("Date completed")+'</label><input type="date" class="tl-date-input" value="'+s.actualDate+'"></div>'
+          + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-edit-confirm" data-id="'+s.id+'">'+t("Save")+'</button></div>'
           + '</div></div>'
-          + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
+          + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">'+t("Remove")+'</button></div>';
       }
     } else if(status==="current"){
       var elapsed = daysBetween(prevDate, todayISO()); if(elapsed<0) elapsed=0;
       var target = s.targetDays;
       var over2 = hasTarget(s) ? Math.max(0, elapsed-target) : 0;
-      body += '<span class="mono" style="font-size:12px; color:var(--muted);">in progress</span></div>';
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+t("in progress")+'</span></div>';
       body += '<div class="step-meta-lines">';
-      if(hasTarget(s)) body += '<div class="meta-line predicted">Target: '+target+'d</div>';
-      body += '<div class="meta-line actual">'+elapsed+'d so far'+(hasTarget(s)?' '+overBadge(over2):'')+'</div>';
+      if(hasTarget(s)) body += '<div class="meta-line predicted">'+t("Target")+': '+target+'d</div>';
+      body += '<div class="meta-line actual">'+elapsed+'d '+t("so far")+(hasTarget(s)?' '+overBadge(over2):'')+'</div>';
       body += '</div>';
       body += '<div class="step-meta">';
-      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+t(s.owner)+'</span>';
       body += '</div>';
       body += '<div class="step-actions">'
-        + '<button type="button" class="btn small tl-complete" data-id="'+s.id+'">Mark complete…</button>'
+        + '<button type="button" class="btn small tl-complete" data-id="'+s.id+'">'+t("Mark complete…")+'</button>'
         + '<div class="mini-form" id="complete-form-'+s.id+'"><div class="row">'
-        + '<div class="field"><label>Date completed</label><input type="date" class="tl-complete-date" value="'+todayISO()+'"></div>'
-        + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-complete-confirm" data-id="'+s.id+'">Confirm</button></div>'
+        + '<div class="field"><label>'+t("Date completed")+'</label><input type="date" class="tl-complete-date" value="'+todayISO()+'"></div>'
+        + '<div class="field" style="flex:0 0 auto;"><button type="button" class="btn primary small tl-complete-confirm" data-id="'+s.id+'">'+t("Confirm")+'</button></div>'
         + '</div></div>'
-        + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Skip this step</button>'
+        + '<button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">'+t("Skip this step")+'</button>'
         + '</div>';
     } else { // pending
-      body += '<span class="mono" style="font-size:12px; color:var(--muted);">upcoming</span></div>';
+      body += '<span class="mono" style="font-size:12px; color:var(--muted);">'+t("upcoming")+'</span></div>';
       body += '<div class="step-meta">';
-      body += '<span>Target: <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?'':s.targetDays)+'" placeholder="none"></span>';
-      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+s.owner+'</span>';
+      body += '<span>'+t("Target")+': <input type="number" min="0" class="target-edit tl-target-edit" data-id="'+s.id+'" value="'+(s.targetDays===null?'':s.targetDays)+'" placeholder="none"></span>';
+      if(s.owner) body += '<span class="owner-tag '+s.owner+'">'+t(s.owner)+'</span>';
       body += '</div>';
-      body += '<div class="step-actions"><button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">Remove</button></div>';
+      body += '<div class="step-actions"><button type="button" class="btn ghost small tl-remove" data-id="'+s.id+'">'+t("Remove")+'</button></div>';
     }
     body += '</div></div>';
     return body;
   }
   function overBadge(over){
     var rb = riskFromOver(over);
-    if(over<=0) return '<span class="over-badge green">on target</span>';
-    return '<span class="over-badge '+rb.band+'">+'+over+'d over</span>';
+    if(over<=0) return '<span class="over-badge green">'+t("on target")+'</span>';
+    return '<span class="over-badge '+rb.band+'">+'+over+'d '+t("over")+'</span>';
   }
 
   function bindStepperEvents(){
@@ -1767,7 +2232,7 @@
 
   document.getElementById("candForm").addEventListener("submit", function(e){
     e.preventDefault();
-    if(!ui.draftTimeline.length){ alert('Click "Load agreed process" to build a timeline first.'); return; }
+    if(!ui.draftTimeline.length){ alert(t('Click "Load agreed process" to build a timeline first.')); return; }
     var data = {
       client: document.getElementById("f_client").value.trim(),
       vacancy: document.getElementById("f_vacancy").value.trim(),
@@ -1790,7 +2255,7 @@
   });
   document.getElementById("deleteBtn").addEventListener("click", function(){
     if(!ui.editingId) return;
-    if(!confirm("Delete this candidate? This can't be undone.")) return;
+    if(!confirm(t("Delete this candidate? This can't be undone."))) return;
     state.candidates = state.candidates.filter(function(x){return x.id!==ui.editingId;});
     save(); closeModal(); renderAll();
   });
@@ -1842,28 +2307,29 @@
       try{
         var parsed = JSON.parse(ev.target.result);
         if(!parsed || !Array.isArray(parsed.candidates)) throw new Error("bad shape");
-        var mode = state.candidates.length ? confirm("Replace current data with the imported file? Cancel to merge instead.") : true;
+        var mode = state.candidates.length ? confirm(t("Replace current data with the imported file? Cancel to merge instead.")) : true;
         if(mode){ state = parsed; if(!state.globalTemplate) state.globalTemplate = newGlobalDefault(); if(!state.clientTemplates) state.clientTemplates={}; if(!state.positionTemplates) state.positionTemplates={}; }
         else {
           var ids = {}; state.candidates.forEach(function(c){ids[c.id]=true;});
           (parsed.candidates||[]).forEach(function(c){ if(!ids[c.id]) state.candidates.push(c); });
         }
         save(); renderAll();
-      }catch(err){ alert("That doesn't look like a valid export file."); }
+      }catch(err){ alert(t("That doesn't look like a valid export file.")); }
     };
     reader.readAsText(file); e.target.value = "";
   });
   document.getElementById("exportCsv").addEventListener("click", function(){
     var cols = ["client","vacancy","candidateName","owner","outcome","notes"];
-    var header = cols.concat(["currentStep","daysOverTarget","totalElapsedDays","timeline"]).join(",");
+    var colLabels = [t("Client"), t("Vacancy / position"), t("Candidate name"), t("Recruiter (TNV)"), t("Outcome"), t("Notes")];
+    var header = colLabels.concat([t("Current step"), t("Days over target"), t("Total elapsed"), t("Timeline")]).join(",");
     var rows = state.candidates.map(function(c){
       var a = analyse(c);
-      var vals = cols.map(function(k){ return csvCell(c[k]); });
-      vals.push(csvCell(currentStepName(c)));
+      var vals = cols.map(function(k){ return csvCell(k==="outcome" ? t(c[k]) : c[k]); });
+      vals.push(csvCell(t(currentStepName(c))));
       vals.push(csvCell(a.currentOver===null?"":a.currentOver));
       vals.push(csvCell(a.totalActual===null?"":a.totalActual));
       var tlStr = (c.timeline||[]).map(function(s){
-        return s.label+(s.actualDate?" ("+fmtDate(s.actualDate)+")":" (pending, target "+(s.targetDays===null?"-":s.targetDays)+"d)");
+        return t(s.label)+(s.actualDate?" ("+fmtDate(s.actualDate)+")":" ("+t("pending, target ")+(s.targetDays===null?"-":s.targetDays)+"d)");
       }).join(" -> ");
       vals.push(csvCell(tlStr));
       return vals.join(",");
@@ -1874,12 +2340,12 @@
 
   document.getElementById("loadSample").addEventListener("click", loadSampleData);
   function loadSampleData(){
-    if(state.candidates.length && !confirm("This adds sample candidates alongside your existing data. Continue?")) return;
+    if(state.candidates.length && !confirm(t("This adds sample candidates alongside your existing data. Continue?"))) return;
     state.candidates = state.candidates.concat(sampleData());
     save(); renderAll();
   }
   document.getElementById("clearAll").addEventListener("click", function(){
-    if(!confirm("Delete ALL candidates from this browser? This also does not touch your process templates. Continue?")) return;
+    if(!confirm(t("Delete ALL candidates from this browser? This also does not touch your process templates. Continue?"))) return;
     state.candidates = []; save(); renderAll();
   });
 
@@ -1891,7 +2357,12 @@
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   }
 
+  document.getElementById("langSelect").value = lang;
+  document.getElementById("langSelect").addEventListener("change", function(){ setLang(this.value); });
+  document.documentElement.lang = lang === "it" ? "it" : lang === "sc" ? "sc" : "en";
+
   load();
+  applyStaticI18n();
   renderAll();
 })();
 </script>
