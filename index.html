@@ -246,7 +246,7 @@
       <p class="tagline">Every candidate has a clock running, against the times you actually agreed with the client.</p>
     </div>
     <div class="topbar-actions">
-      <button class="btn primary" id="addBtn">+ Add candidate</button>
+      <span id="ctaWrap"></span>
       <div class="menu-wrap">
         <button class="btn" id="menuBtn">File ▾</button>
         <div class="menu-pop" id="menuPop">
@@ -709,7 +709,23 @@
 
   // ---------- rendering: dashboard ----------
   function renderAll(){
-    renderStatStrip(); renderDelayOverview(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail(); renderProcessTab();
+    renderTopbarCTA(); renderStatStrip(); renderDelayOverview(); renderClientGrid(); populateClientFilter(); renderCandidatesTable(); renderClientDetail(); renderProcessTab();
+  }
+  function renderTopbarCTA(){
+    var wrap = document.getElementById("ctaWrap");
+    if(!clientsList().length){
+      wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Create client</button>';
+      document.getElementById("addBtn").addEventListener("click", promptCreateClient);
+      return;
+    }
+    if(!readyForCandidates()){
+      wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add position</button>'
+        + '<span class="hint" style="margin-left:8px;">then you can add a candidate</span>';
+      document.getElementById("addBtn").addEventListener("click", function(){ setTab("process"); });
+      return;
+    }
+    wrap.innerHTML = '<button class="btn primary" id="addBtn">+ Add candidate</button>';
+    document.getElementById("addBtn").addEventListener("click", function(){ openModal(); });
   }
   function renderDelayOverview(){
     var wrap = document.getElementById("delayWrap");
@@ -777,7 +793,25 @@
       });
     });
   }
+  // ---------- setup readiness: client -> position -> candidate ----------
+  function clientsWithPositions(){
+    return clientsList().filter(function(c){ return vacanciesForClient(c).length > 0; });
+  }
+  function readyForCandidates(){ return clientsWithPositions().length > 0; }
+
   function emptyStateHTML(){
+    if(!clientsList().length){
+      return '<div class="empty-state"><h3>Set up your first client</h3>'
+        + '<p>Before you can track a candidate, add the client, then add at least one position for them. Steps and timings default from the global process until you customize them.</p>'
+        + '<div class="btn-row"><button class="btn primary" id="emptyCreateClientBtn">+ Create client</button>'
+        + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
+    }
+    if(!readyForCandidates()){
+      return '<div class="empty-state"><h3>Add a position to get started</h3>'
+        + '<p>You have a client set up, but no position yet. Add one on the Process tab, then you can add a candidate for it.</p>'
+        + '<div class="btn-row"><button class="btn primary" id="emptyGoProcessBtn">Go add a position</button>'
+        + '<button class="btn" id="emptySampleBtn">Load sample data</button></div></div>';
+    }
     return '<div class="empty-state"><h3>No candidates yet</h3>'
       + '<p>Add your first candidate, or load sample data to see how the timeline works.</p>'
       + '<div class="btn-row"><button class="btn primary" id="emptyAddBtn">+ Add candidate</button>'
@@ -785,8 +819,15 @@
   }
   function bindEmptyState(){
     var a = document.getElementById("emptyAddBtn"), s = document.getElementById("emptySampleBtn");
+    var cc = document.getElementById("emptyCreateClientBtn"), gp = document.getElementById("emptyGoProcessBtn");
     if(a) a.addEventListener("click", function(){ openModal(); });
     if(s) s.addEventListener("click", loadSampleData);
+    if(cc) cc.addEventListener("click", function(){ promptCreateClient(); });
+    if(gp) gp.addEventListener("click", function(){ setTab("process"); });
+  }
+  function promptCreateClient(){
+    var name = prompt("New client name:");
+    if(addClient(name)){ renderAll(); setTab("process"); }
   }
   function populateClientFilter(){
     var sel = document.getElementById("filterClient");
@@ -887,11 +928,12 @@
   // ---------- Process tab ----------
   function renderProcessTab(){
     var wrap = document.getElementById("processWrap");
-    var html = renderTemplateBlock("Global default", "Applies to any client or vacancy with no customization of its own.",
+    var html = renderTemplateBlock("Step 1 — Global default", "The overall rules for new clients: the default steps and timings. Applies to any client or position with no customization of its own.",
       state.globalTemplate, {kind:"global"});
     var names = clientsList();
     html += '<div class="template-block"><div class="client-block-header" style="margin-bottom:'+(names.length?'10px':'0')+';">'
-      + '<h3 style="margin:0;">Clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>';
+      + '<h3 style="margin:0;">Step 2 — Clients</h3><button class="btn small" id="addClientBtn">+ Add client</button></div>'
+      + '<div class="sub" style="margin-top:-6px;">Add a client, then customize their process only if it differs from the default.</div>';
     if(!names.length){
       html += '<div class="sub">No clients yet. Add one to set up their process ahead of the first candidate.</div>';
     } else {
@@ -907,7 +949,7 @@
         }
         var vacs = vacanciesForClient(name);
         html += '<div class="vacancy-list"><div class="client-block-header" style="margin-bottom:6px;">'
-          + '<div class="sub" style="margin:0;">Vacancies at '+esc(name)+'</div>'
+          + '<div class="sub" style="margin:0;">Step 3 — Positions at '+esc(name)+(vacs.length?'':' (add one before you can add a candidate here)')+'</div>'
           + '<button class="btn small" data-action="add-vacancy" data-client="'+escAttr(name)+'">+ Add position</button></div>';
         vacs.forEach(function(v){
           var pk = posKey(name, v);
@@ -974,12 +1016,12 @@
     var addClientBtn = document.getElementById("addClientBtn");
     if(addClientBtn) addClientBtn.addEventListener("click", function(){
       var name = prompt("New client name:");
-      if(addClient(name)) renderProcessTab();
+      if(addClient(name)){ renderProcessTab(); renderTopbarCTA(); }
     });
     wrap.querySelectorAll('[data-action="add-vacancy"]').forEach(function(btn){
       btn.addEventListener("click", function(){
         var v = prompt("New position/vacancy name for "+btn.dataset.client+":");
-        if(addVacancy(btn.dataset.client, v)) renderProcessTab();
+        if(addVacancy(btn.dataset.client, v)){ renderProcessTab(); renderTopbarCTA(); }
       });
     });
     wrap.querySelectorAll('[data-action="customize-client"]').forEach(function(btn){
@@ -1058,39 +1100,32 @@
     document.getElementById(id).innerHTML = options.map(function(o){ return '<option value="'+escAttr(o)+'">'+esc(o)+'</option>'; }).join("");
   }
 
+  // Client and position are set up ahead of time on the Process tab — this modal
+  // only ever picks from what's already there, it never creates either on the fly.
   function populateClientSelect(selected){
     var sel = document.getElementById("f_client");
-    var names = clientsList();
+    var names = clientsWithPositions();
+    // Keep an existing candidate's own client selectable even if its positions
+    // were later removed — editing must never silently lose its own data.
+    if(selected && names.indexOf(selected)===-1) names = names.concat([selected]).sort();
     sel.innerHTML = '<option value="">Select client…</option>'
-      + names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("")
-      + '<option value="__new__">+ Add new client…</option>';
+      + names.map(function(n){ return '<option value="'+escAttr(n)+'">'+esc(n)+'</option>'; }).join("");
     sel.value = selected && names.indexOf(selected)>=0 ? selected : "";
   }
   function populateVacancySelect(client, selected){
     var sel = document.getElementById("f_vacancy");
     var vacs = client ? vacanciesForClient(client) : [];
+    if(selected && vacs.indexOf(selected)===-1) vacs = vacs.concat([selected]).sort();
     sel.innerHTML = '<option value="">Select position…</option>'
-      + vacs.map(function(v){ return '<option value="'+escAttr(v)+'">'+esc(v)+'</option>'; }).join("")
-      + '<option value="__new__">+ Add new position…</option>';
+      + vacs.map(function(v){ return '<option value="'+escAttr(v)+'">'+esc(v)+'</option>'; }).join("");
     sel.value = selected && vacs.indexOf(selected)>=0 ? selected : "";
     sel.disabled = !client;
   }
   document.getElementById("f_client").addEventListener("change", function(){
-    var sel = this;
-    if(sel.value === "__new__"){
-      var name = prompt("New client name:");
-      if(addClient(name)){ populateClientSelect(name); } else { sel.value = ""; return; }
-    }
-    populateVacancySelect(sel.value, "");
+    populateVacancySelect(this.value, "");
     maybeAutoLoadTemplate();
   });
   document.getElementById("f_vacancy").addEventListener("change", function(){
-    var sel = this;
-    var client = document.getElementById("f_client").value;
-    if(sel.value === "__new__"){
-      var v = prompt("New position name for "+client+":");
-      if(addVacancy(client, v)){ populateVacancySelect(client, v); } else { sel.value = ""; return; }
-    }
     maybeAutoLoadTemplate();
   });
   // Only auto-loads for a brand-new candidate with no timeline yet — never clobbers
@@ -1099,7 +1134,7 @@
     if(ui.editingId) return;
     var client = document.getElementById("f_client").value;
     var vacancy = document.getElementById("f_vacancy").value;
-    if(!client || !vacancy || vacancy==="__new__") return;
+    if(!client || !vacancy) return;
     if(ui.draftTimeline.length) return;
     var resolved = resolveTemplate(client, vacancy);
     var fresh = cloneSteps(resolved.steps);
@@ -1110,6 +1145,11 @@
   }
 
   function openModal(id){
+    if(!id && !readyForCandidates()){
+      alert("Add a client and at least one position for them first (Process tab) before adding a candidate.");
+      setTab("process");
+      return;
+    }
     ui.editingId = id || null;
     var c = id ? state.candidates.find(function(x){return x.id===id;}) : null;
     document.getElementById("modalTitle").textContent = c ? "Edit candidate" : "Add candidate";
@@ -1136,7 +1176,6 @@
   }
   function closeModal(){ modal.close(); ui.editingId = null; }
 
-  document.getElementById("addBtn").addEventListener("click", function(){ openModal(); });
   document.getElementById("modalClose").addEventListener("click", closeModal);
   document.getElementById("cancelBtn").addEventListener("click", closeModal);
 
